@@ -1,123 +1,138 @@
 import React from "react";
-import { FaQuoteLeft } from "react-icons/fa";
-import { getCardBgColor } from "../../utils/gradients";
+import { FaQuoteLeft, FaStar } from "react-icons/fa";
+
+// Updated Ayurveda-focused testimonials
+const testimonials = [
+  {
+    id: 1,
+    name: "Sunita Verma",
+    role: "Regular Customer",
+    content:
+      "I've been using the Joint Pain Relief Oil for two months now, and the difference is incredible. I can finally walk without stiffness. Truly authentic Ayurveda!",
+    avatar: "https://randomuser.me/api/portraits/women/11.jpg",
+    rating: 5,
+  },
+  {
+    id: 2,
+    name: "Rajesh Kumar",
+    role: "Yoga Practitioner",
+    content:
+      "The Ashwagandha powder is of premium quality. It has significantly improved my energy levels and stress management. Highly recommended.",
+    avatar: "https://randomuser.me/api/portraits/men/32.jpg",
+    rating: 5,
+  },
+  {
+    id: 3,
+    name: "Dr. Anjali Mehta",
+    role: "Ayurveda Doctor",
+    content:
+      "I often recommend Ayushaushadhi products to my patients because of their purity and adherence to traditional formulation methods.",
+    avatar: "https://randomuser.me/api/portraits/women/68.jpg",
+    rating: 5,
+  },
+  {
+    id: 4,
+    name: "Vikram Singh",
+    role: "Verified Buyer",
+    content:
+      "Fast delivery and excellent packaging. The Digestive Care syrup worked wonders for my acidity issues within a week.",
+    avatar: "https://randomuser.me/api/portraits/men/45.jpg",
+    rating: 4,
+  },
+  {
+    id: 5,
+    name: "Meera Reddy",
+    role: "Homemaker",
+    content:
+      "I love their herbal hair oil. My hair fall has reduced drastically, and the texture has improved. It smells natural and earthy.",
+    avatar: "https://randomuser.me/api/portraits/women/44.jpg",
+    rating: 5,
+  },
+  {
+    id: 6,
+    name: "Amit Trivedi",
+    role: "Fitness Enthusiast",
+    content:
+      "Great immunity boosters. I've been taking their Chyawanprash this winter and haven't fallen sick once. Great taste too!",
+    avatar: "https://randomuser.me/api/portraits/men/22.jpg",
+    rating: 5,
+  },
+];
+
+// Local helper for nature-themed card backgrounds
+const getNatureCardStyle = (index) => {
+  const styles = [
+    "bg-emerald-50 dark:bg-emerald-900/20 border-emerald-100 dark:border-emerald-800",
+    "bg-amber-50 dark:bg-amber-900/20 border-amber-100 dark:border-amber-800",
+    "bg-stone-50 dark:bg-stone-900/20 border-stone-100 dark:border-stone-800",
+  ];
+  return styles[index % styles.length];
+};
 
 const Testimonials = () => {
-  const testimonials = [
-    {
-      id: 1,
-      name: "Krishna Avtar",
-      role: "Book Enthusiast",
-      content:
-        "This platform has completely transformed my reading habits. The book recommendations are spot on, and the reading experience is seamless.",
-      avatar: "../../images/team-1.jpg",
-      rating: 5,
-    },
-    {
-      id: 2,
-      name: "Preeti Sharma",
-      role: "Student",
-      content:
-        "As a student, I appreciate the wide range of academic books available. The search functionality makes it easy to find exactly what I need.",
-      avatar: "../../images/team-2.jpg",
-      rating: 4,
-    },
-    {
-      id: 3,
-      name: "Rahul Gahlot",
-      role: "Librarian",
-      content:
-        "I recommend this platform to all our library members. The collection is vast and the interface is user-friendly.",
-      avatar: "../../images/team-3.jpg",
-      rating: 5,  
-    },
-    {
-      id: 4,
-      name: "Ravi Teja",
-      role: "Author",
-      content:
-        "This platform has completely transformed my reading habits. The book recommendations are spot on, and the reading experience is seamless.",
-      avatar: "../../images/team-4.jpg",
-      rating: 5,
-    },
-    {
-      id: 5,
-      name: "Rakesh Rathore",
-      role: "Book Enthusiast",
-      content:
-        "This platform has completely transformed my reading habits. The book recommendations are spot on, and the reading experience is seamless.",
-      avatar: "../../images/team-5.jpg",
-      rating: 5,
-    },
-    {
-      id: 6,
-      name: "Ravi Kumar",
-      role: "Student",
-      content:
-        "As a student, I appreciate the wide range of academic books available. The search functionality makes it easy to find exactly what I need.",
-      avatar: "../../images/team-6.jpg",
-      rating: 4,
-    },
-  ];
-
   const renderStars = (rating) => {
     return Array(5)
       .fill(0)
       .map((_, i) => (
-        <svg
+        <FaStar
           key={i}
-          className={`w-5 h-5 ${
-            i < rating ? "text-yellow-400" : "text-gray-300"
+          className={`w-4 h-4 ${
+            i < rating ? "text-amber-400" : "text-gray-300 dark:text-gray-600"
           }`}
-          fill="currentColor"
-          viewBox="0 0 20 20"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-        </svg>
+        />
       ));
   };
 
   return (
-    <section className="py-16 bg-white dark:bg-gray-900">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold text-black dark:text-white sm:text-4xl">
-            What Our Readers Say
+    <section className="py-20 bg-white dark:bg-gray-900 relative">
+      {/* Decorative background blob */}
+      <div className="absolute left-0 bottom-0 w-64 h-64 bg-emerald-100 dark:bg-emerald-900/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2 pointer-events-none"></div>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div className="text-center mb-16">
+          <h2 className="text-sm font-bold text-amber-600 dark:text-amber-500 uppercase tracking-widest mb-2">
+            Testimonials
           </h2>
-          <p className="mt-4 text-xl text-black dark:text-white">
-            Join thousands of satisfied readers
-          </p>
+          <h3 className="text-3xl font-bold text-emerald-900 dark:text-emerald-50 sm:text-4xl font-serif">
+            Healing Stories from Our Community
+          </h3>
+          <div className="h-1 w-20 bg-amber-400 mx-auto mt-4 rounded-full"></div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {testimonials.map((testimonial) => (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {testimonials.map((testimonial, index) => (
             <div
               key={testimonial.id}
-              className={`${getCardBgColor(testimonial)} p-8 rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300`}
+              className={`p-8 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 border ${getNatureCardStyle(
+                index
+              )}`}
             >
-              <div className="flex items-center mb-4">
-                <div className="flex-shrink-0">
+              <div className="flex items-center mb-6">
+                <div className="flex-shrink-0 relative">
                   <img
-                    className="h-12 w-12 rounded-full"
+                    className="h-14 w-14 rounded-full object-cover border-2 border-white dark:border-gray-700 shadow-sm"
                     src={testimonial.avatar}
                     alt={`${testimonial.name}'s avatar`}
                   />
+                  <div className="absolute -bottom-1 -right-1 bg-emerald-500 text-white p-1 rounded-full text-xs">
+                    <FaQuoteLeft size={10} />
+                  </div>
                 </div>
                 <div className="ml-4">
-                  <h3 className="text-lg font-medium text-black dark:text-white">
+                  <h3 className="text-lg font-bold text-gray-900 dark:text-white font-serif">
                     {testimonial.name}
                   </h3>
-                  <p className="text-sm text-black dark:text-white">
+                  <p className="text-xs font-medium text-emerald-600 dark:text-emerald-400 uppercase tracking-wide">
                     {testimonial.role}
                   </p>
                 </div>
               </div>
+
               <div className="flex mb-4">{renderStars(testimonial.rating)}</div>
+
               <div className="relative">
-                <FaQuoteLeft className="text-gray-200 dark:text-white text-4xl absolute -top-2 -left-2" />
-                <p className="relative z-10 text-black dark:text-white italic">
-                  {testimonial.content}
+                <p className="relative z-10 text-gray-700 dark:text-gray-300 italic leading-relaxed text-sm">
+                  "{testimonial.content}"
                 </p>
               </div>
             </div>

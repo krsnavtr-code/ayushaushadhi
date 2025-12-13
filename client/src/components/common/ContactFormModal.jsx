@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { FaTimes } from "react-icons/fa";
+import React, { useState } from "react";
+import { FaTimes, FaCheck, FaLeaf } from "react-icons/fa";
 import { toast } from "react-toastify";
 import { submitContactForm } from "../../api/contactApi";
 import { Link, useNavigate } from "react-router-dom";
@@ -11,33 +11,21 @@ const ContactFormModal = ({ isOpen, onClose }) => {
     email: "",
     phone: "",
     message: "",
-    courseInterest: "",
+    inquiryType: "Product Inquiry", // Changed from courseInterest
     agreedToTerms: false,
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
-  const [courses, setCourses] = useState([]);
-  const [isLoadingCourses, setIsLoadingCourses] = useState(true);
   const [lastSubmitTime, setLastSubmitTime] = useState(0);
 
-  // Load courses
-  useEffect(() => {
-    const loadCourses = async () => {
-      try {
-        const response = await fetch("/api/courses");
-        if (response.ok) {
-          const data = await response.json();
-          setCourses(Array.isArray(data) ? data : data.data || []);
-        }
-      } catch (error) {
-        console.error("Error loading courses:", error);
-      } finally {
-        setIsLoadingCourses(false);
-      }
-    };
-
-    loadCourses();
-  }, []);
+  // Static options for E-commerce context
+  const inquiryOptions = [
+    "Product Inquiry",
+    "Ayurvedic Doctor Consultation",
+    "Order Status / Delivery",
+    "Distributorship Query",
+    "Other",
+  ];
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -53,7 +41,7 @@ const ContactFormModal = ({ isOpen, onClose }) => {
     // Prevent rapid submissions (5 second cooldown)
     const now = Date.now();
     if (now - lastSubmitTime < 5000) {
-      toast.warning('Please wait a few seconds before submitting again');
+      toast.warning("Please wait a few seconds before submitting again");
       return;
     }
 
@@ -61,24 +49,22 @@ const ContactFormModal = ({ isOpen, onClose }) => {
       toast.error("Please accept the terms & conditions and privacy policy");
       return;
     }
-    
-    setLastSubmitTime(now);
 
+    setLastSubmitTime(now);
     setIsSubmitting(true);
 
     try {
       // Prepare the data to match backend expectations
+      // We map 'inquiryType' to 'subject' or a custom field depending on your API
       const submissionData = {
-        ...formData,
-        // Map courseInterest to courseId and find the course title
-        courseId: formData.courseInterest,
-        courseTitle: formData.courseInterest
-          ? courses.find((c) => c._id === formData.courseInterest)?.title || ""
-          : "",
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        message: formData.message || "No specific message provided",
+        subject: formData.inquiryType, // Mapping inquiry type to subject
+        // courseId: null, // Removing course specific fields
+        // courseTitle: null,
       };
-
-      // Remove the courseInterest field as it's not needed by the backend
-      delete submissionData.courseInterest;
 
       console.log("Submitting form data:", submissionData);
 
@@ -91,22 +77,17 @@ const ContactFormModal = ({ isOpen, onClose }) => {
           email: "",
           phone: "",
           message: "",
-          courseInterest: "",
+          inquiryType: "Product Inquiry",
           agreedToTerms: false,
         });
 
-        // Close the modal and redirect to thank you page
-        onClose();
-        navigate('/thank-you', {
-          state: {
-            message: result.message || 'Your message has been sent successfully!',
-            conversionData: {
-              transaction_id: '',
-              value: 1.0,
-              currency: 'INR'
-            }
-          }
-        });
+        setIsSuccess(true);
+
+        // Optional: Redirect after delay or just show success state in modal
+        // setTimeout(() => {
+        //   onClose();
+        //   navigate('/thank-you');
+        // }, 2000);
       } else {
         // Handle API validation errors
         if (result.errors) {
@@ -121,6 +102,8 @@ const ContactFormModal = ({ isOpen, onClose }) => {
       }
     } catch (error) {
       console.error("Error submitting form:", error);
+      // Fallback for demo purposes if API fails
+      // setIsSuccess(true);
       toast.error(
         error.message ||
           error.response?.data?.message ||
@@ -134,67 +117,68 @@ const ContactFormModal = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 mt-20">
-      <div className="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+    <div className="fixed inset-0 z-[100] overflow-y-auto">
+      <div className="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
         {/* Background overlay */}
-        <div className="fixed inset-0 transition-opacity" aria-hidden="true">
-          <div className="absolute inset-0 bg-gray-500 opacity-75"></div>
-        </div>
+        <div
+          className="fixed inset-0 transition-opacity bg-gray-900 bg-opacity-75 backdrop-blur-sm"
+          aria-hidden="true"
+          onClick={onClose}
+        ></div>
+
+        {/* Center Trick */}
+        <span
+          className="hidden sm:inline-block sm:align-middle sm:h-screen"
+          aria-hidden="true"
+        >
+          &#8203;
+        </span>
 
         {/* Modal panel */}
-        <div className="inline-block align-middle bg-white dark:bg-gray-800 rounded-lg text-left overflow-y-auto shadow-xl transform transition-all max-h-[90vh] sm:my-4 sm:align-middle sm:max-w-lg sm:w-full">
-          <div className="bg-white dark:bg-gray-800 px-4 py-4 sm:px-6">
-            <div className="flex justify-between items-center mb-2">
-              <h3 className="text-lg font-medium text-gray-900 dark:text-white">
-                Request A Call Back
-              </h3>
-              <button
-                onClick={onClose}
-                className="text-gray-400 hover:text-gray-500 focus:outline-none"
-              >
-                <FaTimes className="h-6 w-6" />
-              </button>
-            </div>
+        <div className="inline-block align-bottom bg-white dark:bg-gray-800 rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full border border-emerald-100 dark:border-gray-700">
+          {/* Header */}
+          <div className="bg-emerald-50 dark:bg-gray-700/50 px-4 py-4 sm:px-6 flex justify-between items-center border-b border-emerald-100 dark:border-gray-600">
+            <h3 className="text-lg font-bold text-emerald-900 dark:text-emerald-100 flex items-center gap-2">
+              <FaLeaf className="text-emerald-500" />
+              Request Consultation
+            </h3>
+            <button
+              onClick={onClose}
+              className="text-gray-400 hover:text-red-500 transition-colors focus:outline-none"
+            >
+              <FaTimes className="h-5 w-5" />
+            </button>
+          </div>
 
+          <div className="px-4 py-6 sm:px-6">
             {isSuccess ? (
               <div className="text-center py-8">
-                <div className="mx-auto flex items-center justify-center h-10 w-10 rounded-full bg-green-100">
-                  <svg
-                    className="h-6 w-6 text-green-600"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M5 13l4 4L19 7"
-                    />
-                  </svg>
+                <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-emerald-100 dark:bg-emerald-900/30 mb-4 animate-bounce">
+                  <FaCheck className="h-8 w-8 text-emerald-600 dark:text-emerald-400" />
                 </div>
-                <h3 className="mt-2 text-base font-medium text-gray-900 dark:text-white">
-                  Message Sent!
+                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+                  Request Received!
                 </h3>
-                <p className="mt-1 text-xs text-gray-500 dark:text-gray-300">
-                  Thank you for contacting us.
+                <p className="text-sm text-gray-500 dark:text-gray-300 max-w-xs mx-auto">
+                  Thank you for reaching out. Our wellness experts will contact
+                  you shortly.
                 </p>
-                <div className="mt-3">
+                <div className="mt-6">
                   <button
                     type="button"
                     onClick={onClose}
-                    className="w-full justify-center rounded-md border border-transparent shadow-sm px-3 py-1.5 bg-blue-600 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                    className="w-full inline-flex justify-center rounded-lg border border-transparent shadow-sm px-4 py-2 bg-emerald-600 text-base font-medium text-white hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 sm:text-sm transition-colors"
                   >
                     Close
                   </button>
                 </div>
               </div>
             ) : (
-              <form onSubmit={handleSubmit} className="space-y-3">
+              <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
                   <label
                     htmlFor="name"
-                    className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                    className="block text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wide mb-1"
                   >
                     Full Name <span className="text-red-500">*</span>
                   </label>
@@ -205,34 +189,15 @@ const ContactFormModal = ({ isOpen, onClose }) => {
                     value={formData.name}
                     onChange={handleChange}
                     required
-                    className="w-full px-3 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white bg-gray-50 border-gray-800 text-black"
-                    placeholder="Your name"
-                  />
-                </div>
-
-                <div>
-                  <label
-                    htmlFor="email"
-                    className="block text-sm font-medium text-gray-700 dark:text-gray-300"
-                  >
-                    Email Address <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    required
-                    className="w-full px-3 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white bg-gray-50 border-gray-800 text-black"
-                    placeholder="your.email@example.com"
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 dark:bg-gray-700 dark:text-white transition-all outline-none"
+                    placeholder="John Doe"
                   />
                 </div>
 
                 <div>
                   <label
                     htmlFor="phone"
-                    className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                    className="block text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wide mb-1"
                   >
                     Phone Number <span className="text-red-500">*</span>
                   </label>
@@ -243,65 +208,65 @@ const ContactFormModal = ({ isOpen, onClose }) => {
                     value={formData.phone}
                     onChange={handleChange}
                     required
-                    className="w-full px-3 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white bg-gray-50 border-gray-800 text-black"
-                    placeholder="+91 8080808080"
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 dark:bg-gray-700 dark:text-white transition-all outline-none"
+                    placeholder="+91 98765 43210"
                   />
                 </div>
 
                 <div>
                   <label
-                    htmlFor="courseInterest"
-                    className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                    htmlFor="email"
+                    className="block text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wide mb-1"
                   >
-                    I'm interested in: (Optional)
+                    Email Address <span className="text-red-500">*</span>
                   </label>
-                  {isLoadingCourses ? (
-                    <div className="relative">
-                      <select
-                        id="courseInterest"
-                        name="courseInterest"
-                        disabled
-                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 bg-gray-50 border-gray-800 text-black"
-                      >
-                        <option>Loading courses...</option>
-                      </select>
-                    </div>
-                  ) : courses.length > 0 ? (
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    required
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 dark:bg-gray-700 dark:text-white transition-all outline-none"
+                    placeholder="you@example.com"
+                  />
+                </div>
+
+                <div>
+                  <label
+                    htmlFor="inquiryType"
+                    className="block text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wide mb-1"
+                  >
+                    Nature of Inquiry
+                  </label>
+                  <div className="relative">
                     <select
-                      id="courseInterest"
-                      name="courseInterest"
-                      value={formData.courseInterest}
+                      id="inquiryType"
+                      name="inquiryType"
+                      value={formData.inquiryType}
                       onChange={handleChange}
-                      className="w-full px-3 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white bg-gray-50 border-gray-800 text-black"
+                      className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm bg-white dark:bg-gray-700 text-gray-700 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none appearance-none"
                     >
-                      <option value="">Select a course (optional)</option>
-                      {courses.map((course) => (
-                        <option
-                          key={course._id || course.id}
-                          value={course._id || course.id}
-                        >
-                          {course.title || course.name}
+                      {inquiryOptions.map((option) => (
+                        <option key={option} value={option}>
+                          {option}
                         </option>
                       ))}
                     </select>
-                  ) : (
-                    <select
-                      id="courseInterest"
-                      name="courseInterest"
-                      disabled
-                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 bg-gray-50 border-gray-800 text-black"
-                    >
-                      <option>No courses available</option>
-                    </select>
-                  )}
+                    <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-500">
+                      <svg className="h-4 w-4 fill-current" viewBox="0 0 20 20">
+                        <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
+                      </svg>
+                    </div>
+                  </div>
                 </div>
 
-                {/* <div>
+                <div>
                   <label
                     htmlFor="message"
-                    className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                    className="block text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wide mb-1"
                   >
-                    Write Something
+                    Message (Optional)
                   </label>
                   <textarea
                     id="message"
@@ -309,56 +274,79 @@ const ContactFormModal = ({ isOpen, onClose }) => {
                     rows="2"
                     value={formData.message}
                     onChange={handleChange}
-                    // required
-                    className="w-full px-3 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white bg-gray-50 border-gray-800 text-black"
-                    placeholder="How can we help you?"
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 dark:bg-gray-700 dark:text-white transition-all outline-none resize-none"
+                    placeholder="Tell us more about your health concern..."
                   ></textarea>
-                </div> */}
+                </div>
 
-                <div className="flex items-start space-x-2">
-                  <input
-                    id="agreedToTerms"
-                    name="agreedToTerms"
-                    type="checkbox"
-                    checked={formData.agreedToTerms}
-                    onChange={handleChange}
-                    className="mt-1 h-3 w-3 text-blue-600 focus:ring-blue-500 border-gray-300 rounded dark:bg-gray-700 dark:border-gray-600 bg-gray-50 border-gray-800 text-black"
-                    required
-                  />
-                  <div className="text-xs">
-                    <label
-                      htmlFor="agreedToTerms"
-                      className="font-medium text-gray-700 dark:text-gray-300"
-                    >
-                      I hereby agree to receive the promotional emails &
-                      messages through WhatApp/RCS/SMS{" "}
+                <div className="flex items-start space-x-3 pt-2">
+                  <div className="flex items-center h-5">
+                    <input
+                      id="agreedToTerms"
+                      name="agreedToTerms"
+                      type="checkbox"
+                      checked={formData.agreedToTerms}
+                      onChange={handleChange}
+                      className="h-4 w-4 text-emerald-600 focus:ring-emerald-500 border-gray-300 rounded cursor-pointer accent-emerald-600"
+                      required
+                    />
+                  </div>
+                  <div className="text-xs text-gray-600 dark:text-gray-400">
+                    <label htmlFor="agreedToTerms" className="font-medium">
+                      I agree to receive updates via WhatsApp/SMS & accept the{" "}
                       <Link
                         to="/terms-of-service"
-                        className="text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300"
+                        className="text-emerald-600 hover:text-emerald-500 underline"
                       >
-                        T&C
+                        Terms
                       </Link>{" "}
-                      and{" "}
+                      &{" "}
                       <Link
                         to="/privacy-policy"
-                        className="text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300"
+                        className="text-emerald-600 hover:text-emerald-500 underline"
                       >
                         Privacy Policy
                       </Link>
-                      <span className="text-red-500">*</span>
+                      .<span className="text-red-500">*</span>
                     </label>
                   </div>
                 </div>
 
-                <div className="mt-4">
+                <div className="pt-2">
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className={`w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 ${
+                    className={`w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-lg text-sm font-bold text-white bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition-all transform hover:-translate-y-0.5 ${
                       isSubmitting ? "opacity-70 cursor-not-allowed" : ""
                     }`}
                   >
-                    {isSubmitting ? "Sending..." : "Send Message"}
+                    {isSubmitting ? (
+                      <span className="flex items-center gap-2">
+                        <svg
+                          className="animate-spin h-4 w-4 text-white"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                        >
+                          <circle
+                            className="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            strokeWidth="4"
+                          ></circle>
+                          <path
+                            className="opacity-75"
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                          ></path>
+                        </svg>
+                        Sending...
+                      </span>
+                    ) : (
+                      "Submit Request"
+                    )}
                   </button>
                 </div>
               </form>

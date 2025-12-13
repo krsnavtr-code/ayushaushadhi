@@ -1,71 +1,100 @@
 import React from "react";
 import {
-  FaVideo,
+  FaLeaf,
+  FaMortarPestle,
+  FaFlask,
   FaClipboardCheck,
-  FaBullseye,
-  FaComments,
-  FaFileAlt,
-  FaCertificate,
+  FaBoxOpen,
+  FaTruck,
 } from "react-icons/fa";
 
 const steps = [
   {
-    icon: <FaVideo className="text-3xl text-blue-500 dark:text-blue-400" />,
-    title: "Learn from Experts",
-    desc: "Watch in-depth video lectures designed by industry professionals to master core concepts",
+    icon: (
+      <FaLeaf className="text-3xl text-emerald-600 dark:text-emerald-400" />
+    ),
+    title: "Ethical Sourcing",
+    desc: "We select the finest herbs from certified organic farms, ensuring 100% purity and sustainability.",
   },
   {
-    icon: <FaClipboardCheck className="text-3xl text-blue-500 dark:text-blue-400" />,
-    title: "Test Yourself",
-    desc: "Assess your progress with regular quizzes, assignments, and module-wise tests",
+    icon: (
+      <FaMortarPestle className="text-3xl text-emerald-600 dark:text-emerald-400" />
+    ),
+    title: "Traditional Extraction",
+    desc: "Herbs are processed using ancient Ayurvedic methods (Bhavana) to preserve their natural potency.",
   },
   {
-    icon: <FaBullseye className="text-3xl text-blue-500 dark:text-blue-400" />,
-    title: "Hands-on practice",
-    desc: "Work on real-world projects and assignments using tools, software, and integrated coding platforms.",
+    icon: (
+      <FaFlask className="text-3xl text-emerald-600 dark:text-emerald-400" />
+    ),
+    title: "Scientific Formulation",
+    desc: "Our expert Vaidyas blend traditional wisdom with modern science to create effective remedies.",
   },
   {
-    icon: <FaComments className="text-3xl text-blue-500 dark:text-blue-400" />,
-    title: "1:1 doubt solving",
-    desc: "Get personalized support from experts via live doubt-clearing sessions or within 24 hours on our forums.",
+    icon: (
+      <FaClipboardCheck className="text-3xl text-emerald-600 dark:text-emerald-400" />
+    ),
+    title: "Rigorous Testing",
+    desc: "Every batch undergoes strict quality control and lab testing (GMP/ISO) to ensure safety.",
   },
   {
-    icon: <FaFileAlt className="text-3xl text-blue-500 dark:text-blue-400" />,
-    title: "Take final exam",
-    desc: "Conclude your training with a comprehensive final assessment to test your full understanding",
+    icon: (
+      <FaBoxOpen className="text-3xl text-emerald-600 dark:text-emerald-400" />
+    ),
+    title: "Hygienic Packaging",
+    desc: "Products are sealed in eco-friendly, tamper-proof packaging to maintain freshness.",
   },
   {
-    icon: <FaCertificate className="text-3xl text-blue-500 dark:text-blue-400" />,
-    title: "Get certified",
-    desc: "Receive a recognized certificate from FirstVITE (NSDC/NIELIT partnered) upon successful course completion",
+    icon: (
+      <FaTruck className="text-3xl text-emerald-600 dark:text-emerald-400" />
+    ),
+    title: "Doorstep Delivery",
+    desc: "Fast, secure, and contact-less shipping directly to your home across the country.",
   },
 ];
 
-const HowWillYourTrainingWork = () => {
+const QualityProcess = () => {
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <div className="text-center mb-12">
-        <h2 className="text-3xl font-bold text-black dark:text-white sm:text-4xl">
-          How will your training work? – with FirstVITE
-        </h2>
-      </div>
+    <section className="bg-emerald-50/50 dark:bg-gray-900 py-16 transition-colors duration-300">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Section Header */}
+        <div className="text-center mb-16">
+          <h2 className="text-sm font-bold text-amber-600 dark:text-amber-500 uppercase tracking-widest mb-2">
+            Our Process
+          </h2>
+          <h3 className="text-3xl font-bold text-emerald-900 dark:text-emerald-50 sm:text-4xl font-serif">
+            From Nature to You
+          </h3>
+          <div className="h-1 w-20 bg-amber-400 mx-auto mt-4 rounded-full"></div>
+        </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 bg-white dark:bg-gray-800 p-8 rounded-xl shadow-md dark:shadow-none">
-        {steps.map((step, index) => (
-          <div
-            key={index}
-            className="flex flex-col items-start space-y-3 hover:scale-[1.02] transition-transform duration-200"
-          >
-            <div className="bg-blue-100 dark:bg-blue-900 p-3 rounded-full">{step.icon}</div>
-            <h3 className="text-lg font-semibold text-black dark:text-white">
-              {step.title}
-            </h3>
-            <p className="text-sm text-black dark:text-white">{step.desc}</p>
-          </div>
-        ))}
+        {/* Steps Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          {steps.map((step, index) => (
+            <div
+              key={index}
+              className="group flex flex-col items-start p-6 bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-emerald-100 dark:border-gray-700 hover:shadow-xl hover:border-emerald-200 transition-all duration-300 hover:-translate-y-1"
+            >
+              <div className="flex items-center justify-center w-14 h-14 bg-emerald-100 dark:bg-emerald-900/30 rounded-xl mb-6 group-hover:scale-110 transition-transform duration-300">
+                {step.icon}
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3 group-hover:text-emerald-700 dark:group-hover:text-emerald-400 transition-colors">
+                {step.title}
+              </h3>
+              <p className="text-base text-gray-600 dark:text-gray-300 leading-relaxed">
+                {step.desc}
+              </p>
+
+              {/* Optional: Step Number Background */}
+              <div className="absolute top-4 right-4 text-6xl font-bold text-gray-100 dark:text-gray-700 opacity-20 -z-10 select-none">
+                0{index + 1}
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
-    </div>
+    </section>
   );
 };
 
-export default HowWillYourTrainingWork;
+export default QualityProcess;

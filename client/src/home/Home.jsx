@@ -1,69 +1,63 @@
-import React from 'react';
-import SEO from '../components/SEO';
-import Banner from '../components/Banner';
-import Categories from '../components/home/Categories';
-import PopularCourses from '../components/home/PopularCourses';
-import FeaturedBooks from '../components/home/FeaturedBooks';
-import Stats from '../components/home/Stats';
-import Testimonials from '../components/home/Testimonials';
-import Newsletter from '../components/home/Newsletter';
-import ContactSection from '../components/home/ContactSection';
-import WhyLearnWithFirstVITE from '../components/home/WhyLearnWithFirstVITE';
-import HowWillYourTrainingWork from '../components/home/HowWillYourTrainingWork';
-import Content from '../components/home/Content';
+import React from "react";
+import SEO from "../components/SEO";
+import Banner from "../components/Banner";
+import Categories from "../components/home/Categories";
+// Renaming imports conceptually to match E-commerce context
+import FeaturedProducts from "../components/home/PopularCourses";
+// import FeaturedBooks from '../components/home/FeaturedBooks'; // Likely not needed unless selling books
+import Stats from "../components/home/Stats";
+import Testimonials from "../components/home/Testimonials";
+import Newsletter from "../components/home/Newsletter";
+import ContactSection from "../components/home/ContactSection";
+import WhyChooseUs from "../components/home/WhyLearnWithFirstVITE"; // Reusing this component structure for "Why Choose Ayushaushadhi"
+import QualityProcess from "../components/home/HowWillYourTrainingWork"; // Reusing for "Our Quality Process"
+import Content from "../components/home/Content";
 
 function Home() {
   return (
     <>
       <SEO
-        title="FirstVITE - Online Learning Platform | Professional & Management Courses"
-        description="FirstVITE E-Learning offers professional and management courses, including short programs and degree collaborations with international universities. Start your learning journey today!"
-        keywords="online courses, e-learning, professional courses, management courses, online education, FirstVITE, skill development, online learning platform"
+        title="Ayushaushadhi - Authentic Ayurvedic Medicines & Herbal Store"
+        description="Ayushaushadhi offers premium Ayurvedic medicines and herbal products. Shop online for immunity boosters, skin care, digestion aids, and holistic wellness remedies."
+        keywords="ayurveda, herbal medicine, online ayurveda store, natural remedies, ayush aushadhi, immunity, organic health, herbal supplements"
         og={{
-          title: "FirstVITE - Transform Your Career with Online Learning",
+          title: "Ayushaushadhi - Rediscover Nature's Healing Power",
           description:
-            "Join thousands of students learning in-demand skills with our expert-led courses. Flexible learning, industry-recognized certifications, and career support.",
+            "Explore our range of 100% natural and authentic Ayurvedic products. From ancient formulations to modern wellness solutions.",
           type: "website",
-          image:
-            "http://firstvite.com/api/upload/file/img-1753961989896-7541613.png",
+          image: "/assets/Ayush-Aushadhi-Logo-Fit.png", // Updated to point to your logo or a banner image
         }}
       />
-      <div className="flex flex-col min-h-screen">
-        {/* Hero Banner */}
+      <div className="flex flex-col min-h-screen bg-white dark:bg-gray-900 transition-colors duration-300">
+        {/* Hero Banner - Main Slider */}
         <Banner />
 
-        {/* Categories Section */}
+        {/* Categories Section - e.g., Immunity, Skin, Hair, Digestion */}
         <Categories />
 
-        {/* Popular Courses */}
-        <PopularCourses />
+        {/* Popular Products Section (Previously PopularCourses) */}
+        <FeaturedProducts />
 
-        {/* Featured Books */}
-        {/* <FeaturedBooks /> */}
+        {/* Why Choose Ayushaushadhi? (Previously WhyLearnWithFirstVITE) */}
+        <WhyChooseUs />
 
-        {/* Why learn with FirstVITE? */}
-        <WhyLearnWithFirstVITE />
+        {/* Our Process / Quality Assurance (Previously HowWillYourTrainingWork) */}
+        <QualityProcess />
 
-        {/* How will your training work */}
-        <HowWillYourTrainingWork />
-
-        {/* Stats Section */}
+        {/* Stats Section - e.g., "100% Natural", "5000+ Customers" */}
         <Stats />
 
-        {/* Content */}
+        {/* Content - General Info or About Snippet */}
         <Content />
 
-        {/* Testimonials */}
+        {/* Testimonials - Customer Reviews */}
         <Testimonials />
 
-        {/* Newsletter */}
+        {/* Newsletter - Subscribe for Health Tips */}
         <Newsletter />
 
         {/* Contact Section */}
         <ContactSection />
-
-        {/* You can uncomment this if you want to include the Freebook component */}
-        {/* <Freebook /> */}
       </div>
     </>
   );

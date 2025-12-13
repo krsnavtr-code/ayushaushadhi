@@ -5,6 +5,7 @@ import {
   FaEnvelope,
   FaPaperPlane,
   FaCheck,
+  FaLeaf,
 } from "react-icons/fa";
 import { motion } from "framer-motion";
 
@@ -32,7 +33,7 @@ const ContactSection = () => {
 
     // Simulate form submission
     setTimeout(() => {
-      console.log("Form submitted:", formData);
+      console.log("Wellness Query submitted:", formData);
       setIsSubmitting(false);
       setIsSubmitted(true);
       setFormData({ name: "", email: "", subject: "", message: "" });
@@ -44,39 +45,50 @@ const ContactSection = () => {
 
   const contactInfo = [
     {
-      icon: <FaMapMarkerAlt className="text-2xl text-blue-500" />,
+      icon: (
+        <FaMapMarkerAlt className="text-2xl text-emerald-600 dark:text-emerald-400" />
+      ),
       title: "Our Location",
       description:
-        "H-161 BSI Sector-63 Noida Gautam Budh Nagar Uttar Pradesh 201301",
-      link: "#",
+        "H-161 BSI Sector-63, Noida, Gautam Budh Nagar, Uttar Pradesh 201301",
+      link: "https://maps.google.com/?q=H-161+BSI+Sector-63+Noida",
       linkText: "View on map",
     },
     {
-      icon: <FaPhone className="text-2xl text-green-500" />,
+      icon: <FaPhone className="text-2xl text-amber-600 dark:text-amber-400" />,
       title: "Phone Number",
       description: "+91 9990056799",
       link: "tel:+919990056799",
       linkText: "Call us",
     },
     {
-      icon: <FaEnvelope className="text-2xl text-purple-500" />,
+      icon: (
+        <FaEnvelope className="text-2xl text-teal-600 dark:text-teal-400" />
+      ),
       title: "Email Address",
-      description: "info@firstvite.com",
-      link: "mailto:info@firstvite.com",
+      description: "info@ayushaushadhi.com",
+      link: "mailto:info@ayushaushadhi.com",
       linkText: "Send email",
     },
   ];
 
   return (
-    <section className="py-16 bg-gray-50 dark:bg-gray-900">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold text-black dark:text-white sm:text-4xl">
+    <section className="py-20 bg-emerald-50/30 dark:bg-gray-900 relative">
+      {/* Decorative Leaf Background */}
+      <FaLeaf className="absolute top-10 right-10 text-emerald-100 dark:text-emerald-900/20 text-9xl transform rotate-45 pointer-events-none" />
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div className="text-center mb-16">
+          <h2 className="text-sm font-bold text-amber-600 dark:text-amber-500 uppercase tracking-widest mb-2">
             Get In Touch
           </h2>
-          <p className="mt-4 text-xl text-black dark:text-white">
-            We'd love to hear from you. Send us a message and we'll respond as
-            soon as possible.
+          <h2 className="text-3xl font-bold text-emerald-900 dark:text-emerald-50 sm:text-4xl font-serif">
+            We'd Love to Hear From You
+          </h2>
+          <p className="mt-4 text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+            Whether you have a question about our herbs, need help with an
+            order, or want a personalized consultation, our team is here to
+            help.
           </p>
         </div>
 
@@ -86,30 +98,31 @@ const ContactSection = () => {
             {contactInfo.map((item, index) => (
               <motion.div
                 key={index}
-                className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300"
+                className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-sm border border-emerald-100 dark:border-gray-700 hover:shadow-lg transition-all duration-300"
                 whileHover={{ y: -5 }}
               >
-                <div className="flex items-start space-x-4">
-                  <div className="flex-shrink-0 p-3 bg-blue-50 dark:bg-gray-700 rounded-lg">
+                <div className="flex items-start space-x-5">
+                  <div className="flex-shrink-0 p-3 bg-emerald-50 dark:bg-gray-700 rounded-xl">
                     {item.icon}
                   </div>
                   <div>
-                    <h3 className="text-lg font-medium text-black dark:text-white">
+                    <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-1">
                       {item.title}
                     </h3>
-                    <p className="mt-1 text-black dark:text-gray-300">
+                    <p className="text-gray-600 dark:text-gray-300 mb-3 text-sm leading-relaxed">
                       {item.description}
                     </p>
                     <a
                       href={item.link}
-                      className="mt-2 inline-flex items-center text-blue-600 dark:text-blue-400 hover:underline"
+                      className="inline-flex items-center text-sm font-semibold text-emerald-700 dark:text-emerald-400 hover:text-emerald-800 hover:underline transition-colors"
+                      target="_blank"
+                      rel="noopener noreferrer"
                     >
                       {item.linkText}
                       <svg
                         className="w-4 h-4 ml-1"
                         fill="currentColor"
                         viewBox="0 0 20 20"
-                        xmlns="http://www.w3.org/2000/svg"
                       >
                         <path
                           fillRule="evenodd"
@@ -126,21 +139,26 @@ const ContactSection = () => {
 
           {/* Contact Form */}
           <div className="lg:col-span-2">
-            <div className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-sm">
+            <div className="bg-white dark:bg-gray-800 p-8 md:p-10 rounded-2xl shadow-lg shadow-emerald-900/5 border border-emerald-50 dark:border-gray-700">
               {isSubmitted ? (
-                <div className="text-center py-12">
-                  <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-green-100 dark:bg-green-900">
-                    <FaCheck className="h-8 w-8 text-green-600 dark:text-green-400" />
-                  </div>
-                  <h3 className="mt-4 text-xl font-medium text-black dark:text-white">
-                    Message Sent!
+                <div className="text-center py-16">
+                  <motion.div
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    className="mx-auto flex items-center justify-center h-20 w-20 rounded-full bg-emerald-100 dark:bg-emerald-900 mb-6"
+                  >
+                    <FaCheck className="h-10 w-10 text-emerald-600 dark:text-emerald-400" />
+                  </motion.div>
+                  <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2 font-serif">
+                    Message Received!
                   </h3>
-                  <p className="mt-2 text-black dark:text-gray-300">
-                    Thank you for contacting us. We'll get back to you soon!
+                  <p className="text-gray-600 dark:text-gray-300 max-w-sm mx-auto">
+                    Thank you for reaching out. One of our wellness experts will
+                    respond to you shortly.
                   </p>
                   <button
                     onClick={() => setIsSubmitted(false)}
-                    className="mt-6 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                    className="mt-8 inline-flex items-center px-6 py-3 border border-transparent text-sm font-bold rounded-full text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition-colors"
                   >
                     Send another message
                   </button>
@@ -151,95 +169,87 @@ const ContactSection = () => {
                     <div>
                       <label
                         htmlFor="name"
-                        className="block text-sm font-medium text-black dark:text-white"
+                        className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1"
                       >
                         Full Name <span className="text-red-500">*</span>
                       </label>
-                      <div className="mt-1">
-                        <input
-                          type="text"
-                          name="name"
-                          id="name"
-                          required
-                          value={formData.name}
-                          onChange={handleChange}
-                          className="block w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
-                          placeholder="John Doe"
-                        />
-                      </div>
+                      <input
+                        type="text"
+                        name="name"
+                        id="name"
+                        required
+                        value={formData.name}
+                        onChange={handleChange}
+                        className="block w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:ring-emerald-500 focus:border-emerald-500 dark:bg-gray-700 dark:text-white transition-colors"
+                        placeholder="John Doe"
+                      />
                     </div>
 
                     <div>
                       <label
                         htmlFor="email"
-                        className="block text-sm font-medium text-black dark:text-white"
+                        className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1"
                       >
                         Email Address <span className="text-red-500">*</span>
                       </label>
-                      <div className="mt-1">
-                        <input
-                          type="email"
-                          name="email"
-                          id="email"
-                          required
-                          value={formData.email}
-                          onChange={handleChange}
-                          className="block w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
-                          placeholder="you@example.com"
-                        />
-                      </div>
+                      <input
+                        type="email"
+                        name="email"
+                        id="email"
+                        required
+                        value={formData.email}
+                        onChange={handleChange}
+                        className="block w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:ring-emerald-500 focus:border-emerald-500 dark:bg-gray-700 dark:text-white transition-colors"
+                        placeholder="you@example.com"
+                      />
                     </div>
                   </div>
 
                   <div>
                     <label
                       htmlFor="subject"
-                      className="block text-sm font-medium text-black dark:text-white"
+                      className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1"
                     >
                       Subject <span className="text-red-500">*</span>
                     </label>
-                    <div className="mt-1">
-                      <input
-                        type="text"
-                        name="subject"
-                        id="subject"
-                        required
-                        value={formData.subject}
-                        onChange={handleChange}
-                        className="block w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
-                        placeholder="How can we help you?"
-                      />
-                    </div>
+                    <input
+                      type="text"
+                      name="subject"
+                      id="subject"
+                      required
+                      value={formData.subject}
+                      onChange={handleChange}
+                      className="block w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:ring-emerald-500 focus:border-emerald-500 dark:bg-gray-700 dark:text-white transition-colors"
+                      placeholder="Product inquiry, Order status, Consultation..."
+                    />
                   </div>
 
                   <div>
                     <label
                       htmlFor="message"
-                      className="block text-sm font-medium text-black dark:text-white"
+                      className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1"
                     >
                       Your Message <span className="text-red-500">*</span>
                     </label>
-                    <div className="mt-1">
-                      <textarea
-                        id="message"
-                        name="message"
-                        rows={5}
-                        required
-                        value={formData.message}
-                        onChange={handleChange}
-                        className="block w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
-                        placeholder="Type your message here..."
-                      />
-                    </div>
+                    <textarea
+                      id="message"
+                      name="message"
+                      rows={5}
+                      required
+                      value={formData.message}
+                      onChange={handleChange}
+                      className="block w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:ring-emerald-500 focus:border-emerald-500 dark:bg-gray-700 dark:text-white transition-colors resize-none"
+                      placeholder="Type your message here..."
+                    />
                   </div>
 
-                  <div className="flex justify-end">
+                  <div className="flex justify-end pt-2">
                     <motion.button
                       type="submit"
                       disabled={isSubmitting}
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
-                      className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-70 disabled:cursor-not-allowed"
+                      className="inline-flex items-center px-8 py-3.5 border border-transparent text-base font-bold rounded-full shadow-lg shadow-emerald-600/20 text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 disabled:opacity-70 disabled:cursor-not-allowed transition-all duration-300"
                     >
                       {isSubmitting ? (
                         "Sending..."

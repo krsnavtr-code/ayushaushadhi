@@ -1,87 +1,69 @@
-import React, { useState } from "react";
-
-import { FaCheckCircle, FaTimesCircle, FaInfoCircle } from "react-icons/fa";
-import "./WhyLearnWithFirstVITE.css";
+import React, { useState, useEffect, useRef } from "react";
+import {
+  FaLeaf,
+  FaFlask,
+  FaHandHoldingHeart,
+  FaShieldAlt,
+  FaShippingFast,
+  FaUserMd,
+} from "react-icons/fa";
+// Ensure typography.css exists or remove this import
 import "../../styles/typography.css";
 
-const data = [
+// Updated Data for Ayurveda Brand
+const reasons = [
   {
-    benefit: "FirstVITE ISO certified certificate",
-    firstVITE: true,
-    others: false,
-    youtube: false,
+    icon: <FaLeaf />,
+    title: "100% Natural Ingredients",
+    description:
+      "Sourced directly from organic farms, our herbs are free from chemicals and preservatives.",
+    color:
+      "bg-emerald-100 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400",
   },
   {
-    benefit: "Dedicated placement support",
-    firstVITE: true,
-    others: false,
-    youtube: false,
+    icon: <FaFlask />,
+    title: "Lab Tested & Certified",
+    description:
+      "Every batch undergoes rigorous testing for purity, potency, and safety standards (GMP/ISO).",
+    color:
+      "bg-amber-100 text-amber-600 dark:bg-amber-900/30 dark:text-amber-400",
   },
   {
-    benefit: "3x more visibility with verified certification ",
-    firstVITE: true,
-    others: false,
-    youtube: false,
+    icon: <FaUserMd />,
+    title: "Doctor Formulated",
+    description:
+      "Blends crafted by experienced Vaidyas to ensure maximum efficacy and holistic healing.",
+    color: "bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400",
   },
   {
-    benefit: "Direct job & internship opportunities",
-    firstVITE: true,
-    others: false,
-    youtube: false,
+    icon: <FaHandHoldingHeart />,
+    title: "Holistic Wellness",
+    description:
+      "We focus on treating the root cause, not just symptoms, balancing your body's doshas.",
+    color: "bg-rose-100 text-rose-600 dark:bg-rose-900/30 dark:text-rose-400",
   },
   {
-    benefit: "Industry-led curriculum & hands-on projects",
-    firstVITE: true,
-    others: false,
-    youtube: false,
+    icon: <FaShieldAlt />,
+    title: "Trusted by Thousands",
+    description:
+      "Join our community of happy customers who have reclaimed their health naturally.",
+    color:
+      "bg-indigo-100 text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-400",
   },
   {
-    benefit: "Live doubt-clearing sessions",
-    firstVITE: true,
-    others: false,
-    youtube: false,
-  },
-  {
-    benefit: "Courses in Hindi, English & more",
-    firstVITE: true,
-    others: false,
-    youtube: false,
-  },
-  {
-    benefit: "4 Million+ trusted learners",
-    firstVITE: true,
-    others: false,
-    youtube: false,
+    icon: <FaShippingFast />,
+    title: "Fast & Safe Delivery",
+    description:
+      "Secure packaging and reliable shipping partners ensure your remedies arrive fresh.",
+    color: "bg-teal-100 text-teal-600 dark:bg-teal-900/30 dark:text-teal-400",
   },
 ];
 
-const renderIcon = (value) => {
-  const iconClass =
-    "text-xl mx-auto transition-transform duration-300 hover:scale-110";
-
-  if (value === true)
-    return (
-      <FaCheckCircle
-        className={`text-green-500 dark:text-green-400 ${iconClass}`}
-      />
-    );
-  if (value === false)
-    return (
-      <FaTimesCircle
-        className={`text-red-500 dark:text-red-400 ${iconClass}`}
-      />
-    );
-  return (
-    <span className="text-gray-400 dark:text-gray-600 text-center">—</span>
-  );
-};
-
-const WhyLearnWithFirstVITE = () => {
-  const [comparisonData, setComparisonData] = useState(data);
+const WhyChooseUs = () => {
   const [isVisible, setIsVisible] = useState(false);
-  const componentRef = React.useRef(null);
+  const componentRef = useRef(null);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
@@ -90,8 +72,8 @@ const WhyLearnWithFirstVITE = () => {
         }
       },
       {
-        threshold: 0.1, // Trigger when 10% of the component is visible
-        rootMargin: "0px 0px -50px 0px", // Adjust this to control when the animation triggers
+        threshold: 0.1,
+        rootMargin: "0px 0px -50px 0px",
       }
     );
 
@@ -106,166 +88,69 @@ const WhyLearnWithFirstVITE = () => {
     };
   }, []);
 
-  const toggleValue = (rowIndex, column) => {
-    const cell = document.querySelector(
-      `[data-row="${rowIndex}"][data-column="${column}"] .flip-icon`
-    );
-    if (cell) {
-      cell.classList.add("flip");
-      setTimeout(() => cell.classList.remove("flip"), 500);
-    }
-
-    setTimeout(() => {
-      setComparisonData((prevData) => {
-        const newData = [...prevData];
-        newData[rowIndex] = {
-          ...newData[rowIndex],
-          [column]: !newData[rowIndex][column],
-        };
-        return newData;
-      });
-    }, 150);
-  };
-
-  const handleCellClick = (e, rowIndex, column) => {
-    // Prevent toggling when clicking on the benefit column
-    if (column === "benefit") return;
-    toggleValue(rowIndex, column);
-  };
   return (
-    <div
+    <section
       ref={componentRef}
-      className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 transition-opacity duration-1000 ${
+      className={`py-20 bg-gradient-to-b from-white to-stone-50 dark:from-gray-900 dark:to-gray-800 transition-opacity duration-1000 ${
         isVisible ? "opacity-100 visible" : "opacity-0"
       }`}
     >
-      <div className="text-center mb-12">
-        <h2 className="text-lg-mobile text-xl-tablet text-xl-desktop font-bold text-black dark:text-white text-thin-bold">
-          Why Learn with FirstVITE?
-        </h2>
-        <p className="mt-4 text-xs-mobile text-sm-tablet text-sm-desktop text-thin text-black dark:text-white">
-          Compare our platform with others and see why we stand out
-        </p>
-      </div>
-
-      <div className="w-full">
-        {/* Desktop view - Table layout */}
-        <div className="hidden md:block w-full">
-          <div className="w-full bg-white dark:bg-gray-800 rounded-xl shadow-md dark:shadow-none overflow-hidden hover:shadow-lg dark:hover:shadow-lg transition-all duration-300">
-            <div className="w-full overflow-x-auto">
-              <table className="w-full table-fixed border-collapse text-black dark:text-white">
-                <thead>
-                  <tr className="bg-gray-200 dark:bg-gray-700 text-black dark:text-white text-thin text-xs-mobile text-sm-tablet text-sm-desktop">
-                    <th className="w-1/2 px-4 py-3 text-left">Benefits</th>
-                    <th className="w-1/6 px-4 py-3">FirstVITE</th>
-                    <th className="w-1/6 px-4 py-3">Other Platforms</th>
-                    <th className="w-1/6 px-4 py-3">YouTube</th>
-                  </tr>
-                </thead>
-                <tbody className="text-center text-thin text-xs-mobile text-sm-tablet text-sm-desktop">
-                  {comparisonData.map((row, idx) => (
-                    <tr
-                      key={idx}
-                      className={`${
-                        idx % 2 === 0
-                          ? "bg-white dark:bg-gray-800"
-                          : "bg-gray-50 dark:bg-gray-700"
-                      } hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors cursor-pointer`}
-                    >
-                      <td
-                        className="w-1/2 px-4 py-3 text-left font-medium text-thin-bold"
-                        onClick={(e) => handleCellClick(e, idx, "benefit")}
-                      >
-                        {row.benefit}
-                      </td>
-                      <td
-                        className="w-1/6 px-4 py-3 text-center"
-                        onClick={(e) => handleCellClick(e, idx, "firstVITE")}
-                        data-row={idx}
-                        data-column="firstVITE"
-                      >
-                        <div
-                          className="flip-icon-container"
-                          style={{ "--delay": idx % 3 }}
-                        >
-                          {renderIcon(row.firstVITE)}
-                        </div>
-                      </td>
-                      <td
-                        className="w-1/6 px-4 py-3 text-center"
-                        onClick={(e) => handleCellClick(e, idx, "others")}
-                        data-row={idx}
-                        data-column="others"
-                      >
-                        <div
-                          className="flip-icon-container"
-                          style={{ "--delay": (idx % 3) + 1 }}
-                        >
-                          {renderIcon(row.others)}
-                        </div>
-                      </td>
-                      <td
-                        className="w-1/6 px-4 py-3 text-center"
-                        onClick={(e) => handleCellClick(e, idx, "youtube")}
-                        data-row={idx}
-                        data-column="youtube"
-                      >
-                        <div
-                          className="flip-icon-container"
-                          style={{ "--delay": (idx % 3) + 2 }}
-                        >
-                          {renderIcon(row.youtube)}
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Header Section */}
+        <div className="text-center mb-16 max-w-3xl mx-auto">
+          <h2 className="text-sm font-bold text-amber-600 dark:text-amber-500 uppercase tracking-widest mb-2">
+            The Ayushaushadhi Difference
+          </h2>
+          <h3 className="text-3xl md:text-4xl font-bold text-emerald-900 dark:text-emerald-50 font-serif mb-4">
+            Why Trust Nature With Us?
+          </h3>
+          <div className="h-1 w-20 bg-amber-400 mx-auto rounded-full mb-6"></div>
+          <p className="text-gray-600 dark:text-gray-300 text-lg leading-relaxed">
+            We combine ancient Vedic wisdom with modern quality standards to
+            bring you authentic Ayurveda that actually works.
+          </p>
         </div>
 
-        {/* Mobile view - Card layout */}
-        <div className="md:hidden space-y-6">
-          {comparisonData.map((row, idx) => (
+        {/* Cards Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {reasons.map((item, index) => (
             <div
-              key={idx}
-              className="bg-white dark:bg-gray-800 rounded-xl shadow-md hover:shadow-lg transition-transform duration-300 hover:scale-[1.02]"
+              key={index}
+              className={`group relative bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-sm hover:shadow-xl border border-gray-100 dark:border-gray-700 transition-all duration-300 transform hover:-translate-y-2 overflow-hidden`}
+              style={{
+                transitionDelay: `${index * 100}ms`,
+              }}
             >
-              <div className="p-4 space-y-4">
-                <h3 className="text-base font-semibold text-black dark:text-white">
-                  {row.benefit}
-                </h3>
+              {/* Decorative Circle Background */}
+              <div
+                className={`absolute top-0 right-0 -mt-8 -mr-8 w-32 h-32 rounded-full opacity-10 transition-transform duration-500 group-hover:scale-150 ${
+                  item.color.split(" ")[0]
+                }`}
+              ></div>
 
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between px-3 py-2 rounded-lg bg-gray-50 dark:bg-gray-700">
-                    <span className="text-sm font-medium text-gray-800 dark:text-white">
-                      FirstVITE
-                    </span>
-                    {renderIcon(row.firstVITE)}
-                  </div>
-
-                  <div className="flex items-center justify-between px-3 py-2 rounded-lg bg-gray-50 dark:bg-gray-700">
-                    <span className="text-sm font-medium text-gray-800 dark:text-white">
-                      Other Platforms
-                    </span>
-                    {renderIcon(row.others)}
-                  </div>
-
-                  <div className="flex items-center justify-between px-3 py-2 rounded-lg bg-gray-50 dark:bg-gray-700">
-                    <span className="text-sm font-medium text-gray-800 dark:text-white">
-                      YouTube
-                    </span>
-                    {renderIcon(row.youtube)}
-                  </div>
-                </div>
+              {/* Icon */}
+              <div
+                className={`relative w-14 h-14 rounded-xl flex items-center justify-center text-2xl mb-6 shadow-sm transition-transform duration-300 group-hover:scale-110 ${item.color}`}
+              >
+                {item.icon}
               </div>
+
+              {/* Content */}
+              <h4 className="text-xl font-bold text-gray-900 dark:text-white mb-3 group-hover:text-emerald-700 dark:group-hover:text-emerald-400 transition-colors">
+                {item.title}
+              </h4>
+              <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
+                {item.description}
+              </p>
+
+              {/* Bottom Border Accent */}
+              <div className="absolute bottom-0 left-0 w-0 h-1 bg-gradient-to-r from-emerald-500 to-amber-500 transition-all duration-500 group-hover:w-full"></div>
             </div>
           ))}
         </div>
       </div>
-    </div>
+    </section>
   );
 };
 
-export default WhyLearnWithFirstVITE;
+export default WhyChooseUs;

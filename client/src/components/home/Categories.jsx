@@ -1,19 +1,27 @@
 import "../Banner.css";
+// Ensure typography.css exists or remove this import
 import "../../styles/typography.css";
 import React, { useState, useEffect } from "react";
 import { getCategories as getCategoriesFromApi } from "../../api/categoryApi";
 import { getCoursesByCategory } from "../../api/courseApi";
-import { FaImage, FaArrowRight } from "react-icons/fa";
+import { FaLeaf, FaArrowRight, FaMortarPestle } from "react-icons/fa";
 import { Link } from "react-router-dom";
-import { getCardBgColor } from "../../utils/gradients";
 
 // Helper function to get the full image URL
 const getImageUrl = (imagePath) => {
   if (!imagePath) return null;
-  // If it's already a full URL, return as is
   if (imagePath.startsWith("http")) return imagePath;
-  // Otherwise, prepend the API base URL
   return `${import.meta.env.VITE_API_BASE_URL.replace("/api", "")}${imagePath}`;
+};
+
+// Local helper for Ayurveda-themed card backgrounds
+const getNatureCardStyle = (index) => {
+  const styles = [
+    "bg-gradient-to-br from-emerald-50 to-teal-50 border-emerald-100 dark:from-emerald-900/20 dark:to-teal-900/20 dark:border-emerald-800",
+    "bg-gradient-to-br from-amber-50 to-orange-50 border-amber-100 dark:from-amber-900/20 dark:to-orange-900/20 dark:border-amber-800",
+    "bg-gradient-to-br from-lime-50 to-green-50 border-lime-100 dark:from-lime-900/20 dark:to-green-900/20 dark:border-lime-800",
+  ];
+  return styles[index % styles.length];
 };
 
 const Categories = () => {
@@ -34,13 +42,11 @@ const Categories = () => {
           fields: "_id,name,slug,courseCount,image,description,showOnHome",
         });
 
-        // Extract the categories array from the response
-        // The API might return either an array directly or a paginated response with a 'data' property
         const categoriesData = Array.isArray(response)
           ? response
           : response.data || [];
 
-        // Create a map to remove duplicates by ID
+        // Remove duplicates
         const uniqueCategoriesMap = new Map();
         categoriesData.forEach((cat) => {
           if (cat && cat._id && !uniqueCategoriesMap.has(cat._id)) {
@@ -50,7 +56,7 @@ const Categories = () => {
 
         const uniqueCategories = Array.from(uniqueCategoriesMap.values());
 
-        // Fetch course counts for categories that don't have it
+        // Fetch product counts (mapped from courseCount)
         const categoriesWithCount = await Promise.all(
           uniqueCategories.map(async (category) => {
             if (
@@ -58,6 +64,7 @@ const Categories = () => {
               category.courseCount === null
             ) {
               try {
+                // NOTE: Using getCoursesByCategory to fetch products
                 const courses = await getCoursesByCategory(category._id);
                 return {
                   ...category,
@@ -65,7 +72,7 @@ const Categories = () => {
                 };
               } catch (err) {
                 console.error(
-                  `Error fetching courses for category ${category.name}:`,
+                  `Error fetching products for category ${category.name}:`,
                   err
                 );
                 return { ...category, courseCount: 0 };
@@ -75,7 +82,6 @@ const Categories = () => {
           })
         );
 
-        // Sort by course count and limit to 6 categories
         const sortedCategories = categoriesWithCount
           .sort((a, b) => (b.courseCount || 0) - (a.courseCount || 0))
           .slice(0, 6);
@@ -83,7 +89,7 @@ const Categories = () => {
         setCategories(sortedCategories);
       } catch (error) {
         console.error("Error fetching categories:", error);
-        setError("Failed to load categories. Please try again later.");
+        setError("Failed to load wellness categories.");
       } finally {
         setLoading(false);
       }
@@ -92,24 +98,19 @@ const Categories = () => {
     fetchCategories();
   }, []);
 
-  // Memoized CategoryImage component to prevent unnecessary re-renders
   const CategoryImage = React.memo(({ category }) => {
     const [imageError, setImageError] = useState(false);
     const [imageUrl, setImageUrl] = useState(null);
 
     useEffect(() => {
-      // Reset error state when category changes
       setImageError(false);
-      // Only process if we have an image and no error
       if (category?.image) {
         const url = getImageUrl(category.image);
-        // Create a new Image object to check if it loads successfully
         const img = new Image();
         img.onload = () => setImageUrl(url);
         img.onerror = () => setImageError(true);
         img.src = url;
 
-        // Cleanup function
         return () => {
           img.onload = null;
           img.onerror = null;
@@ -120,7 +121,7 @@ const Categories = () => {
     }, [category?.image]);
 
     return (
-      <div className="relative w-16 h-16 rounded-lg overflow-hidden bg-white/30 dark:bg-black/30 backdrop-blur-sm flex items-center justify-center">
+      <div className="relative w-16 h-16 rounded-full overflow-hidden bg-white shadow-sm border-2 border-emerald-100 flex items-center justify-center flex-shrink-0">
         {!imageError && imageUrl ? (
           <img
             src={imageUrl}
@@ -130,8 +131,8 @@ const Categories = () => {
             loading="lazy"
           />
         ) : (
-          <div className="flex items-center justify-center w-full h-full text-gray-400">
-            <FaImage className="text-2xl" />
+          <div className="flex items-center justify-center w-full h-full text-emerald-300">
+            <FaLeaf className="text-2xl" />
           </div>
         )}
       </div>
@@ -143,23 +144,21 @@ const Categories = () => {
       <section className="py-16 bg-white dark:bg-gray-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-lg sm:text-2xl lg:text-3xl font-bold text-black dark:text-white">
-              Online Learning Categories
+            <h2 className="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white font-serif">
+              Shop by Health Concern
             </h2>
-            <p className="mt-4 text-xs sm:text-sm lg:text-base text-black dark:text-white">
-              Choose from a wide range of online courses, grouped by subject to
-              match your learning goals
-            </p>
+            <div className="h-1 w-20 bg-amber-400 mx-auto mt-3 rounded-full"></div>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {[...Array(6)].map((_, i) => (
               <div
                 key={i}
-                className="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden animate-pulse"
+                className="bg-gray-50 dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-100 dark:border-gray-700 animate-pulse flex items-center space-x-4"
               >
-                <div className="p-6">
-                  <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-3/4 mb-4"></div>
-                  <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/2"></div>
+                <div className="w-16 h-16 bg-gray-200 dark:bg-gray-700 rounded-full"></div>
+                <div className="flex-1 space-y-3">
+                  <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4"></div>
+                  <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-1/2"></div>
                 </div>
               </div>
             ))}
@@ -173,12 +172,15 @@ const Categories = () => {
     return (
       <section className="py-16 bg-white dark:bg-gray-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="text-red-500 mb-4">{error}</div>
+          <div className="text-amber-600 mb-4 bg-amber-50 inline-block px-4 py-2 rounded-lg border border-amber-200">
+            {error}
+          </div>
+          <br />
           <button
             onClick={() => window.location.reload()}
-            className="px-4 py-2 bg-blue-600 text-black rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+            className="px-6 py-2 bg-emerald-600 text-white rounded-full hover:bg-emerald-700 transition-colors shadow-lg shadow-emerald-600/20"
           >
-            Try Again
+            Refresh Page
           </button>
         </div>
       </section>
@@ -186,48 +188,57 @@ const Categories = () => {
   }
 
   return (
-    <section className="py-16 bg-white dark:bg-gray-900">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="py-16 bg-white dark:bg-gray-900 relative overflow-hidden">
+      {/* Decorative background element */}
+      <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-50 dark:bg-emerald-900/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="text-center mb-12">
-          <h2 className="text-lg-mobile text-xl-tablet text-xl-desktop font-bold text-black dark:text-white text-thin-bold">
-            Online Learning Categories
+          <h2 className="text-3xl md:text-4xl font-bold text-emerald-900 dark:text-emerald-50 font-serif">
+            Wellness Collections
           </h2>
-          <p className="mt-4 text-xs sm:text-sm lg:text-base text-black dark:text-white">
-            Choose from a wide range of online courses, grouped by subject to
-            match your learning goals
+          <div className="h-1.5 w-24 bg-amber-400 mx-auto mt-4 rounded-full"></div>
+          <p className="mt-4 text-base text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+            Discover 100% natural Ayurvedic formulations categorized by your
+            health needs. From immunity to digestion, find your balance.
           </p>
         </div>
 
         {categories.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {categories.map((category) => (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {categories.map((category, index) => (
               <Link
                 key={category._id}
                 to={`/courses/category/${category.name
                   .toLowerCase()
                   .replace(/\s+/g, "-")}`}
-                className={`block p-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1 ${getCardBgColor(
-                  category
+                className={`group block p-6 rounded-2xl border transition-all duration-300 hover:shadow-xl hover:-translate-y-1 ${getNatureCardStyle(
+                  index
                 )}`}
               >
-                <div className="flex items-center space-x-4">
+                <div className="flex items-center space-x-5">
                   <CategoryImage category={category} />
                   <div className="flex-1">
-                    <h3 className="text-lg font-semibold text-black dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-300">
+                    <h3 className="text-lg font-bold text-emerald-900 dark:text-white group-hover:text-amber-700 dark:group-hover:text-amber-400 transition-colors">
                       {category.name}
                     </h3>
-                    <p className="text-black dark:text-white">
-                      {category.courseCount || 0} courses
-                    </p>
+                    <div className="flex items-center mt-1 text-sm text-gray-600 dark:text-gray-300">
+                      <FaMortarPestle className="mr-1.5 text-emerald-500 text-xs" />
+                      <span>{category.courseCount || 0} Products</span>
+                    </div>
+                  </div>
+                  <div className="text-emerald-300 group-hover:text-emerald-600 dark:text-emerald-700 dark:group-hover:text-emerald-400 transition-colors">
+                    <FaArrowRight className="text-lg transform group-hover:translate-x-1 transition-transform" />
                   </div>
                 </div>
               </Link>
             ))}
           </div>
         ) : (
-          <div className="text-center py-8">
-            <p className="text-black dark:text-white">
-              No categories found.
+          <div className="text-center py-12 bg-gray-50 dark:bg-gray-800 rounded-xl border border-dashed border-gray-300 dark:border-gray-700">
+            <FaLeaf className="mx-auto text-4xl text-gray-300 dark:text-gray-600 mb-3" />
+            <p className="text-gray-500 dark:text-gray-400">
+              No product categories found at the moment.
             </p>
           </div>
         )}
@@ -235,9 +246,10 @@ const Categories = () => {
         <div className="mt-12 text-center">
           <Link
             to="/categories"
-            className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors duration-300"
+            className="inline-flex items-center px-8 py-3 bg-emerald-700 hover:bg-emerald-800 text-white font-medium rounded-full transition-all duration-300 shadow-lg shadow-emerald-700/20 hover:shadow-emerald-700/40"
           >
-            View All Categories
+            View All Collections
+            <FaArrowRight className="ml-2" />
           </Link>
         </div>
       </div>

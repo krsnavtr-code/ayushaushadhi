@@ -1,28 +1,34 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { FaStar, FaRegStar, FaRegClock, FaUserGraduate } from "react-icons/fa";
+import {
+  FaStar,
+  FaRegStar,
+  FaShoppingCart,
+  FaTag,
+  FaLeaf,
+} from "react-icons/fa";
 import axios from "../../api/axios";
-import { getCardBgColor } from "../../utils/gradients";
 
 // Base URL for API requests
 const API_BASE_URL = import.meta.env.VITE_API_URL || "";
 
-// CourseCard component for displaying individual course
-const CourseCard = ({ course }) => {
+// ProductCard Component (Formerly CourseCard)
+const ProductCard = ({ course: product }) => {
   const [imageState, setImageState] = useState({
     url: "",
     error: false,
     loading: true,
   });
 
+  // Image Loading Logic (Kept robust from original code)
   useEffect(() => {
     let isMounted = true;
 
     const loadImage = async () => {
-      if (!course?.thumbnail) {
+      if (!product?.thumbnail) {
         if (isMounted) {
           setImageState({
-            url: "/images/course-placeholder.jpg",
+            url: "/images/product-placeholder.jpg", // Changed placeholder name
             error: false,
             loading: false,
           });
@@ -30,9 +36,9 @@ const CourseCard = ({ course }) => {
         return;
       }
 
-      let url = course.thumbnail;
+      let url = product.thumbnail;
 
-      // If it's not already a full URL, construct it
+      // URL Construction logic
       if (
         !url.startsWith("http") &&
         !url.startsWith("https") &&
@@ -40,70 +46,27 @@ const CourseCard = ({ course }) => {
       ) {
         const cleanPath = url.replace(/^\/+/, "");
         const baseUrl = API_BASE_URL || "";
-        url = `${baseUrl}/${cleanPath}`.replace(/([^:]\/)\/+/g, "$1"); // Remove duplicate slashes
+        url = `${baseUrl}/${cleanPath}`.replace(/([^:]\/)\/+/g, "$1");
       }
 
-      // Set loading state
       if (isMounted) {
-        setImageState({
-          url: url,
-          error: false,
-          loading: true,
-        });
+        setImageState({ url: url, error: false, loading: true });
       }
 
-      // Create a new image to test loading
       const img = new Image();
-
-      const handleLoad = () => {
-        if (isMounted) {
-          setImageState({
-            url: url,
-            error: false,
-            loading: false,
-          });
-        }
+      img.onload = () => {
+        if (isMounted)
+          setImageState({ url: url, error: false, loading: false });
       };
-
-      const handleError = () => {
-        if (isMounted) {
+      img.onerror = () => {
+        if (isMounted)
           setImageState({
-            url: "/images/course-placeholder.jpg",
+            url: "/images/product-placeholder.jpg",
             error: true,
             loading: false,
           });
-        }
       };
-
-      img.onload = handleLoad;
-      img.onerror = handleError;
       img.src = url;
-
-      // Set a longer timeout for slow connections
-      const timeoutId = setTimeout(() => {
-        if (isMounted) {
-          // Only show error if the image hasn't loaded yet
-          const imgElement = new Image();
-          imgElement.onload = () => {};
-          imgElement.onerror = () => {
-            if (isMounted) {
-              setImageState({
-                url: "/images/course-placeholder.jpg",
-                error: true,
-                loading: false,
-              });
-            }
-          };
-          imgElement.src = url;
-        }
-      }, 5000); // Increased to 5 seconds
-
-      return () => {
-        isMounted = false;
-        img.onload = null;
-        img.onerror = null;
-        clearTimeout(timeoutId);
-      };
     };
 
     loadImage();
@@ -111,9 +74,8 @@ const CourseCard = ({ course }) => {
     return () => {
       isMounted = false;
     };
-  }, [course?._id, course?.thumbnail]); // Only re-run if course ID or thumbnail changes
+  }, [product?._id, product?.thumbnail]);
 
-  // Render star ratings
   const renderStars = (rating) => {
     const stars = [];
     const fullStars = Math.floor(rating || 0);
@@ -121,106 +83,95 @@ const CourseCard = ({ course }) => {
 
     for (let i = 1; i <= 5; i++) {
       if (i <= fullStars) {
-        stars.push(<FaStar key={i} className="text-yellow-400" />);
+        stars.push(<FaStar key={i} className="text-amber-400" />);
       } else if (i === fullStars + 1 && hasHalfStar) {
-        stars.push(<FaStar key={i} className="text-yellow-400" />);
+        stars.push(<FaStar key={i} className="text-amber-400" />); // Can use FaStarHalfAlt if imported
       } else {
-        stars.push(<FaRegStar key={i} className="text-yellow-400" />);
+        stars.push(<FaRegStar key={i} className="text-amber-200" />);
       }
     }
     return stars;
   };
 
-  // Get background color class
-  const bgColor = getCardBgColor(course);
+  // Pricing formatting (Assuming product.price exists, defaulting to dummy if not)
+  const formatPrice = (price) => {
+    return new Intl.NumberFormat("en-IN", {
+      style: "currency",
+      currency: "INR",
+      maximumFractionDigits: 0,
+    }).format(price || 499); // Default fallback price
+  };
 
   return (
-    <div
-      className={`${bgColor} rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-all duration-300 hover:scale-[1.02]`}
-    >
-      <Link to={`/course/${course.slug || course._id}`}>
-        <div className="relative pb-9/16">
-          <div className="w-full h-48 bg-gray-200 dark:bg-gray-700 flex items-center justify-center overflow-hidden">
-            {imageState.loading ? (
-              <div className="w-full h-full flex items-center justify-center bg-gray-100 dark:bg-gray-800">
-                <div className="animate-pulse rounded-full h-12 w-12 border-4 border-t-blue-500 border-gray-300 dark:border-gray-600"></div>
-              </div>
-            ) : imageState.error || !course.thumbnail ? (
-              <div className="w-full h-full flex items-center justify-center bg-gray-100 dark:bg-gray-800">
-                <div className="text-center p-4">
-                  <div className="text-gray-500 dark:text-gray-400">
-                    No image available
-                  </div>
-                  {process.env.NODE_ENV === "development" &&
-                    course.thumbnail && (
-                      <div className="text-xs mt-2 text-gray-400 break-all max-w-xs">
-                        {course.thumbnail}
-                      </div>
-                    )}
-                </div>
-              </div>
-            ) : (
-              <div className="w-full h-[200px] bg-white dark:bg-gray-800 flex items-center justify-center overflow-hidden">
-                <img
-                  src={imageState.url}
-                  alt={course.title || "Course image"}
-                  className="max-w-full max-h-full object-contain transition-opacity duration-300"
-                  style={{ opacity: imageState.loading ? 0 : 1 }}
-                  loading="lazy"
-                  onError={() => {
-                    setImageState({
-                      url: "/images/course-placeholder.jpg",
-                      error: true,
-                      loading: false,
-                    });
-                  }}
-                />
-              </div>
-            )}
-            {/* Hidden debug info - only shown in development */}
-            {process.env.NODE_ENV === "development" && (
-              <div className="hidden">
-                <div>Image URL: {course.thumbnail}</div>
-                <div>Processed URL: {imageState.url}</div>
-                <div>Course ID: {course._id}</div>
-                <div>Loading: {imageState.loading ? "true" : "false"}</div>
-                <div>Error: {imageState.error ? "true" : "false"}</div>
-              </div>
-            )}
-          </div>
-          {course.isFeatured && (
-            <div className="absolute top-2 right-2 bg-yellow-400 text-xs font-bold px-2 py-1 rounded">
-              Featured
+    <div className="group bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-emerald-100 dark:border-gray-700 overflow-hidden hover:shadow-xl hover:shadow-emerald-900/10 transition-all duration-300 hover:-translate-y-1">
+      <Link to={`/course/${product.slug || product._id}`}>
+        {/* Image Container */}
+        <div className="relative aspect-[4/3] overflow-hidden bg-gray-100 dark:bg-gray-700">
+          {imageState.loading ? (
+            <div className="w-full h-full flex items-center justify-center">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600"></div>
             </div>
+          ) : (
+            <img
+              src={
+                imageState.error
+                  ? "/assets/placeholder-herb.jpg"
+                  : imageState.url
+              }
+              alt={product.title}
+              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+              onError={(e) => {
+                e.target.src =
+                  "https://via.placeholder.com/300?text=Ayush+Product";
+              }}
+            />
           )}
+
+          {/* Badges */}
+          {product.isFeatured && (
+            <span className="absolute top-2 left-2 bg-amber-400 text-amber-900 text-xs font-bold px-2 py-1 rounded-full shadow-sm">
+              Bestseller
+            </span>
+          )}
+          <span className="absolute top-2 right-2 bg-white/90 dark:bg-gray-900/90 backdrop-blur text-emerald-700 dark:text-emerald-400 text-xs font-bold px-2 py-1 rounded-full shadow-sm flex items-center gap-1">
+            <FaLeaf size={10} /> 100% Natural
+          </span>
         </div>
 
-        <div className="p-4">
-          <h3 className="font-bold text-black dark:text-white text-lg mb-2 line-clamp-2 mb-0 h-14">
-            {course.title}
-          </h3>
-          <p className="text-black dark:text-white mt-0 text-sm mb-3 line-clamp-2 h-10">
-            {course.shortDescription
-              ?.replace(/^<p>/i, "")
-              .replace(/<\/p>$/i, "")}
-          </p>
-          <div className="flex items-center mb-2">
-            <div className="flex" style={{ color: "#F47C26" }}>
-              {renderStars(course.rating || 4)}
-            </div>
-            {/* <span className="ml-2 text-sm text-black dark:text-gray-400">
-              ({course.enrollmentCount || course.enrolledStudents || 0}{" "}
-              students)
-            </span> */}
+        {/* Content */}
+        <div className="p-5">
+          {/* Category Tag */}
+          <div className="text-xs font-medium text-emerald-600 dark:text-emerald-400 mb-2 uppercase tracking-wide">
+            {product.category?.name || product.level || "Wellness"}
           </div>
-          <div className="flex justify-between items-center">
-            <div className="flex items-center text-sm text-black dark:text-gray-400">
-              <FaRegClock className="mr-1" />
-              {course.duration || "Self-paced"} Weeks
+
+          <h3 className="font-bold text-gray-900 dark:text-white text-lg mb-2 line-clamp-2 h-14 group-hover:text-emerald-700 transition-colors">
+            {product.title}
+          </h3>
+
+          {/* Rating */}
+          <div className="flex items-center mb-3 space-x-1">
+            <div className="flex text-sm">
+              {renderStars(product.rating || 4.5)}
             </div>
-            <span className="text-sm px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-100 rounded">
-              {course.level || "All Levels"}
+            <span className="text-xs text-gray-500 dark:text-gray-400 ml-2">
+              ({product.enrollmentCount || 120} reviews)
             </span>
+          </div>
+
+          {/* Price & Action */}
+          <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-100 dark:border-gray-700">
+            <div className="flex flex-col">
+              <span className="text-xs text-gray-400 line-through">
+                {formatPrice((product.price || 499) * 1.5)}
+              </span>
+              <span className="text-lg font-bold text-gray-900 dark:text-white">
+                {formatPrice(product.price || 499)}
+              </span>
+            </div>
+            <button className="p-2 rounded-full bg-emerald-50 text-emerald-600 hover:bg-emerald-600 hover:text-white transition-colors">
+              <FaShoppingCart />
+            </button>
           </div>
         </div>
       </Link>
@@ -229,82 +180,69 @@ const CourseCard = ({ course }) => {
 };
 
 const PopularCourses = () => {
-  const [courses, setCourses] = useState([]);
+  const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchPopularCourses = async () => {
+    const fetchPopularProducts = async () => {
       try {
         setLoading(true);
         setError(null);
 
-        // Set a timeout for the request
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+        const timeoutId = setTimeout(() => controller.abort(), 10000);
 
-        // console.log("Fetching featured courses with showOnHome=true");
+        // Fetching "Courses" but treating them as Products
         const response = await axios.get("/courses", {
           params: {
             showOnHome: "true",
-            limit: 8, // Limit to 6 featured courses
-            sort: "-createdAt", // Show most recently added first
-            isPublished: "true", // Only get published courses
+            limit: 8,
+            sort: "-createdAt",
+            isPublished: "true",
           },
           signal: controller.signal,
         });
 
-        // Clear the timeout if the request completes
         clearTimeout(timeoutId);
 
-        console.log("Featured courses response:", response);
-
-        // Handle different response formats
-        let courses = [];
+        let data = [];
         if (Array.isArray(response.data)) {
-          courses = response.data;
+          data = response.data;
         } else if (response.data && Array.isArray(response.data.data)) {
-          courses = response.data.data;
+          data = response.data.data;
         } else if (response.data && response.data.courses) {
-          courses = response.data.courses;
-        } else {
-          throw new Error("Invalid response format from server");
+          data = response.data.courses;
         }
 
-        console.log("Parsed featured courses:", courses);
-
-        // Filter courses that are marked to show on home page
-        // If no courses are marked, show the most recent published courses
-        const featuredCourses = courses.filter(
-          (course) => course.showOnHome !== false // Include if true or undefined
+        // Filter valid products
+        const featuredProducts = data.filter(
+          (item) => item.showOnHome !== false
         );
 
-        console.log("Filtered featured courses:", featuredCourses);
-
-        // Set the courses, or an empty array if none found
-        setCourses(featuredCourses);
+        setProducts(featuredProducts);
       } catch (err) {
-        console.error("Error fetching featured courses:", err);
-        setError("Failed to load featured courses");
+        console.error("Error fetching products:", err);
+        setError("Unable to load products at the moment.");
       } finally {
         setLoading(false);
       }
     };
 
-    fetchPopularCourses();
+    fetchPopularProducts();
   }, []);
 
   return (
-    <div className="bg-white dark:bg-gray-900 py-12">
+    <div className="bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800 py-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="mb-8">
-          <h1 className="text-2xl md:text-3xl font-bold text-black dark:text-white text-center">
-            Best E-Learning Courses
-          </h1>
-          <p className="mt-4 text-xl text-center text-black dark:text-white">
-            Practical, skill-based online courses in areas like IT, business,
-            design, and marketing. Learn at your own pace with real-world
-            projects and expert-led content
+        <div className="text-center mb-12">
+          <h2 className="text-3xl md:text-4xl font-bold text-emerald-900 dark:text-emerald-50 font-serif">
+            Best Selling Remedies
+          </h2>
+          <div className="h-1.5 w-24 bg-amber-400 mx-auto mt-4 rounded-full"></div>
+          <p className="mt-4 text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+            Explore our most loved Ayurvedic formulations, crafted to restore
+            balance and vitality naturally.
           </p>
         </div>
 
@@ -313,38 +251,46 @@ const PopularCourses = () => {
             {[...Array(4)].map((_, index) => (
               <div
                 key={index}
-                className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden animate-pulse"
+                className="bg-white dark:bg-gray-800 rounded-xl shadow-sm overflow-hidden animate-pulse border border-gray-100"
               >
                 <div className="h-48 bg-gray-200 dark:bg-gray-700"></div>
-                <div className="p-4">
-                  <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded w-3/4 mb-2"></div>
-                  <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/2 mb-4"></div>
-                  <div className="flex justify-between">
-                    <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/4"></div>
-                    <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/4"></div>
+                <div className="p-5 space-y-3">
+                  <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4"></div>
+                  <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-1/2"></div>
+                  <div className="flex justify-between pt-2">
+                    <div className="h-6 w-16 bg-gray-200 dark:bg-gray-700 rounded"></div>
+                    <div className="h-8 w-8 rounded-full bg-gray-200 dark:bg-gray-700"></div>
                   </div>
                 </div>
               </div>
             ))}
           </div>
         ) : error ? (
-          <div className="text-center py-8">
-            <p className="text-red-500">{error}</p>
+          <div className="text-center py-12 bg-red-50 dark:bg-red-900/20 rounded-xl">
+            <p className="text-red-600 dark:text-red-400 font-medium">
+              {error}
+            </p>
+            <button
+              onClick={() => window.location.reload()}
+              className="mt-4 text-sm text-red-700 underline hover:text-red-800"
+            >
+              Try Again
+            </button>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {courses
-              .map((course) => (
-                <CourseCard key={course._id} course={course} />
-              ))}
+            {products.map((product) => (
+              <ProductCard key={product._id} course={product} />
+            ))}
           </div>
         )}
-        <div className="mt-8 text-center">
+
+        <div className="mt-12 text-center">
           <Link
             to="/courses"
-            className="inline-flex text-white items-center px-6 py-2 border border-transparent text-base font-medium rounded-md shadow-sm text-black bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:bg-blue-700 dark:hover:bg-blue-600 transition-colors duration-200"
+            className="inline-flex items-center px-8 py-3 bg-emerald-700 hover:bg-emerald-800 text-white font-semibold rounded-full shadow-lg shadow-emerald-700/20 hover:shadow-emerald-700/40 transition-all duration-300"
           >
-            View All Courses
+            <FaTag className="mr-2" /> View All Products
           </Link>
         </div>
       </div>
