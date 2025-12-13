@@ -319,7 +319,7 @@ const MyLearning = () => {
               Browse our courses and start learning today!
             </p>
             <Link
-              to="/courses"
+              to="/collections"
               className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-pink-600 hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500"
             >
               Explore Courses
@@ -396,7 +396,7 @@ const MyLearning = () => {
                       onClick={() => {
                         if (course.status === "active") {
                           // Navigate to course content
-                          navigate(`/courses/${course.courseId}`);
+                          navigate(`/collections/${course.courseId}`);
                         } else {
                           // Show message for pending courses
                           toast(
@@ -437,7 +437,7 @@ const MyLearning = () => {
 
             <div className="mt-8 text-center">
               <Link
-                to="/courses"
+                to="/collections"
                 className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-pink-700 bg-pink-100 hover:bg-pink-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500 dark:bg-slate-700 dark:text-pink-300 dark:hover:bg-slate-600"
               >
                 Browse More Courses

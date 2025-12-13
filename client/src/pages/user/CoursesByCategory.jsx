@@ -141,7 +141,7 @@ const ProductsByCategory = () => {
             <li className="text-gray-400">/</li>
             <li>
               <Link
-                to="/courses"
+                to="/collections"
                 className="text-gray-500 hover:text-emerald-600 dark:text-gray-400 dark:hover:text-emerald-400"
               >
                 Store
@@ -175,7 +175,7 @@ const ProductsByCategory = () => {
               <ul className="space-y-1">
                 <li>
                   <Link
-                    to="/courses"
+                    to="/collections"
                     onClick={() => {
                       setCategory(null);
                       setProducts([]);
@@ -194,7 +194,7 @@ const ProductsByCategory = () => {
                   .map((cat) => (
                     <li key={cat._id}>
                       <Link
-                        to={`/courses/category/${cat.name
+                        to={`/collections/category/${cat.name
                           .toLowerCase()
                           .replace(/\s+/g, "-")}`}
                         className={`block px-3 py-2 rounded-lg text-sm transition-colors ${
@@ -231,7 +231,7 @@ const ProductsByCategory = () => {
                   No products found in this collection currently.
                 </p>
                 <Link
-                  to="/courses"
+                  to="/collections"
                   className="mt-6 inline-flex items-center px-6 py-2 bg-emerald-600 text-white rounded-full hover:bg-emerald-700 transition-colors shadow-lg shadow-emerald-600/20"
                 >
                   Browse All Products

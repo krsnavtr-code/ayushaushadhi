@@ -209,7 +209,7 @@ const Categories = () => {
             {categories.map((category, index) => (
               <Link
                 key={category._id}
-                to={`/courses/category/${category.name
+                to={`/collections/category/${category.name
                   .toLowerCase()
                   .replace(/\s+/g, "-")}`}
                 className={`group block p-6 rounded-2xl border transition-all duration-300 hover:shadow-xl hover:-translate-y-1 ${getNatureCardStyle(

@@ -166,31 +166,40 @@ const JobDetails = () => {
   const isApplied = !!application;
 
   return (
-    <div style={{ maxWidth: 1200, margin: '0 auto', padding: '24px 16px' }}>
-      <Breadcrumb 
+    <div style={{ maxWidth: 1200, margin: "0 auto", padding: "24px 16px" }}>
+      <Breadcrumb
         style={{ marginBottom: 24 }}
         items={[
-          { title: <Link to="/"><HomeOutlined /> Home</Link> },
+          {
+            title: (
+              <Link to="/">
+                <HomeOutlined /> Home
+              </Link>
+            ),
+          },
           { title: <Link to="/career">Career</Link> },
-          { title: job.title }
+          { title: job.title },
         ]}
       />
 
-      <Button 
-        type="text" 
-        icon={<ArrowLeftOutlined />} 
+      <Button
+        type="text"
+        icon={<ArrowLeftOutlined />}
         onClick={() => navigate(-1)}
         style={{ marginBottom: 16 }}
       >
         Back to Jobs
       </Button>
 
-      <Card 
+      <Card
         title={
           <Title level={3} style={{ margin: 0 }}>
             {title}
             {company && (
-              <Text type="secondary" style={{ display: 'block', fontSize: 18, fontWeight: 'normal' }}>
+              <Text
+                type="secondary"
+                style={{ display: "block", fontSize: 18, fontWeight: "normal" }}
+              >
                 {company}
               </Text>
             )}
@@ -198,12 +207,12 @@ const JobDetails = () => {
         }
         extra={
           <Space>
-            <Button 
-              type="primary" 
+            <Button
+              type="primary"
               onClick={handleApply}
               disabled={isApplied || isDeadlinePassed}
             >
-              {isApplied ? 'Applied' : 'Apply Now'}
+              {isApplied ? "Applied" : "Apply Now"}
             </Button>
             <Button>Save Job</Button>
           </Space>
@@ -211,10 +220,11 @@ const JobDetails = () => {
         style={{ marginBottom: 24 }}
       >
         <Space size={[8, 16]} wrap style={{ marginBottom: 16 }}>
-          <Tag icon={<EnvironmentOutlined />}>
-            {location || 'Remote'}
-          </Tag>
-          <Tag icon={<ClockCircleOutlined />} color={jobType === 'Full-time' ? 'blue' : 'green'}>
+          <Tag icon={<EnvironmentOutlined />}>{location || "Remote"}</Tag>
+          <Tag
+            icon={<ClockCircleOutlined />}
+            color={jobType === "Full-time" ? "blue" : "green"}
+          >
             {jobType}
           </Tag>
           {salary && (
@@ -224,43 +234,62 @@ const JobDetails = () => {
           )}
           {courseId && (
             <Tag icon={<BookOutlined />}>
-              {typeof courseId === 'object' ? courseId.name : 'Related Course'}
+              {typeof courseId === "object" ? courseId.name : "Related Course"}
             </Tag>
           )}
-          <Tag icon={<CalendarOutlined />} color={isDeadlinePassed ? 'red' : 'default'}>
-            {isDeadlinePassed 
-              ? 'Closed on ' + format(deadline, 'MMM d, yyyy') 
-              : 'Apply within ' + daysLeft + ' day' + (daysLeft !== 1 ? 's' : '')}
+          <Tag
+            icon={<CalendarOutlined />}
+            color={isDeadlinePassed ? "red" : "default"}
+          >
+            {isDeadlinePassed
+              ? "Closed on " + format(deadline, "MMM d, yyyy")
+              : "Apply within " +
+                daysLeft +
+                " day" +
+                (daysLeft !== 1 ? "s" : "")}
           </Tag>
         </Space>
 
-        <Tabs 
-          defaultActiveKey="details" 
+        <Tabs
+          defaultActiveKey="details"
           activeKey={activeTab}
           onChange={setActiveTab}
           style={{ marginTop: 16 }}
         >
-          <TabPane tab={<span><FileTextOutlined /> Job Details</span>} key="details">
+          <TabPane
+            tab={
+              <span>
+                <FileTextOutlined /> Job Details
+              </span>
+            }
+            key="details"
+          >
             <Row gutter={[24, 24]} style={{ marginTop: 16 }}>
               <Col xs={24} lg={16}>
-                <Card 
-                  title="Job Description" 
+                <Card
+                  title="Job Description"
                   bordered={false}
                   style={{ marginBottom: 24 }}
                 >
-                  <div dangerouslySetInnerHTML={{ __html: description.replace(/\n/g, '<br />') }} />
+                  <div
+                    dangerouslySetInnerHTML={{
+                      __html: description.replace(/\n/g, "<br />"),
+                    }}
+                  />
                 </Card>
 
-                <Card 
-                  title="Key Responsibilities" 
+                <Card
+                  title="Key Responsibilities"
                   bordered={false}
                   style={{ marginBottom: 24 }}
                 >
                   <List
                     dataSource={responsibilities}
-                    renderItem={item => (
+                    renderItem={(item) => (
                       <List.Item>
-                        <CheckCircleOutlined style={{ color: '#52c41a', marginRight: 8 }} />
+                        <CheckCircleOutlined
+                          style={{ color: "#52c41a", marginRight: 8 }}
+                        />
                         {item}
                       </List.Item>
                     )}
@@ -270,9 +299,11 @@ const JobDetails = () => {
                 <Card title="Requirements" bordered={false}>
                   <List
                     dataSource={requirements}
-                    renderItem={item => (
+                    renderItem={(item) => (
                       <List.Item>
-                        <CheckCircleOutlined style={{ color: '#52c41a', marginRight: 8 }} />
+                        <CheckCircleOutlined
+                          style={{ color: "#52c41a", marginRight: 8 }}
+                        />
                         {item}
                       </List.Item>
                     )}
@@ -284,27 +315,33 @@ const JobDetails = () => {
                 <Card title="Job Overview" style={{ marginBottom: 24 }}>
                   <Descriptions column={1}>
                     <Descriptions.Item label="Posted Date">
-                      {format(parseISO(createdAt), 'MMM d, yyyy')}
+                      {format(parseISO(createdAt), "MMM d, yyyy")}
                     </Descriptions.Item>
                     <Descriptions.Item label="Application Deadline">
-                      <Text type={isDeadlinePassed ? 'danger' : 'default'}>
-                        {format(deadline, 'MMM d, yyyy')}
-                        {isDeadlinePassed && ' (Closed)'}
+                      <Text type={isDeadlinePassed ? "danger" : "default"}>
+                        {format(deadline, "MMM d, yyyy")}
+                        {isDeadlinePassed && " (Closed)"}
                       </Text>
                     </Descriptions.Item>
-                    <Descriptions.Item label="Job Type">{jobType}</Descriptions.Item>
-                    <Descriptions.Item label="Location">{location || 'Remote'}</Descriptions.Item>
+                    <Descriptions.Item label="Job Type">
+                      {jobType}
+                    </Descriptions.Item>
+                    <Descriptions.Item label="Location">
+                      {location || "Remote"}
+                    </Descriptions.Item>
                     {salary && (
-                      <Descriptions.Item label="Salary">{salary}</Descriptions.Item>
+                      <Descriptions.Item label="Salary">
+                        {salary}
+                      </Descriptions.Item>
                     )}
                     {courseId && (
                       <Descriptions.Item label="Related Course">
-                        {typeof courseId === 'object' ? (
-                          <Link to={`/courses/${courseId._id}`}>
+                        {typeof courseId === "object" ? (
+                          <Link to={`/collections/${courseId._id}`}>
                             {courseId.name}
                           </Link>
                         ) : (
-                          'N/A'
+                          "N/A"
                         )}
                       </Descriptions.Item>
                     )}
@@ -328,9 +365,11 @@ const JobDetails = () => {
                     <List
                       size="small"
                       dataSource={benefits}
-                      renderItem={benefit => (
+                      renderItem={(benefit) => (
                         <List.Item>
-                          <CheckCircleOutlined style={{ color: '#52c41a', marginRight: 8 }} />
+                          <CheckCircleOutlined
+                            style={{ color: "#52c41a", marginRight: 8 }}
+                          />
                           {benefit}
                         </List.Item>
                       )}
@@ -341,19 +380,20 @@ const JobDetails = () => {
             </Row>
           </TabPane>
 
-          <TabPane 
+          <TabPane
             tab={
               <span>
                 <UserOutlined />
-                About {company || 'the Company'}
+                About {company || "the Company"}
               </span>
-            } 
+            }
             key="company"
           >
             <Card style={{ marginTop: 16 }}>
-              <Title level={4}>About {company || 'Our Company'}</Title>
+              <Title level={4}>About {company || "Our Company"}</Title>
               <Paragraph>
-                {job.companyDescription || 'No company information available. Please check back later for updates.'}
+                {job.companyDescription ||
+                  "No company information available. Please check back later for updates."}
               </Paragraph>
             </Card>
           </TabPane>
@@ -365,16 +405,16 @@ const JobDetails = () => {
           <List
             itemLayout="vertical"
             dataSource={relatedJobs}
-            renderItem={relatedJob => (
+            renderItem={(relatedJob) => (
               <List.Item
                 key={relatedJob._id}
                 actions={[
-                  <Button 
-                    type="link" 
+                  <Button
+                    type="link"
                     onClick={() => navigate(`/career/${relatedJob._id}`)}
                   >
                     View Details
-                  </Button>
+                  </Button>,
                 ]}
               >
                 <List.Item.Meta
@@ -386,15 +426,13 @@ const JobDetails = () => {
                   description={
                     <Space size={[8, 8]} wrap>
                       <Tag icon={<EnvironmentOutlined />}>
-                        {relatedJob.location || 'Remote'}
+                        {relatedJob.location || "Remote"}
                       </Tag>
                       <Tag icon={<ClockCircleOutlined />}>
                         {relatedJob.jobType}
                       </Tag>
                       {relatedJob.salary && (
-                        <Tag icon={<DollarOutlined />}>
-                          {relatedJob.salary}
-                        </Tag>
+                        <Tag icon={<DollarOutlined />}>{relatedJob.salary}</Tag>
                       )}
                     </Space>
                   }

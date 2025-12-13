@@ -86,7 +86,7 @@ function Footer() {
               ].map((item) => (
                 <li key={item}>
                   <Link
-                    to="/courses"
+                    to="/collections"
                     className="group flex items-center text-sm text-gray-600 dark:text-gray-300 hover:text-amber-600 dark:hover:text-amber-400 transition-colors"
                   >
                     <span className="h-1.5 w-1.5 rounded-full bg-emerald-200 group-hover:bg-amber-500 mr-2 transition-colors"></span>

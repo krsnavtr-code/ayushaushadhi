@@ -555,11 +555,15 @@ export const CourseForm = ({ isEdit = false }) => {
         "type:",
         typeof formData.isFeatured
       );
-      
+
       // Ensure price is always included and properly formatted
-      const price = formData.isFree ? 0 : Math.max(0, Number(formData.price) || 0);
-      const originalPrice = formData.isFree ? 0 : Math.max(0, Number(formData.originalPrice) || price);
-      
+      const price = formData.isFree
+        ? 0
+        : Math.max(0, Number(formData.price) || 0);
+      const originalPrice = formData.isFree
+        ? 0
+        : Math.max(0, Number(formData.originalPrice) || price);
+
       const dataToSend = {
         ...formData,
         // Ensure boolean fields are properly set
@@ -660,7 +664,7 @@ export const CourseForm = ({ isEdit = false }) => {
         await createCourse(dataToSend);
         toast.success("Course created successfully!");
       }
-      navigate("/admin/courses");
+      navigate("/admin/collections");
     } catch (error) {
       console.error("Error saving course:", error);
       toast.error(error.response?.data?.message || "Failed to save course");
@@ -1356,7 +1360,7 @@ export const CourseForm = ({ isEdit = false }) => {
         <div className="flex justify-end space-x-4 pt-6 border-t border-gray-200">
           <button
             type="button"
-            onClick={() => navigate("/admin/courses")}
+            onClick={() => navigate("/admin/collections")}
             className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
           >
             Cancel

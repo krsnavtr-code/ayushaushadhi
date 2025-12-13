@@ -12,7 +12,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 // @desc    Generate PDF for a course
-// @route   GET /api/courses/:id/generate-pdf
+// @route   GET /api/collections/:id/generate-pdf
 // @access  Private/Admin
 // Helper function to strip HTML tags
 const stripHtml = (html) => {
@@ -98,7 +98,7 @@ const drawSectionHeader = (page, text, x, y, options) => {
 
 /**
  * @desc    Send course PDF to student's email
- * @route   POST /api/courses/:id/send-pdf
+ * @route   POST /api/collections/:id/send-pdf
  * @access  Private/Admin
  */
 export const sendCoursePdfToStudent = async (req, res) => {
@@ -659,7 +659,7 @@ export const generateCoursePDF = async (req, res) => {
 
 /**
  * @desc    Download course brochure
- * @route   GET /api/courses/:id/download-brochure
+ * @route   GET /api/collections/:id/download-brochure
  * @access  Private
  */
 export const downloadCourseBrochure = async (req, res) => {

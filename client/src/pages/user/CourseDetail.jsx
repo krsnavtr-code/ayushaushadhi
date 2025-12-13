@@ -103,7 +103,7 @@ const CourseDetail = () => {
       } catch (error) {
         console.error("Error fetching course:", error);
         toast.error(error.message || "Failed to load course details");
-        navigate("/courses");
+        navigate("/collections");
       } finally {
         setLoading(false);
       }
@@ -140,7 +140,7 @@ const CourseDetail = () => {
           </p>
           <div className="space-y-3">
             <Link
-              to="/courses"
+              to="/collections"
               className="inline-block w-full px-6 py-3 bg-blue-600 text-black rounded-lg hover:bg-blue-700 transition-colors"
             >
               Browse All Courses
@@ -179,7 +179,7 @@ const CourseDetail = () => {
   const handleEnroll = async () => {
     if (!isAuthenticated) {
       // If user is not authenticated, redirect to login
-      navigate("/login", { state: { from: `/courses/${course._id}` } });
+      navigate("/login", { state: { from: `/collections/${course._id}` } });
       return;
     }
 
@@ -419,7 +419,7 @@ const CourseDetail = () => {
       try {
         // Make API call to download brochure (no auth required)
         const response = await axios.get(
-          `/api/courses/${course._id}/download-brochure`,
+          `/api/collections/${course._id}/download-brochure`,
           {
             responseType: "blob", // Important for file downloads
           }
@@ -609,24 +609,33 @@ const CourseDetail = () => {
   };
 
   // Generate SEO metadata
-  const seoTitle = course ? `${course.title} | FirstVITE` : 'Course Details | FirstVITE';
-  const seoDescription = course?.shortDescription || 'Learn valuable skills with our comprehensive course.';
-  const courseImage = course?.imageUrl || '/images/default-course-image.jpg';
-  const canonicalUrl = course ? `https://firstvite.com/course/${course._id}` : 'https://firstvite.com/courses';
+  const seoTitle = course
+    ? `${course.title} | FirstVITE`
+    : "Course Details | FirstVITE";
+  const seoDescription =
+    course?.shortDescription ||
+    "Learn valuable skills with our comprehensive course.";
+  const courseImage = course?.imageUrl || "/images/default-course-image.jpg";
+  const canonicalUrl = course
+    ? `https://firstvite.com/course/${course._id}`
+    : "https://firstvite.com/collections";
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200">
-      <SEO 
+      <SEO
         title={seoTitle}
         description={seoDescription}
-        keywords={course?.tags?.join(', ') || 'online course, e-learning, professional development'}
+        keywords={
+          course?.tags?.join(", ") ||
+          "online course, e-learning, professional development"
+        }
         canonical={canonicalUrl}
         og={{
           title: seoTitle,
           description: seoDescription,
-          type: 'course',
+          type: "course",
           image: courseImage,
-          url: canonicalUrl
+          url: canonicalUrl,
         }}
       />
       {/* Course Header */}
@@ -645,7 +654,7 @@ const CourseDetail = () => {
               <li className="flex items-center">
                 <span className="mx-2 text-gray-400">/</span>
                 <Link
-                  to="/courses"
+                  to="/collections"
                   className="text-gray-500 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 transition-colors"
                 >
                   Courses
@@ -887,7 +896,7 @@ const CourseDetail = () => {
                   onClick={() => {
                     // if (!isAuthenticated) {
                     //   // Redirect to login page with a return URL
-                    //   navigate("/login", { state: { from: `/courses/${id}` } });
+                    //   navigate("/login", { state: { from: `/collections/${id}` } });
                     //   toast.info("Please log in to enroll in this course");
                     //   return;
                     // }

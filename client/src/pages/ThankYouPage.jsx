@@ -56,7 +56,7 @@ const ThankYouPage = () => {
           </button>
 
           <button
-            onClick={() => navigate("/courses")}
+            onClick={() => navigate("/collections")}
             className="w-full py-3 px-6 rounded-full border border-emerald-200 dark:border-gray-600 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-gray-700 transition-colors"
           >
             Browse More Products

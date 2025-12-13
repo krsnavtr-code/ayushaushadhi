@@ -25,11 +25,11 @@ const HerbalStore = () => {
         const categoryId = "68887f978b23a2d739ac5be4";
         console.log(`Fetching products for category: ${categoryId}`);
 
-        // Fetch published products (using the existing /courses endpoint structure)
+        // Fetch published products (using the existing /collections endpoint structure)
         const response = await axios.get(
           `${
             import.meta.env.VITE_API_URL
-          }/api/courses?category=${categoryId}&isPublished=true`
+          }/api/collections?category=${categoryId}&isPublished=true`
         );
 
         const productsData = Array.isArray(response.data) ? response.data : [];

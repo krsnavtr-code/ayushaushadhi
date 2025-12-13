@@ -155,7 +155,7 @@ const Content = () => {
             ingredients, ancient recipes, delivered to you.
           </p>
           <Link
-            to="/courses"
+            to="/collections"
             className="inline-block px-8 py-3 bg-white text-emerald-700 font-bold rounded-full hover:bg-amber-50 transition-colors shadow-lg"
           >
             Shop Now

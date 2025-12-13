@@ -1,96 +1,81 @@
 import React, { useState, useEffect } from "react";
 import {
-  FaSearch,
-  FaLeaf, // Changed from Book
-  FaUserMd, // Changed from Users
+  FaLeaf,
+  FaUserMd,
   FaCertificate,
   FaArrowRight,
   FaTimes,
-  FaCheckCircle,
+  FaQuoteLeft,
 } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import axios from "axios";
-import "./Banner.css";
-// Ensure typography.css exists or remove this import
-import "../styles/typography.css";
 
-// Placeholder for a Hero Banner Image (e.g., herbs, bottles, lifestyle)
-// You should upload a banner image to your public/assets folder
+// Placeholder images - You should replace these with your actual assets
 const BANNER_IMG =
   "https://images.unsplash.com/photo-1540420773420-3366772f4999?q=80&w=2084&auto=format&fit=crop";
-// Using the logo path you shared earlier
-const LOGO_IMG = "/assets/Ayush-Aushadhi-Logo-Fit.png";
+const SECONDARY_IMG =
+  "https://images.unsplash.com/photo-1624454002302-36b824d7bd0a?q=80&w=2070&auto=format&fit=crop";
 
+// --- Certificate Modal (Kept mostly same, just styled) ---
 const CertificateModal = ({ isOpen, onClose }) => {
-  // Prevent right-click context menu to protect certificate image
   useEffect(() => {
-    const handleContextMenu = (e) => {
-      if (isOpen) {
-        e.preventDefault();
-      }
-    };
+    const handleContextMenu = (e) => isOpen && e.preventDefault();
     document.addEventListener("contextmenu", handleContextMenu);
-    return () => {
-      document.removeEventListener("contextmenu", handleContextMenu);
-    };
+    return () => document.removeEventListener("contextmenu", handleContextMenu);
   }, [isOpen]);
 
   if (!isOpen) return null;
 
   return (
     <div
-      className="fixed inset-0 bg-emerald-900/40 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+      className="fixed inset-0 bg-stone-900/60 backdrop-blur-md flex items-center justify-center z-[60] p-4 animate-fade-in"
       onClick={onClose}
     >
       <div
-        className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl max-w-[550px] w-full max-h-[550px] overflow-auto relative border border-emerald-100 dark:border-gray-700"
+        className="bg-[#fffbf0] dark:bg-stone-900 rounded-2xl shadow-2xl max-w-lg w-full relative border border-amber-200 dark:border-stone-700 overflow-hidden transform transition-all scale-100"
         onClick={(e) => e.stopPropagation()}
       >
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-gray-500 hover:text-red-500 dark:text-gray-300 dark:hover:text-red-400 z-20 transition-colors"
+          className="absolute top-4 right-4 text-stone-400 hover:text-red-500 transition-colors z-20"
         >
           <FaTimes className="text-2xl" />
         </button>
-        <div className="p-8 relative">
-          <h3 className="text-2xl font-bold text-emerald-900 dark:text-emerald-50 mb-2 font-serif">
-            Quality Assurance
+
+        <div className="p-10 text-center">
+          <div className="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4 text-amber-600">
+            <FaCertificate className="text-3xl" />
+          </div>
+          <h3 className="text-2xl font-bold text-emerald-900 dark:text-emerald-100 font-serif mb-2">
+            Certified Purity
           </h3>
-          <p className="text-sm text-gray-600 dark:text-gray-300 mb-6">
-            Our products are GMP certified and lab tested for purity.
+          <p className="text-stone-600 dark:text-stone-400 text-sm mb-8">
+            Our manufacturing processes adhere to the strictest AYUSH Ministry
+            guidelines.
           </p>
 
-          {/* Certificate Image Container */}
-          <div className="relative rounded-lg overflow-hidden border-4 border-double border-amber-200 dark:border-amber-700 bg-amber-50">
-            {/* Watermark Overlay */}
-            <div
-              className="absolute inset-0 z-10 pointer-events-none flex items-center justify-center"
-              style={{
-                backgroundImage:
-                  "repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(217, 119, 6, 0.05) 10px, rgba(217, 119, 6, 0.05) 20px)",
-              }}
-            >
-              <div className="text-3xl font-bold text-amber-900 opacity-10 transform -rotate-45 select-none border-4 border-amber-900/10 p-4 rounded">
-                AYUSH CERTIFIED
-              </div>
+          {/* Certificate Mockup */}
+          <div className="relative border-8 border-double border-amber-100 p-6 bg-white shadow-inner mx-auto max-w-xs rotate-1 hover:rotate-0 transition-transform duration-500">
+            <div className="absolute top-2 left-2 opacity-10">
+              <FaLeaf className="text-6xl text-emerald-800" />
             </div>
-
-            {/* Placeholder for Certificate Image */}
-            <div className="w-full aspect-[4/3] bg-white flex flex-col items-center justify-center text-center p-4">
-              <FaCertificate className="text-6xl text-amber-500 mb-4" />
-              <h4 className="text-xl font-bold text-gray-800 font-serif">
-                Certificate of Authenticity
-              </h4>
-              <p className="text-gray-500 text-sm mt-2">
-                100% Herbal Formulation
-              </p>
-              <div className="mt-4 flex gap-2">
-                <span className="px-2 py-1 bg-green-100 text-green-800 text-xs rounded border border-green-200">
-                  GMP Certified
-                </span>
-                <span className="px-2 py-1 bg-green-100 text-green-800 text-xs rounded border border-green-200">
-                  ISO 9001:2015
-                </span>
+            <h4 className="text-lg font-bold text-stone-800 uppercase tracking-widest border-b-2 border-stone-200 pb-2 mb-2">
+              GMP Certified
+            </h4>
+            <p className="text-xs text-stone-500 leading-relaxed font-serif italic">
+              "This certifies that Ayush Aushadhi products are manufactured in a
+              Good Manufacturing Practice (GMP) compliant facility."
+            </p>
+            <div className="mt-4 flex justify-center gap-2">
+              <div className="w-12 h-12 bg-amber-500 rounded-full flex items-center justify-center text-white text-[10px] font-bold shadow-lg">
+                100%
+                <br />
+                PURE
+              </div>
+              <div className="w-12 h-12 bg-emerald-700 rounded-full flex items-center justify-center text-white text-[10px] font-bold shadow-lg">
+                ISO
+                <br />
+                9001
               </div>
             </div>
           </div>
@@ -100,169 +85,161 @@ const CertificateModal = ({ isOpen, onClose }) => {
   );
 };
 
+// --- Main Banner Component ---
 function Banner() {
   const [productCount, setProductCount] = useState(0);
-
-  useEffect(() => {
-    const fetchProductCount = async () => {
-      // NOTE: Adjust endpoint to your actual product endpoint
-      const API_URL =
-        import.meta.env.VITE_API_BASE_URL || "http://localhost:4002/api";
-      try {
-        // Keeping '/courses' for now as per your backend, but conceptually these are products
-        const response = await axios.get(`${API_URL}/courses?fields=_id`);
-        setProductCount(response.data.length + 50); // Adding base number for display
-      } catch (error) {
-        console.error("Error fetching count:", error);
-        setProductCount(100); // Fallback number
-      }
-    };
-
-    fetchProductCount();
-  }, []);
-
   const [showCertificate, setShowCertificate] = useState(false);
 
-  const features = [
-    {
-      icon: (
-        <FaLeaf className="text-2xl text-emerald-600 dark:text-emerald-400" />
-      ),
-      title: `${productCount}+ Herbal Products`,
-      desc: "100% Natural Ingredients",
-    },
-    {
-      icon: (
-        <FaUserMd className="text-2xl text-emerald-600 dark:text-emerald-400" />
-      ),
-      title: "Ayurvedic Experts",
-      desc: "Formulated by Doctors",
-    },
-    {
-      icon: (
-        <FaCertificate className="text-2xl text-emerald-600 dark:text-emerald-400" />
-      ),
-      title: "Certified Quality",
-      desc: "GMP & ISO Certified",
-      onClick: () => setShowCertificate(true),
-    },
-  ];
+  useEffect(() => {
+    // Simulating API or fetching real count
+    setProductCount(150);
+  }, []);
 
   return (
-    <div className="relative overflow-hidden bg-gradient-to-r from-emerald-50 to-amber-50 dark:from-gray-900 dark:to-gray-800 py-12 lg:py-20 transition-colors duration-300">
-      {/* Background Decorative Blobs */}
-      <div className="absolute top-0 left-0 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-emerald-200/30 rounded-full blur-3xl dark:bg-emerald-900/20"></div>
-      <div className="absolute bottom-0 right-0 translate-x-1/2 translate-y-1/2 w-96 h-96 bg-amber-200/30 rounded-full blur-3xl dark:bg-amber-900/20"></div>
+    <div className="relative bg-[#fcfbf7] dark:bg-[#111827] overflow-hidden transition-colors duration-300">
+      {/* 1. Background Pattern (Subtle Mandala/Texture) */}
+      <div
+        className="absolute inset-0 z-0 opacity-[0.03] dark:opacity-[0.05] pointer-events-none"
+        style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23065f46' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+        }}
+      ></div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="flex flex-col lg:flex-row items-center justify-between gap-12 lg:gap-16">
-          {/* Left Content */}
-          <div className="lg:w-1/2 space-y-8 text-center lg:text-left">
-            <div className="space-y-4 w-full">
-              {/* Logo & Brand Name */}
-              <div className="flex items-center justify-center lg:justify-start gap-3">
-                <img
-                  src={LOGO_IMG}
-                  alt="Ayush Aushadhi Logo"
-                  className="h-10 w-auto object-contain"
-                  onError={(e) => (e.target.style.display = "none")}
-                />
-                <span className="text-lg font-bold tracking-wider text-emerald-800 dark:text-emerald-400 uppercase">
-                  Ayush Aushadhi
-                </span>
-              </div>
+      {/* 2. Organic Blobs */}
+      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-amber-200/20 rounded-full blur-[100px] translate-x-1/3 -translate-y-1/3 dark:bg-amber-900/10"></div>
+      <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-emerald-200/20 rounded-full blur-[120px] -translate-x-1/3 translate-y-1/3 dark:bg-emerald-900/10"></div>
 
-              {/* Headlines */}
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white leading-tight font-serif">
-                <span className="block">Rediscover</span>
-                <span className="block text-emerald-700 dark:text-emerald-400">
-                  Nature's Healing
-                </span>
-                <span className="block text-amber-600 dark:text-amber-500 text-3xl sm:text-4xl mt-2">
-                  Power
-                </span>
-              </h1>
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-24 lg:pt-8 lg:pb-16">
+        <div className="flex flex-col lg:flex-row items-center gap-16">
+          {/* --- Left Content --- */}
+          <div className="lg:w-1/2 text-center lg:text-left space-y-8">
+            {/* Brand Tag */}
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-100 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 text-xs font-bold uppercase tracking-widest animate-fade-in-up">
+              <FaLeaf className="text-emerald-500" />
+              <span>Est. 2025 • Pure Ayurveda</span>
             </div>
 
-            <p className="text-base sm:text-lg text-gray-600 dark:text-gray-300 max-w-lg mx-auto lg:mx-0 leading-relaxed">
-              Experience the ancient wisdom of Ayurveda with our authentic,
-              hand-crafted herbal remedies. Holistic wellness for a balanced
-              life.
+            {/* Headline */}
+            <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-stone-900 dark:text-stone-50 font-serif leading-[1.1]">
+              Heal naturally with{" "}
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-700 to-emerald-500 dark:from-emerald-400 dark:to-emerald-200 italic">
+                ancient wisdom
+              </span>
+              .
+            </h1>
+
+            {/* Subtext */}
+            <p className="text-lg text-stone-600 dark:text-stone-400 max-w-xl mx-auto lg:mx-0 leading-relaxed font-light">
+              Discover {productCount}+ authentic herbal remedies crafted by
+              Vaidyas. We bridge the gap between traditional formulation and
+              modern lifestyle needs.
             </p>
 
-            {/* Features Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-8">
-              {features.map((feature, index) => (
-                <div
-                  key={index}
-                  onClick={feature.onClick}
-                  className={`flex items-center p-3 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-xl shadow-sm border border-emerald-100 dark:border-gray-700 transition-all duration-300 hover:shadow-md hover:border-emerald-300 ${
-                    feature.onClick
-                      ? "cursor-pointer hover:bg-emerald-50 dark:hover:bg-emerald-900/20"
-                      : ""
-                  }`}
-                >
-                  <div className="flex-shrink-0 p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-full mr-3">
-                    {feature.icon}
-                  </div>
-                  <div className="text-left">
-                    <h4 className="font-bold text-gray-900 dark:text-white text-sm leading-tight">
-                      {feature.title}
-                    </h4>
-                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
-                      {feature.desc}
-                    </p>
-                  </div>
-                </div>
-              ))}
+            {/* CTA Buttons */}
+            <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+              <Link
+                to="/store"
+                className="group relative px-8 py-4 bg-emerald-800 text-white rounded-full font-semibold shadow-xl hover:bg-emerald-900 transition-all hover:shadow-emerald-900/20 overflow-hidden"
+              >
+                <span className="relative z-10 flex items-center gap-2">
+                  Shop Remedies{" "}
+                  <FaArrowRight className="group-hover:translate-x-1 transition-transform" />
+                </span>
+                {/* Button Shine Effect */}
+                <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 backdrop-blur-sm rounded-full"></div>
+              </Link>
+
+              <button
+                onClick={() => setShowCertificate(true)}
+                className="px-8 py-4 bg-white dark:bg-stone-800 text-stone-800 dark:text-stone-200 border border-stone-200 dark:border-stone-700 rounded-full font-semibold hover:bg-stone-50 dark:hover:bg-stone-700 transition-colors flex items-center justify-center gap-2"
+              >
+                <FaCertificate className="text-amber-500" /> View Certifications
+              </button>
             </div>
 
-            {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-4">
-              <Link
-                to="/courses"
-                className="group bg-emerald-700 hover:bg-emerald-800 text-white px-8 py-3.5 rounded-full font-semibold text-lg transition-all duration-300 shadow-lg hover:shadow-emerald-700/30 flex items-center w-full sm:w-auto justify-center"
-              >
-                <span>Shop Remedies</span>
-                <FaArrowRight className="ml-2 group-hover:translate-x-1 transition-transform duration-200" />
-              </Link>
-              <Link
-                to="/about"
-                className="bg-white dark:bg-gray-800 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-700 hover:bg-emerald-50 dark:hover:bg-gray-700 px-8 py-3.5 rounded-full font-semibold text-lg transition-all duration-300 w-full sm:w-auto flex justify-center"
-              >
-                Our Story
-              </Link>
+            {/* Mini Trust Signals */}
+            <div className="pt-6 flex items-center justify-center lg:justify-start gap-6 text-sm font-medium text-stone-500 dark:text-stone-400">
+              <div className="flex items-center gap-2">
+                <FaUserMd className="text-emerald-600 text-lg" />
+                <span>Doctor Recommended</span>
+              </div>
+              <div className="w-1 h-1 bg-stone-300 rounded-full"></div>
+              <div className="flex items-center gap-2">
+                <span className="text-amber-500 text-lg">★</span>
+                <span>4.9/5 Ratings</span>
+              </div>
             </div>
           </div>
 
-          {/* Right Content - Hero Image */}
-          <div className="lg:w-1/2 w-full mt-8 lg:mt-0 relative">
-            {/* Main Image Container */}
-            <div className="relative rounded-2xl overflow-hidden shadow-2xl border-4 border-white dark:border-gray-700 transform hover:scale-[1.01] transition-transform duration-500">
+          {/* --- Right Content (Composition Image) --- */}
+          <div className="lg:w-1/2 relative w-full flex justify-center lg:justify-end">
+            {/* Decorative Rotating Circle behind images */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] border border-dashed border-emerald-200/50 dark:border-emerald-700/30 rounded-full animate-[spin_60s_linear_infinite]"></div>
+
+            {/* Main Tall Image with Organic Shape */}
+            <div className="relative z-10 w-72 sm:w-80 h-96 sm:h-[500px] rounded-tl-[100px] rounded-br-[100px] rounded-tr-3xl rounded-bl-3xl overflow-hidden shadow-2xl border-4 border-white dark:border-stone-800 transform hover:scale-[1.02] transition-transform duration-500">
               <img
                 src={BANNER_IMG}
-                alt="Ayurvedic Wellness"
-                className="w-full h-auto object-cover aspect-[4/3]"
+                alt="Ayurvedic Lifestyle"
+                className="w-full h-full object-cover"
               />
+              {/* Overlay Gradient */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
+            </div>
 
-              {/* Overlay Badge */}
-              <div className="absolute bottom-6 left-6 bg-white/95 dark:bg-gray-800/95 backdrop-blur px-4 py-2 rounded-lg shadow-lg flex items-center gap-3">
-                <FaCheckCircle className="text-emerald-500 text-2xl" />
-                <div>
-                  <p className="text-xs text-gray-500 dark:text-gray-400 font-bold uppercase tracking-wider">
-                    Trusted By
-                  </p>
-                  <p className="text-sm font-bold text-gray-900 dark:text-white">
-                    10,000+ Customers
-                  </p>
-                </div>
+            {/* Floating Secondary Image (Product Closeup) */}
+            <div className="absolute bottom-10 left-4 sm:left-10 z-20 w-48 h-48 bg-white dark:bg-stone-800 rounded-full p-2 shadow-xl animate-[bounce_3s_infinite]">
+              <img
+                src={SECONDARY_IMG}
+                alt="Herbal Ingredients"
+                className="w-full h-full object-cover rounded-full border-2 border-amber-100 dark:border-stone-600"
+              />
+              <div className="absolute -bottom-2 -right-2 bg-amber-400 text-amber-950 text-xs font-bold px-3 py-1 rounded-full shadow-sm">
+                100% Organic
               </div>
             </div>
 
-            {/* Decorative Floating Elements */}
-            <div className="absolute -top-6 -right-6 w-24 h-24 bg-amber-100 dark:bg-amber-900/30 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-pulse"></div>
-            <div className="absolute -bottom-8 -left-8 w-32 h-32 bg-emerald-100 dark:bg-emerald-900/30 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-pulse delay-1000"></div>
+            {/* Floating Quote Card */}
+            <div className="absolute top-10 right-0 sm:-right-6 z-20 bg-white/90 dark:bg-stone-800/90 backdrop-blur p-4 rounded-xl shadow-lg max-w-[200px] border border-stone-100 dark:border-stone-700 hidden sm:block">
+              <FaQuoteLeft className="text-emerald-200 text-xl mb-2" />
+              <p className="text-xs text-stone-600 dark:text-stone-300 font-serif italic">
+                "Ayurveda is the science of life, a knowledge passed down from
+                the gods."
+              </p>
+            </div>
           </div>
+        </div>
+      </div>
+
+      {/* --- Bottom Glass Bar (Features) --- */}
+      <div className="relative z-20 -mt-12 mx-4">
+        <div className="max-w-5xl mx-auto bg-white/70 dark:bg-stone-800/70 backdrop-blur-md border border-white/50 dark:border-stone-700 rounded-3xl shadow-xl p-6 sm:p-10 flex flex-wrap justify-between items-center gap-6">
+          {[
+            { icon: FaLeaf, title: "100% Natural", sub: "No Chemicals" },
+            {
+              icon: FaUserMd,
+              title: "Expert Support",
+              sub: "Free Consultation",
+            },
+            { icon: FaCertificate, title: "Lab Tested", sub: "Safety Assured" },
+          ].map((item, idx) => (
+            <div
+              key={idx}
+              className="flex items-center gap-4 min-w-[200px] mx-auto sm:mx-0"
+            >
+              <div className="w-12 h-12 rounded-full bg-emerald-100 dark:bg-emerald-900/40 flex items-center justify-center text-emerald-700 dark:text-emerald-400">
+                <item.icon className="text-xl" />
+              </div>
+              <div>
+                <h4 className="font-bold text-stone-900 dark:text-stone-100">
+                  {item.title}
+                </h4>
+                <p className="text-xs text-stone-500 dark:text-stone-400 uppercase tracking-wide">
+                  {item.sub}
+                </p>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
 

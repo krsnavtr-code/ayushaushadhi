@@ -81,7 +81,7 @@ const CourseMenu = ({ isMobile = false, onItemClick = () => {} }) => {
             subcategories: [
               {
                 name: `All ${category.name} Courses`,
-                url: `/courses/category/${category.slug || category._id}`,
+                url: `/collections/category/${category.slug || category._id}`,
                 isAllCourses: true,
               },
             ],
@@ -209,21 +209,23 @@ const CourseMenu = ({ isMobile = false, onItemClick = () => {} }) => {
   const handleCategoryHover = (categoryId, event) => {
     if (!isMobile) {
       setActiveCategory(categoryId);
-      
+
       // Calculate available space below the menu item
       if (event && event.currentTarget) {
         const rect = event.currentTarget.getBoundingClientRect();
         const spaceBelow = window.innerHeight - rect.bottom;
         const spaceAbove = rect.top;
-        setDropdownPosition(spaceBelow < 400 && spaceBelow < spaceAbove ? 'top' : 'bottom');
+        setDropdownPosition(
+          spaceBelow < 400 && spaceBelow < spaceAbove ? "top" : "bottom"
+        );
       }
-      
+
       if (!categoryCourses[categoryId]) {
         fetchCategoryCourses(categoryId);
       }
     }
   };
-  
+
   // Set dropdown ref for a category
   const setDropdownRef = (element, categoryId) => {
     if (element) {
@@ -392,7 +394,9 @@ const CourseMenu = ({ isMobile = false, onItemClick = () => {} }) => {
                         className={`${
                           !isMobile
                             ? `absolute left-full ml-1 w-[400px] max-h-[80vh] overflow-y-auto ${
-                                dropdownPosition === 'top' ? 'bottom-0' : 'top-0'
+                                dropdownPosition === "top"
+                                  ? "bottom-0"
+                                  : "top-0"
                               }`
                             : "w-full mt-2"
                         } bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-50`}
@@ -405,7 +409,7 @@ const CourseMenu = ({ isMobile = false, onItemClick = () => {} }) => {
                       >
                         <div className="p-2">
                           <Link
-                            to={`/courses/category/${
+                            to={`/collections/category/${
                               category.slug ||
                               category.name.toLowerCase().replace(/\s+/g, "-")
                             }`}

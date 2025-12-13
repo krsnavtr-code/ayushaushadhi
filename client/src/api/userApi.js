@@ -246,7 +246,7 @@ export const testApiConnection = async () => {
   try {
     console.log('Testing API connection...');
     // Test with a more appropriate endpoint
-    const response = await api.get('/courses');
+    const response = await api.get('/collections');
     console.log('API test response:', response.data);
     return true;
   } catch (error) {

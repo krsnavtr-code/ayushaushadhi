@@ -50,7 +50,9 @@ const SendCoursePdfModal = ({ course, isOpen, onClose, onSuccess }) => {
       setIsSending(true);
       setError('');
       
-      const response = await api.post(`/courses/${course._id}/send-pdf`, { emails: validEmails });
+      const response = await api.post(`/collections/${course._id}/send-pdf`, {
+        emails: validEmails,
+      });
       
       if (response.data.success) {
         toast.success(`PDF sent successfully to ${validEmails.length} email(s)`);

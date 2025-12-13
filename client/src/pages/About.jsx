@@ -205,7 +205,7 @@ export default function About() {
               through our natural remedies.
             </p>
             <Link
-              to="/courses"
+              to="/collections"
               className="inline-block bg-amber-400 hover:bg-amber-500 text-emerald-900 font-bold py-4 px-10 rounded-full shadow-lg transition-transform hover:-translate-y-1 relative z-10"
             >
               Shop Herbal Collection

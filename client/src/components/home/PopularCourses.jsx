@@ -194,7 +194,7 @@ const PopularCourses = () => {
         const timeoutId = setTimeout(() => controller.abort(), 10000);
 
         // Fetching "Courses" but treating them as Products
-        const response = await axios.get("/courses", {
+        const response = await axios.get("/collections", {
           params: {
             showOnHome: "true",
             limit: 8,
@@ -287,7 +287,7 @@ const PopularCourses = () => {
 
         <div className="mt-12 text-center">
           <Link
-            to="/courses"
+            to="/collections"
             className="inline-flex items-center px-8 py-3 bg-emerald-700 hover:bg-emerald-800 text-white font-semibold rounded-full shadow-lg shadow-emerald-700/20 hover:shadow-emerald-700/40 transition-all duration-300"
           >
             <FaTag className="mr-2" /> View All Products

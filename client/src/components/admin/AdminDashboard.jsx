@@ -99,7 +99,7 @@ const AdminDashboard = () => {
     {
       label: "Add New Course",
       icon: "plus",
-      link: "/admin/courses/new",
+      link: "/admin/collections/new",
       color: "indigo",
     },
     {
@@ -110,7 +110,15 @@ const AdminDashboard = () => {
     },
   ];
 
-  const totalRevenue = courses.reduce((acc, course) => acc + (course.directPayments || []).reduce((acc2, payment) => acc2 + payment.paymentAmount, 0), 0);
+  const totalRevenue = courses.reduce(
+    (acc, course) =>
+      acc +
+      (course.directPayments || []).reduce(
+        (acc2, payment) => acc2 + payment.paymentAmount,
+        0
+      ),
+    0
+  );
   console.log("Total Revenue:", totalRevenue);
   return (
     <div className="p-6">
@@ -153,7 +161,7 @@ const AdminDashboard = () => {
         {/* Total Courses Card */}
         <div
           className="bg-white p-6 rounded-lg shadow-md cursor-pointer hover:shadow-lg transition-shadow"
-          onClick={() => navigate("/admin/courses")}
+          onClick={() => navigate("/admin/collections")}
         >
           <div className="flex items-center">
             <div className="p-3 rounded-full bg-indigo-100 text-indigo-600">
@@ -239,7 +247,9 @@ const AdminDashboard = () => {
               <h3 className="text-gray-500 text-sm font-medium">
                 Total Revenue
               </h3>
-              <p className="text-2xl font-semibold text-gray-800">{totalRevenue}</p>
+              <p className="text-2xl font-semibold text-gray-800">
+                {totalRevenue}
+              </p>
             </div>
           </div>
         </div>
@@ -260,20 +270,20 @@ const AdminDashboard = () => {
               >
                 <svg
                   className="w-5 h-5 mr-2"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-                />
-              </svg>
-              {action.label}
-            </Link>
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                  />
+                </svg>
+                {action.label}
+              </Link>
             ))}
           </div>
         </div>

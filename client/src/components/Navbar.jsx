@@ -154,8 +154,8 @@ function Navbar() {
 
     try {
       setIsSearching(true);
-      // NOTE: Assuming API still uses '/courses' endpoint, even if we display "Products"
-      const response = await api.get("/courses", {
+      // NOTE: Assuming API still uses '/collections' endpoint, even if we display "Products"
+      const response = await api.get("/collections", {
         params: {
           search: trimmedQuery,
           limit: 10,
@@ -181,7 +181,7 @@ function Navbar() {
 
   const handleClientSideSearch = async (query) => {
     try {
-      const response = await api.get("/courses", { params: { limit: 50 } });
+      const response = await api.get("/collections", { params: { limit: 50 } });
       const allCourses = Array.isArray(response?.data)
         ? response?.data
         : response?.data?.data || [];
@@ -237,7 +237,7 @@ function Navbar() {
         resetSearch();
       }
     } else if (type === "category" && item._id) {
-      navigate(`/courses/category/${item._id}`);
+      navigate(`/collections/category/${item._id}`);
       resetSearch();
     }
   };

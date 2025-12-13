@@ -68,7 +68,7 @@ const PaymentForm = ({ onClose, initialData = {} }) => {
 
         // Fetch all published courses with a high limit
         const response = await api.get(
-          `/courses?isPublished=true&limit=100&page=1&all=true&fields=title,price`,
+          `/collections?isPublished=true&limit=100&page=1&all=true&fields=title,price`,
           {
             timeout: 15000, // Increased timeout for larger payload
           }

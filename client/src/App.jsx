@@ -9,7 +9,7 @@ import AdminLayout from "./components/admin/AdminLayout";
 import AdminDashboard from "./components/admin/AdminDashboard";
 import CategoriesList from "./components/admin/categories/CategoriesList";
 import ScrollToTop from "./components/ScrollToTop";
-import CoursesList from "./components/admin/courses/CoursesList";
+import CoursesList from "./components/admin/collections/CoursesList";
 import Users from "./components/admin/Users";
 import ContactsList from "./components/admin/ContactsList";
 import AdminEnrollments from "./pages/admin/Enrollments";
@@ -30,7 +30,7 @@ import FAQPage from "./pages/FAQPage";
 import ManageFAQs from "./pages/admin/ManageFAQs";
 import ImageUploadDemo from "./pages/admin/ImageUploadDemo";
 import ImageGallery from "./components/admin/ImageGallery";
-import CourseForm from "./components/admin/courses/CourseForm";
+import CourseForm from "./components/admin/collections/CourseForm";
 import MediaGallery from "./pages/admin/MediaGallery";
 import { CartProvider } from "./contexts/CartContext";
 import Profile from "./pages/user/Profile";
@@ -376,13 +376,13 @@ function App() {
               path="/admin/categories/:id/edit"
               element={<CategoryForm />}
             />
-            <Route path="/admin/courses" element={<CoursesList />} />
+            <Route path="/admin/collections" element={<CoursesList />} />
             <Route
-              path="/admin/courses/new"
+              path="/admin/collections/new"
               element={<CourseForm isEdit={false} />}
             />
             <Route
-              path="/admin/courses/:id/edit"
+              path="/admin/collections/:id/edit"
               element={<CourseForm isEdit={true} />}
             />
             <Route path="/admin/course/:id" element={<CourseDetail />} />

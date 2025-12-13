@@ -20,7 +20,7 @@ const EnrollUserModal = ({ visible, onCancel, onEnroll, userId }) => {
         setLoading(true);
 
         // Fetch courses first
-        const coursesResponse = await api.get("/courses");
+        const coursesResponse = await api.get("/collections");
         setCourses(coursesResponse.data || []);
 
         // Then fetch enrollments for the user

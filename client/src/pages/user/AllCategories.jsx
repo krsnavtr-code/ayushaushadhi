@@ -145,7 +145,7 @@ const AllCollections = () => {
           {categories.map((category) => (
             <Link
               key={category._id}
-              to={`/courses/category/${category.name
+              to={`/collections/category/${category.name
                 .toLowerCase()
                 .replace(/\s+/g, "-")}`} // Maintaining route structure
               className="group block bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-emerald-50 dark:border-gray-700 hover:shadow-xl hover:border-emerald-200 dark:hover:border-emerald-600 transition-all duration-300 overflow-hidden hover:-translate-y-1"

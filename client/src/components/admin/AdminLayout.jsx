@@ -98,7 +98,7 @@ const AdminLayout = () => {
                 LMS
               </Link>
               <Link
-                to="/admin/courses"
+                to="/admin/collections"
                 className="flex items-center px-6 py-3 text-indigo-100 hover:bg-indigo-700"
               >
                 <svg

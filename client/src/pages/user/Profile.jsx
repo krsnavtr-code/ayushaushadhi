@@ -130,7 +130,7 @@ const Profile = () => {
     }, [loadEnrollments, error]);
   
     const handleCourseClick = (courseId) => {
-      navigate(`/lms/courses/${courseId}`);
+      navigate(`/lms/collections/${courseId}`);
     };
   
   if (!authUser) {

@@ -64,8 +64,8 @@ const Career = () => {
       setLoading(true);
       
       const [jobsRes, coursesRes] = await Promise.all([
-        axios.get('/api/careers?status=Open'),
-        axios.get('/api/courses?status=published&fields=name,slug')
+        axios.get("/api/careers?status=Open"),
+        axios.get("/api/collections?status=published&fields=name,slug"),
       ]);
       
       setJobs(jobsRes.data);

@@ -101,72 +101,79 @@ const CoursesList = () => {
   const handleGeneratePdf = async (course) => {
     try {
       setGeneratingPdf(course._id);
-      
+
       // Generate and save PDF on the server
       const response = await api.post(
-        `/courses/${course._id}/generate-pdf`
+        `/collections/${course._id}/generate-pdf`
       );
-      
+
       // Update state to show download button
       const newCoursesWithPdf = new Set([...coursesWithPdf, course._id]);
       const newPdfUrls = {
         ...pdfUrls,
         [course._id]: {
           url: response.data.fileUrl,
-          filename: response.data.filename
-        }
+          filename: response.data.filename,
+        },
       };
-      
+
       // Update both states at once to minimize re-renders
       setCoursesWithPdf(newCoursesWithPdf);
       setPdfUrls(newPdfUrls);
-      
-      toast.success('PDF generated successfully. You can now download it.');
+
+      toast.success("PDF generated successfully. You can now download it.");
     } catch (error) {
-      console.error('Error generating PDF:', error);
-      toast.error(error.response?.data?.message || 'Failed to generate PDF');
+      console.error("Error generating PDF:", error);
+      toast.error(error.response?.data?.message || "Failed to generate PDF");
     } finally {
       setGeneratingPdf(null);
     }
   };
 
   const handleDeletePdf = async (course) => {
-    if (!window.confirm('Are you sure you want to delete this PDF? This action cannot be undone.')) {
+    if (
+      !window.confirm(
+        "Are you sure you want to delete this PDF? This action cannot be undone."
+      )
+    ) {
       return;
     }
 
     try {
       setDeletingPdf(course._id);
-      
+
       // Get the PDF URL from the stored URLs
       const pdfInfo = pdfUrls[course._id];
       if (!pdfInfo || !pdfInfo.url) {
-        throw new Error('PDF URL not found');
+        throw new Error("PDF URL not found");
       }
-      
+
       // Call the API to delete the PDF with the file URL in the request body
-      await api.delete(`/courses/${course._id}/pdf`, {
-        data: { fileUrl: pdfInfo.url }
+      await api.delete(`/collections/${course._id}/pdf`, {
+        data: { fileUrl: pdfInfo.url },
       });
-      
+
       // Update the local state
       const newPdfUrls = { ...pdfUrls };
       delete newPdfUrls[course._id];
-      
+
       const newCoursesWithPdf = new Set(coursesWithPdf);
       newCoursesWithPdf.delete(course._id);
-      
+
       setPdfUrls(newPdfUrls);
       setCoursesWithPdf(newCoursesWithPdf);
-      
+
       // Update localStorage
-      localStorage.setItem('pdfUrls', JSON.stringify(newPdfUrls));
-      localStorage.setItem('coursesWithPdf', JSON.stringify(Array.from(newCoursesWithPdf)));
-      
-      toast.success('PDF deleted successfully');
+      localStorage.setItem("pdfUrls", JSON.stringify(newPdfUrls));
+      localStorage.setItem(
+        "coursesWithPdf",
+        JSON.stringify(Array.from(newCoursesWithPdf))
+      );
+
+      toast.success("PDF deleted successfully");
     } catch (error) {
-      console.error('Error deleting PDF:', error);
-      toast.error(error.response?.data?.message || 'Failed to delete PDF');
+      console.error("Error deleting PDF:", error);
+      toast.error(error.response?.data?.message || "Failed to delete PDF");
     } finally {
       setDeletingPdf(null);
     }
@@ -361,7 +368,7 @@ const CoursesList = () => {
                           {course.instructor}
                         </td> */}
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                          ₹ {course.price?.toFixed(2) || '0.00'}
+                          ₹ {course.price?.toFixed(2) || "0.00"}
                         </td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm">
                           <span
@@ -388,7 +395,7 @@ const CoursesList = () => {
                         <td className="whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
                           <div className="flex items-center justify-end space-x-2">
                             <Link
-                              to={`/admin/courses/${course._id}/edit`}
+                              to={`/admin/collections/${course._id}/edit`}
                               className="text-blue-600 hover:text-blue-900"
                               title="Edit Course"
                             >
@@ -430,8 +437,8 @@ const CoursesList = () => {
                                 disabled={generatingPdf === course._id}
                                 className={`p-2 rounded-md ${
                                   generatingPdf === course._id
-                                    ? 'text-gray-400 cursor-not-allowed'
-                                    : 'text-gray-700 hover:bg-gray-100'
+                                    ? "text-gray-400 cursor-not-allowed"
+                                    : "text-gray-700 hover:bg-gray-100"
                                 }`}
                                 title="Generate PDF"
                               >
@@ -453,7 +460,7 @@ const CoursesList = () => {
           </div>
         </div>
       </div>
-      
+
       {/* Send PDF Modal */}
       {selectedCourse && (
         <SendCoursePdfModal

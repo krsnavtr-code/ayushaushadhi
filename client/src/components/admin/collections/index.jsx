@@ -11,7 +11,10 @@ const AdminCourses = () => {
           <Route index element={<CoursesList />} />
           <Route path="new" element={<CourseForm />} />
           <Route path="edit/:id" element={<CourseForm isEdit={true} />} />
-          <Route path="*" element={<Navigate to="/admin/courses" replace />} />
+          <Route
+            path="*"
+            element={<Navigate to="/admin/collections" replace />}
+          />
         </Routes>
       </div>
     </div>

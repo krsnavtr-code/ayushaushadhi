@@ -43,9 +43,13 @@ const CorporateTraining = () => {
       <div className="bg-gradient-to-r from-blue-600 to-blue-800 text-white py-16">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center">
-            <h1 className="text-4xl md:text-5xl font-bold mb-6">Corporate Training Solutions</h1>
+            <h1 className="text-4xl md:text-5xl font-bold mb-6">
+              Corporate Training Solutions
+            </h1>
             <p className="text-xl mb-8 opacity-90">
-              Empower your workforce with our comprehensive corporate training programs designed to drive business growth and employee development.
+              Empower your workforce with our comprehensive corporate training
+              programs designed to drive business growth and employee
+              development.
             </p>
             <div className="flex flex-col sm:flex-row justify-center gap-4">
               <Link
@@ -55,7 +59,7 @@ const CorporateTraining = () => {
                 Request a Demo
               </Link>
               <Link
-                to="/courses"
+                to="/collections"
                 className="bg-transparent border-2 border-white hover:bg-white hover:text-blue-700 font-semibold py-3 px-8 rounded-lg transition duration-300 inline-block"
               >
                 Browse Courses
@@ -69,10 +73,13 @@ const CorporateTraining = () => {
       <div className="py-16 bg-white dark:bg-slate-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl mx-auto text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">Why Choose Our Corporate Training?</h2>
+            <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
+              Why Choose Our Corporate Training?
+            </h2>
             <div className="w-24 h-1 bg-blue-600 mx-auto mb-8"></div>
             <p className="text-gray-600 dark:text-gray-300 text-lg">
-              We deliver high-impact training solutions that align with your business objectives and drive measurable results.
+              We deliver high-impact training solutions that align with your
+              business objectives and drive measurable results.
             </p>
           </div>
 
@@ -89,8 +96,12 @@ const CorporateTraining = () => {
               >
                 <div className="text-center">
                   {program.icon}
-                  <h3 className="text-xl font-semibold mb-2 text-gray-900 dark:text-white">{program.title}</h3>
-                  <p className="text-gray-600 dark:text-gray-300">{program.description}</p>
+                  <h3 className="text-xl font-semibold mb-2 text-gray-900 dark:text-white">
+                    {program.title}
+                  </h3>
+                  <p className="text-gray-600 dark:text-gray-300">
+                    {program.description}
+                  </p>
                 </div>
               </motion.div>
             ))}
@@ -102,9 +113,12 @@ const CorporateTraining = () => {
       <div className="bg-blue-50 dark:bg-slate-800 py-16">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">Ready to Transform Your Workforce?</h2>
+            <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">
+              Ready to Transform Your Workforce?
+            </h2>
             <p className="text-xl text-gray-600 dark:text-gray-300 mb-8">
-              Contact us today to discuss your corporate training needs and how we can help your team succeed.
+              Contact us today to discuss your corporate training needs and how
+              we can help your team succeed.
             </p>
             <Link
               to="/contact"

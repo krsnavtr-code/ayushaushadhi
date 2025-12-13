@@ -13,7 +13,7 @@ export const uploadCourseImage = async (formData) => {
             }
         });
 
-        const response = await uploadAxios.post('/courses/upload-image', formData);
+        const response = await uploadAxios.post('/collections/upload-image', formData);
         return response.data;
     } catch (error) {
         console.error('Error uploading image:', error);
@@ -42,8 +42,8 @@ export const getCourses = async (queryParams = '', isAdmin = false) => {
         // Ensure we're including all necessary fields
         params.set('fields', 'title,description,image,category,instructor,price,showOnHome,isPublished,level');
         
-        console.log('Making API request to /courses with params:', Object.fromEntries(params));
-        const response = await axios.get(`/courses?${params.toString()}`);
+        console.log('Making API request to /collections with params:', Object.fromEntries(params));
+        const response = await axios.get(`/collections?${params.toString()}`);
         
         console.log('API Response data structure:', {
             isArray: Array.isArray(response.data),
@@ -76,7 +76,7 @@ export const getCourses = async (queryParams = '', isAdmin = false) => {
 export const getCourseById = async (id) => {
     try {
         console.log(`Fetching course with ID: ${id}`);
-        const response = await axios.get(`/courses/${id}`, {
+        const response = await axios.get(`/collections/${id}`, {
             params: {
                 fields: [
                     'title', 'description', 'shortDescription', 'category', 'instructor',
@@ -272,7 +272,7 @@ export const createCourse = async (courseData) => {
         
         const response = await axios({
             method: 'post',
-            url: '/courses',
+            url: '/collections',
             data: cleanData,
             headers: {
                 'Content-Type': 'application/json',
@@ -424,7 +424,7 @@ export const updateCourse = async (id, courseData, isPartial = false) => {
         console.log('Sending cleaned data:', dataToSend);
         
         const method = isPartial ? 'patch' : 'put';
-        const response = await axios[method](`/courses/${id}`, dataToSend, {
+        const response = await axios[method](`/collections/${id}`, dataToSend, {
             headers: {
                 'Content-Type': 'application/json'
             }
@@ -446,7 +446,7 @@ export const updateCourse = async (id, courseData, isPartial = false) => {
 export const updateCourseSection = async (id, section, sectionData) => {
     try {
         console.log(`Updating course ${id} section '${section}' with data:`, sectionData);
-        const response = await axios.patch(`/courses/${id}/section/${section}`, sectionData, {
+        const response = await axios.patch(`/collections/${id}/section/${section}`, sectionData, {
             headers: {
                 'Content-Type': 'application/json'
             }
@@ -467,7 +467,7 @@ export const updateCourseSection = async (id, section, sectionData) => {
 export const deleteCourse = async (id) => {
     try {
         console.log(`Deleting course with ID: ${id}`);
-        const response = await axios.delete(`/courses/${id}`);
+        const response = await axios.delete(`/collections/${id}`);
         console.log('Course deleted successfully:', response.data);
         return response.data;
     } catch (error) {
@@ -494,7 +494,7 @@ export const getCoursesByCategory = async (categoryId = '') => {
     }
     
     // console.log('Fetching courses with params:', params);
-    const response = await axios.get('/courses', { params });
+      const response = await axios.get('/collections', { params });
     // console.log('Courses fetched successfully:', response.data);
     return response.data;
   } catch (error) {
@@ -507,7 +507,7 @@ export const getCoursesByCategory = async (categoryId = '') => {
 // Download course brochure
 export const downloadBrochure = async (courseId) => {
     try {
-        const response = await axios.get(`/courses/${courseId}/download-brochure`, {
+        const response = await axios.get(`/collections/${courseId}/download-brochure`, {
             responseType: 'blob', // Important for downloading files
         });
         
