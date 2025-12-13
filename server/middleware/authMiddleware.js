@@ -165,15 +165,6 @@ export const protect = async (req, res, next) => {
                 });
             }
             
-            // Check if user is approved (if applicable)
-            if (currentUser.isApproved === false) {
-                console.error('User account not approved:', currentUser.email);
-                return res.status(403).json({ 
-                    success: false,
-                    message: 'Your account is pending approval from the administrator.'
-                });
-            }
-            
             // Attach user to request object
             req.user = currentUser;
             console.log('User authenticated successfully:', currentUser.email);

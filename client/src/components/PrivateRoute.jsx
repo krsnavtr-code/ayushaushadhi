@@ -33,11 +33,6 @@ export default function PrivateRoute({
     return <Navigate to="/login?error=account_suspended" replace />;
   }
 
-  // Check LMS access requirements
-  if (requireLMS && currentUser?.isApproved === false) {
-    logout();
-    return <Navigate to="/login?error=not_approved" replace />;
-  }
 
   // Check admin access
   if (location.pathname.startsWith('/admin') && !isAdmin) {

@@ -21,10 +21,6 @@ const ProtectedRoute = ({ children, roles = [], requireLMSAccess = false }) => {
     return <Navigate to="/inactive-account" replace />;
   }
 
-  // Check if LMS access is required and user is approved
-  if (requireLMSAccess && !authUser.isApproved) {
-    return <Navigate to="/pending-approval" replace />;
-  }
 
   // If specific roles are required, check if user has any of them
   if (roles.length > 0 && !roles.some(role => authUser.roles?.includes(role))) {
