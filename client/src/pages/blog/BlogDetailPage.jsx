@@ -1,23 +1,24 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import SEO from "../../components/SEO";
-import { Skeleton, Button, message, Divider, Tag, Empty } from "antd";
 import {
-  CalendarOutlined,
-  UserOutlined,
-  ClockCircleOutlined,
-  TagOutlined,
-  ArrowLeftOutlined,
-  ShareAltOutlined,
-} from "@ant-design/icons";
+  FaCalendarAlt,
+  FaUser,
+  FaClock,
+  FaArrowLeft,
+  FaShareAlt,
+  FaTags,
+  FaLeaf,
+  FaExclamationCircle,
+} from "react-icons/fa";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { getBlogPostBySlug, getPostsByCategory } from "../../api/blogApi";
-import "github-markdown-css/github-markdown.css";
-import "./BlogDetailPage.css";
+import { toast } from "react-hot-toast"; // Replaced antd message with toast
+import "github-markdown-css/github-markdown.css"; // Kept as requested, though Tailwind typography is applied
 
 dayjs.extend(relativeTime);
 
@@ -38,7 +39,6 @@ export default function BlogDetailPage() {
         const response = await getBlogPostBySlug(slug);
         console.log("API Response:", response);
 
-        // Updated to handle the correct response structure
         const postData = response?.data?.post || response?.post;
 
         if (!postData) {
@@ -49,7 +49,6 @@ export default function BlogDetailPage() {
         setPost(postData);
         console.log("Post state set:", postData);
 
-        // Fetch related posts after the main post is loaded
         if (postData?.categories?.length > 0) {
           console.log(
             "Fetching related posts for category:",
@@ -77,14 +76,13 @@ export default function BlogDetailPage() {
           limit: 3,
         });
 
-        // Handle both response structures: response.data.posts and response.posts
         const relatedPosts = response?.data?.posts || response?.posts || [];
         console.log("Related posts response:", { response, relatedPosts });
 
         setRelatedPosts(Array.isArray(relatedPosts) ? relatedPosts : []);
       } catch (error) {
         console.error("Error fetching related posts:", error);
-        setRelatedPosts([]); // Ensure we always set an array, even if there's an error
+        setRelatedPosts([]);
       } finally {
         setIsRelatedLoading(false);
       }
@@ -105,7 +103,7 @@ export default function BlogDetailPage() {
         });
       } else {
         await navigator.clipboard.writeText(window.location.href);
-        message.success("Link copied to clipboard!");
+        toast.success("Link copied to clipboard!");
       }
     } catch (err) {
       console.error("Error sharing:", err);
@@ -113,38 +111,36 @@ export default function BlogDetailPage() {
   };
 
   const renderLoadingSkeleton = () => (
-    <div className="max-w-4xl mx-auto px-4 py-12">
-      <div className="mb-8">
-        <Skeleton active paragraph={{ rows: 2 }} />
+    <div className="max-w-4xl mx-auto px-4 py-12 animate-pulse">
+      <div className="mb-8 space-y-4">
+        <div className="h-4 bg-gray-200 rounded w-1/4"></div>
+        <div className="h-8 bg-gray-200 rounded w-3/4"></div>
       </div>
       <div className="mb-12">
-        <Skeleton.Image className="w-full h-96" />
+        <div className="w-full h-96 bg-gray-200 rounded-2xl"></div>
       </div>
       <div className="space-y-4">
         {[...Array(8)].map((_, i) => (
-          <Skeleton key={i} active paragraph={{ rows: 3 }} />
+          <div key={i} className="h-4 bg-gray-200 rounded w-full"></div>
         ))}
       </div>
     </div>
   );
 
   const renderErrorState = () => (
-    <div className="min-h-[70vh] flex items-center justify-center">
-      <Empty
-        description={
-          <span className="text-gray-600 dark:text-gray-400">
-            {error || "Blog post not found"}
-          </span>
-        }
-      >
-        <Button
-          type="primary"
+    <div className="min-h-[70vh] flex flex-col items-center justify-center bg-gray-50 dark:bg-gray-900">
+      <div className="text-center p-8 bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700">
+        <FaExclamationCircle className="mx-auto text-4xl text-gray-400 mb-4" />
+        <p className="text-gray-600 dark:text-gray-300 text-lg mb-6">
+          {error || "Blog post not found"}
+        </p>
+        <button
           onClick={() => navigate("/blog")}
-          className="mt-4"
+          className="px-6 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-full transition-colors font-medium"
         >
-          Back to Blog
-        </Button>
-      </Empty>
+          Back to Journal
+        </button>
+      </div>
     </div>
   );
 
@@ -174,255 +170,259 @@ export default function BlogDetailPage() {
     readingTime,
   } = post;
 
-  // Generate SEO metadata based on the blog post
-  const seoTitle = post ? `${post.title} | FirstVITE Blog` : 'Blog Post | FirstVITE';
-  const seoDescription = post?.excerpt || 'Read this article on FirstVITE';
-  const seoKeywords = post?.tags?.join(', ') || 'blog, article, education, learning';
-  const canonicalUrl = post ? `https://firstvite.com/blog/${post.slug}` : 'https://firstvite.com/blog';
+  // Generate SEO metadata
+  const seoTitle = post
+    ? `${post.title} | Ayushaushadhi Journal`
+    : "Blog Post | Ayushaushadhi";
+  const seoDescription = post?.excerpt || "Read this article on Ayushaushadhi";
+  const seoKeywords =
+    post?.tags?.join(", ") || "ayurveda, wellness, herbal, health";
+  const canonicalUrl = post
+    ? `https://ayushaushadhi.com/blog/${post.slug}`
+    : "https://ayushaushadhi.com/blog";
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <SEO 
+    <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-300">
+      <SEO
         title={seoTitle}
         description={seoDescription}
         keywords={seoKeywords}
         canonical={canonicalUrl}
         og={{
-          title: post?.title || 'FirstVITE Blog',
-          description: post?.excerpt || 'Read this article on FirstVITE',
-          type: 'article',
+          title: post?.title || "Ayushaushadhi Journal",
+          description: post?.excerpt || "Read this article on Ayushaushadhi",
+          type: "article",
           image: post?.imageUrl,
-          url: canonicalUrl
+          url: canonicalUrl,
         }}
       />
-      {/* Header with back button and share */}
-      <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-10">
+
+      {/* Sticky Navigation Header */}
+      <header className="sticky top-0 z-30 bg-white/90 dark:bg-gray-900/90 backdrop-blur-md border-b border-gray-100 dark:border-gray-800 transition-colors">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            <Button
-              type="text"
-              icon={<ArrowLeftOutlined />}
+            <button
               onClick={() => navigate("/blog")}
-              className="flex items-center text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
-              size="large"
+              className="flex items-center text-gray-600 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors font-medium"
             >
-              Back to Blog
-            </Button>
+              <FaArrowLeft className="mr-2" /> Back to Journal
+            </button>
 
-            <Button
-              type="primary"
-              icon={<ShareAltOutlined />}
+            <button
               onClick={handleShare}
-              className="flex items-center bg-blue-600 hover:bg-blue-700 border-none"
-              size="large"
+              className="flex items-center gap-2 px-4 py-2 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 rounded-full hover:bg-emerald-100 dark:hover:bg-emerald-900/50 transition-colors text-sm font-medium"
             >
-              Share Article
-            </Button>
+              <FaShareAlt /> Share
+            </button>
           </div>
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 grid grid-cols-1 lg:grid-cols-4 gap-8">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 grid grid-cols-1 lg:grid-cols-4 gap-12">
         {/* Left: Blog Content (75%) */}
         <section className="lg:col-span-3">
-          <article className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
-            {/* Keep your entire blog article section here (image, title, author, markdown, tags etc.) */}
-            <article className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
-              {/* Featured Image */}
-              {featuredImage && (
-                <div className="w-full h-96 overflow-hidden">
-                  <img
-                    src={featuredImage}
-                    alt={title}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-              )}
+          <article className="bg-white dark:bg-gray-800 rounded-3xl shadow-xl shadow-gray-200/50 dark:shadow-none border border-gray-100 dark:border-gray-700 overflow-hidden">
+            {/* Featured Image */}
+            {featuredImage && (
+              <div className="w-full h-64 md:h-[28rem] relative overflow-hidden group">
+                <img
+                  src={featuredImage}
+                  alt={title}
+                  className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+              </div>
+            )}
 
-              {/* Article Header */}
-              <div className="p-3 sm:p-6 md:p-12">
-                <div className="flex flex-wrap gap-2 mb-2">
-                  {categories?.map((category) => (
-                    <Link
-                      key={category._id}
-                      to={`/blog?category=${category.slug}`}
-                      className="inline-block"
-                    >
-                      <Tag color="blue" className="text-sm">
-                        {category.name}
-                      </Tag>
-                    </Link>
-                  ))}
-                </div>
+            {/* Article Header Info */}
+            <div className="p-6 md:p-10 border-b border-gray-100 dark:border-gray-700">
+              {/* Categories Pills */}
+              <div className="flex flex-wrap gap-2 mb-4">
+                {categories?.map((category) => (
+                  <Link
+                    key={category._id}
+                    to={`/blog?category=${category.slug}`}
+                    className="inline-block"
+                  >
+                    <span className="px-3 py-1 bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300 rounded-full text-xs font-bold uppercase tracking-wide hover:bg-amber-200 transition-colors">
+                      {category.name}
+                    </span>
+                  </Link>
+                ))}
+              </div>
 
-                <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-3">
-                  {title}
-                </h1>
+              <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white mb-6 font-serif leading-tight">
+                {title}
+              </h1>
 
-                <div className="flex flex-wrap items-center text-sm text-gray-500 dark:text-gray-400 mb-3">
-                  <div className="flex items-center mr-6 mb-2 sm:mb-0">
-                    <UserOutlined className="mr-1" />
-                    <span>{author?.name || "FirstVITE"}</span>
+              {/* Meta Data Row */}
+              <div className="flex flex-wrap items-center gap-6 text-sm text-gray-500 dark:text-gray-400">
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-full bg-emerald-100 dark:bg-emerald-900 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
+                    <FaUser size={12} />
                   </div>
-                  <div className="flex items-center mr-6 mb-2 sm:mb-0">
-                    <CalendarOutlined className="mr-1" />
-                    <time dateTime={createdAt}>
-                      {dayjs(createdAt).format("MMMM D, YYYY")}
-                    </time>
-                  </div>
-                  <div className="flex items-center">
-                    <ClockCircleOutlined className="mr-1" />
-                    <span>{Math.ceil(readingTime || 5)} min read</span>
-                  </div>
+                  <span className="font-medium text-gray-700 dark:text-gray-300">
+                    {author?.name || "AyushAyushAUSHADHI"}
+                  </span>
                 </div>
 
-                {excerpt && (
-                  <p className="text-xl text-gray-600 dark:text-gray-300 mb-3 font-medium">
+                <div className="flex items-center gap-2">
+                  <FaCalendarAlt className="text-emerald-500" />
+                  <time dateTime={createdAt}>
+                    {dayjs(createdAt).format("MMMM D, YYYY")}
+                  </time>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <FaClock className="text-emerald-500" />
+                  <span>{Math.ceil(readingTime || 5)} min read</span>
+                </div>
+              </div>
+
+              {excerpt && (
+                <div className="mt-8 pl-6 border-l-4 border-amber-400">
+                  <p className="text-xl text-gray-600 dark:text-gray-300 italic font-serif leading-relaxed">
                     {excerpt}
                   </p>
-                )}
-              </div>
+                </div>
+              )}
+            </div>
 
-              {/* Article Content */}
-              <div className="px-3 sm:px-6 md:px-12 pb-6">
-                <div className="text-gray-800 dark:text-gray-200 bg-white dark:bg-gray-800 rounded-lg shadow-sm">
-                  <ReactMarkdown
-                    remarkPlugins={[remarkGfm]}
-                    rehypePlugins={[rehypeRaw]}
-                    components={{
-                      img: ({ node, ...props }) => (
-                        <img
-                          {...props}
-                          className="rounded-lg shadow-md my-6 w-full h-auto"
-                          alt={props.alt || ""}
-                        />
-                      ),
-                      a: ({ node, ...props }) => (
-                        <a
-                          {...props}
-                          className="text-blue-600 dark:text-blue-400 hover:underline"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        />
-                      ),
-                      code: ({
-                        node,
-                        inline,
-                        className,
-                        children,
-                        ...props
-                      }) => {
-                        const match = /language-(\w+)/.exec(className || "");
-                        return !inline && match ? (
-                          <pre className="bg-white p-4 rounded-lg overflow-x-auto">
-                            <code className={className} {...props}>
-                              {children}
-                            </code>
-                          </pre>
-                        ) : (
-                          <code className="bg-white px-1.5 py-0.5 rounded text-sm">
+            {/* Article Body Content */}
+            <div className="p-6 md:p-10">
+              <div className="prose prose-lg prose-emerald dark:prose-invert max-w-none prose-headings:font-serif prose-img:rounded-xl prose-img:shadow-lg">
+                <ReactMarkdown
+                  remarkPlugins={[remarkGfm]}
+                  rehypePlugins={[rehypeRaw]}
+                  components={{
+                    img: ({ node, ...props }) => (
+                      <img
+                        {...props}
+                        className="rounded-xl shadow-md my-8 w-full h-auto"
+                        alt={props.alt || "Article Image"}
+                      />
+                    ),
+                    a: ({ node, ...props }) => (
+                      <a
+                        {...props}
+                        className="text-emerald-600 dark:text-emerald-400 hover:text-emerald-800 underline decoration-emerald-300/50 hover:decoration-emerald-600 underline-offset-2 transition-colors"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      />
+                    ),
+                    code: ({ node, inline, className, children, ...props }) => {
+                      const match = /language-(\w+)/.exec(className || "");
+                      return !inline && match ? (
+                        <pre className="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto my-6">
+                          <code className={className} {...props}>
                             {children}
                           </code>
-                        );
-                      },
-                    }}
-                  >
-                    {content}
-                  </ReactMarkdown>
-                </div>
+                        </pre>
+                      ) : (
+                        <code className="bg-gray-100 dark:bg-gray-700 px-1.5 py-0.5 rounded text-sm text-pink-600 dark:text-pink-400 font-mono">
+                          {children}
+                        </code>
+                      );
+                    },
+                  }}
+                >
+                  {content}
+                </ReactMarkdown>
               </div>
 
-              {/* Tags */}
+              {/* Footer Tags */}
               {tags?.length > 0 && (
-                <div className="px-3 sm:px-6 md:px-12 pb-6">
-                  <div className="border-t border-gray-200 dark:border-gray-700 pt-8">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <TagOutlined className="text-gray-500 mr-2" />
-                      {tags.map((tag, index) => (
-                        <Link
-                          key={index}
-                          to={`/blog?tag=${encodeURIComponent(tag)}`}
-                          className="inline-block"
-                        >
-                          <Tag className="text-sm hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
-                            {tag}
-                          </Tag>
-                        </Link>
-                      ))}
-                    </div>
+                <div className="mt-12 pt-8 border-t border-gray-100 dark:border-gray-700">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <FaTags className="text-emerald-500 mr-2" />
+                    {tags.map((tag, index) => (
+                      <Link
+                        key={index}
+                        to={`/blog?tag=${encodeURIComponent(tag)}`}
+                        className="inline-block"
+                      >
+                        <span className="px-3 py-1 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-600 dark:text-gray-300 rounded-full text-sm transition-colors cursor-pointer">
+                          #{tag}
+                        </span>
+                      </Link>
+                    ))}
                   </div>
                 </div>
               )}
-            </article>
+            </div>
           </article>
 
-          {/* Related Posts */}
+          {/* Related Posts Section */}
           {relatedPosts.length > 0 && (
-            <section className="">
-              <Divider orientation="left" className="text-xl font-semibold">
-                Related Articles
-              </Divider>
+            <section className="mt-16">
+              <div className="flex items-center gap-4 mb-8">
+                <div className="h-px bg-gray-200 dark:bg-gray-700 flex-1"></div>
+                <h3 className="text-2xl font-bold text-gray-900 dark:text-white font-serif">
+                  Related Articles
+                </h3>
+                <div className="h-px bg-gray-200 dark:bg-gray-700 flex-1"></div>
+              </div>
 
               {isRelatedLoading ? (
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   {[...Array(3)].map((_, i) => (
                     <div
                       key={i}
-                      className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden p-3 sm:p-6 md:p-12"
-                    >
-                      <Skeleton.Image className="w-full h-48" />
-                      <div className="p-6">
-                        <Skeleton active paragraph={{ rows: 2 }} />
-                      </div>
-                    </div>
+                      className="bg-white dark:bg-gray-800 rounded-xl shadow-sm h-64 animate-pulse"
+                    ></div>
                   ))}
                 </div>
               ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                   {relatedPosts.map((relatedPost) => (
                     <article
                       key={relatedPost._id}
-                      className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 p-3 sm:p-6 md:p-12"
+                      className="group bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-emerald-50 dark:border-gray-700 overflow-hidden hover:shadow-xl hover:border-emerald-200 transition-all duration-300 flex flex-col h-full hover:-translate-y-1"
                     >
-                      {relatedPost.featuredImage && (
+                      {relatedPost.featuredImage ? (
                         <Link
                           to={`/blog/${relatedPost.slug}`}
-                          className="block h-48 overflow-hidden"
+                          className="block h-48 overflow-hidden relative"
                         >
                           <img
                             src={relatedPost.featuredImage}
                             alt={relatedPost.title}
-                            className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                           />
+                          <div className="absolute inset-0 bg-black/10 group-hover:bg-black/0 transition-colors"></div>
                         </Link>
+                      ) : (
+                        <div className="h-48 bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center">
+                          <FaLeaf className="text-4xl text-emerald-300" />
+                        </div>
                       )}
-                      <div className="p-6">
-                        <div className="flex flex-wrap gap-1 mb-2">
+
+                      <div className="p-5 flex flex-col flex-grow">
+                        <div className="flex gap-2 mb-3">
                           {relatedPost.categories
-                            ?.slice(0, 2)
+                            ?.slice(0, 1)
                             .map((category) => (
-                              <Link
+                              <span
                                 key={category._id}
-                                to={`/blog?category=${category.slug}`}
-                                className="text-xs font-medium text-blue-600 dark:text-blue-400 hover:underline"
+                                className="text-[10px] font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400"
                               >
                                 {category.name}
-                              </Link>
+                              </span>
                             ))}
                         </div>
-                        <h3 className="text-lg font-semibold mb-2 line-clamp-2">
-                          <Link
-                            to={`/blog/${relatedPost.slug}`}
-                            className="text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
-                          >
+
+                        <h3 className="text-lg font-bold mb-2 font-serif leading-snug group-hover:text-emerald-700 dark:group-hover:text-emerald-400 transition-colors">
+                          <Link to={`/blog/${relatedPost.slug}`}>
                             {relatedPost.title}
                           </Link>
                         </h3>
-                        <p className="text-gray-600 dark:text-gray-300 text-sm line-clamp-2 mb-3">
+
+                        <p className="text-gray-500 dark:text-gray-400 text-sm line-clamp-2 mb-4 flex-grow">
                           {relatedPost.excerpt}
                         </p>
-                        <div className="flex items-center text-xs text-gray-500 dark:text-gray-400">
-                          <ClockCircleOutlined className="mr-1" />
+
+                        <div className="flex items-center text-xs text-gray-400 pt-4 border-t border-gray-100 dark:border-gray-700 mt-auto">
+                          <FaClock className="mr-1.5" />
                           <span>
                             {Math.ceil(relatedPost.readingTime || 5)} min read
                           </span>
@@ -434,64 +434,66 @@ export default function BlogDetailPage() {
               )}
             </section>
           )}
-
-          {/* Related Posts Full Width */}
-          {relatedPosts.length > 0 && (
-            <section className="">
-              <Divider orientation="left" className="text-xl font-semibold">
-                Related Articles
-              </Divider>
-              {/* Related Posts Grid */}
-              ...
-            </section>
-          )}
         </section>
 
         {/* Right: Sidebar (25%) */}
-        <aside className="lg:col-span-1 space-y-6">
+        <aside className="lg:col-span-1 space-y-8">
           {/* Author Info */}
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
-            <h3 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-emerald-50 dark:border-gray-700 p-6">
+            <h3 className="text-lg font-bold mb-4 text-emerald-900 dark:text-white font-serif border-b border-gray-100 dark:border-gray-700 pb-2">
               About the Author
             </h3>
-            <p className="text-gray-600 dark:text-gray-300 text-sm mb-2">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="w-12 h-12 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-700 text-xl font-serif font-bold">
+                {author?.name ? author.name.charAt(0) : "A"}
+              </div>
+              <div>
+                <p className="font-bold text-gray-900 dark:text-white">
+                  {author?.name || "Ayushaushadhi"}
+                </p>
+                <p className="text-xs text-emerald-600 dark:text-emerald-400">
+                  Wellness Expert
+                </p>
+              </div>
+            </div>
+            <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed italic">
               {author?.bio ||
-                "This author loves writing about technology, design, and web development."}
+                "Dedicated to sharing the ancient wisdom of Ayurveda for a modern, balanced lifestyle."}
             </p>
-            {/* <p className="text-sm text-gray-400">
-              Written by <strong>{author?.name || "Admin"}</strong>
-            </p> */}
           </div>
 
-          {/* Share Button */}
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 text-center">
-            <p className="text-gray-700 dark:text-gray-300 mb-4">
-              Enjoyed the post?
+          {/* Share Box */}
+          <div className="bg-gradient-to-br from-emerald-600 to-teal-700 rounded-2xl shadow-lg p-6 text-center text-white">
+            <p className="font-medium mb-4 text-emerald-50">
+              Found this helpful? Spread the wellness!
             </p>
-            <Button
-              type="primary"
-              icon={<ShareAltOutlined />}
+            <button
               onClick={handleShare}
-              className="w-full"
+              className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-white text-emerald-700 rounded-xl font-bold hover:bg-emerald-50 transition-all transform hover:-translate-y-1 shadow-md"
             >
-              Share This Post
-            </Button>
+              <FaShareAlt /> Share Article
+            </button>
           </div>
 
-          {/* Categories */}
+          {/* Categories List */}
           {categories?.length > 0 && (
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
-              <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">
-                Categories
+            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-emerald-50 dark:border-gray-700 p-6">
+              <h3 className="text-lg font-bold mb-4 text-emerald-900 dark:text-white font-serif">
+                Topics
               </h3>
               <ul className="space-y-2">
                 {categories.map((category) => (
                   <li key={category._id}>
                     <Link
                       to={`/blog?category=${category.slug}`}
-                      className="text-blue-600 dark:text-blue-400 hover:underline text-sm"
+                      className="flex justify-between items-center group"
                     >
-                      {category.name}
+                      <span className="text-gray-600 dark:text-gray-300 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors text-sm font-medium">
+                        {category.name}
+                      </span>
+                      <span className="text-gray-300 group-hover:text-emerald-400">
+                        <FaArrowLeft className="rotate-180 text-xs" />
+                      </span>
                     </Link>
                   </li>
                 ))}
@@ -499,16 +501,18 @@ export default function BlogDetailPage() {
             </div>
           )}
 
-          {/* Tags */}
+          {/* Tags Cloud */}
           {tags?.length > 0 && (
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
-              <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">
-                Tags
+            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-emerald-50 dark:border-gray-700 p-6">
+              <h3 className="text-lg font-bold mb-4 text-emerald-900 dark:text-white font-serif">
+                Trending Tags
               </h3>
               <div className="flex flex-wrap gap-2">
                 {tags.map((tag, index) => (
                   <Link key={index} to={`/blog?tag=${encodeURIComponent(tag)}`}>
-                    <Tag>{tag}</Tag>
+                    <span className="px-3 py-1 bg-gray-50 hover:bg-emerald-100 dark:bg-gray-700 dark:hover:bg-emerald-900/30 text-gray-600 dark:text-gray-300 dark:hover:text-emerald-300 rounded-lg text-xs font-medium transition-colors border border-gray-100 dark:border-gray-600">
+                      {tag}
+                    </span>
                   </Link>
                 ))}
               </div>

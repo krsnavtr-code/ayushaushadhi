@@ -2,6 +2,10 @@ import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { getCategories } from "../api/categoryApi";
 import { getCoursesByCategory } from "../api/courseApi";
+import {
+  FaChevronDown,
+  FaThLarge,
+} from "react-icons/fa";
 
 const CourseMenu = ({ isMobile = false, onItemClick = () => {} }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -11,7 +15,7 @@ const CourseMenu = ({ isMobile = false, onItemClick = () => {} }) => {
   const [activeCategory, setActiveCategory] = useState(null);
   const [categoryCourses, setCategoryCourses] = useState({});
   const [isLoadingCourses, setIsLoadingCourses] = useState({});
-  const [dropdownPosition, setDropdownPosition] = useState('bottom'); // 'top' or 'bottom'
+  const [dropdownPosition, setDropdownPosition] = useState("bottom"); // 'top' or 'bottom'
   const menuRef = useRef(null);
   const dropdownRefs = useRef({});
 
@@ -240,31 +244,25 @@ const CourseMenu = ({ isMobile = false, onItemClick = () => {} }) => {
       {/* Main Menu Button - Only show in desktop or as a toggle in mobile */}
       {!isMobile && (
         <button
+          className={`h-full flex items-center gap-2 px-4 text-sm font-semibold tracking-wide transition-colors ${
+            isOpen
+              ? "bg-emerald-800 text-amber-400"
+              : "hover:bg-emerald-800 text-white"
+          }`}
           onClick={(e) => {
             e.stopPropagation();
             setIsOpen(!isOpen);
           }}
-          className="flex items-center text-sm px-1 py-1 text-blue-900 dark:text-blue-400 hover:text-blue-600 dark:hover:text-blue-400 bg-blue-200 dark:bg-blue-900/30 rounded transition-colors duration-200 font-medium"
           aria-expanded={isOpen}
           aria-haspopup="true"
           aria-controls="course-menu-dropdown"
         >
-          <span>Course Menu</span>
-          <svg
-            className={`w-3 h-3 transition-transform duration-200 ${
-              isOpen ? "transform rotate-180" : ""
+          <FaThLarge /> SHOP BY CATEGORY{" "}
+          <FaChevronDown
+            className={`text-xs transition-transform ${
+              isOpen ? "rotate-180" : ""
             }`}
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M19 9l-7 7-7-7"
-            />
-          </svg>
+          />
         </button>
       )}
 
