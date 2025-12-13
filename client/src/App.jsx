@@ -170,7 +170,7 @@ function App() {
 
           {/* Public course routes */}
           <Route
-            path="/courses"
+            path="/collections"
             element={
               <MainLayout>
                 <CoursesByCategory />
@@ -188,7 +188,7 @@ function App() {
           />
 
           <Route
-            path="/courses/category/:categoryName"
+            path="/collections/category/:categoryName"
             element={
               <MainLayout>
                 <CoursesByCategory />
@@ -206,7 +206,7 @@ function App() {
           />
 
           <Route
-            path="/course/:id"
+            path="/collections/:id"
             element={
               <MainLayout>
                 <CourseDetail />
