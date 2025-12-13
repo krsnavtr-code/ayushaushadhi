@@ -1,81 +1,76 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
-import { useNavigate } from "react-router-dom";
 import { getCategories } from "../../api/categoryApi";
-import { getCourses, deleteCourse } from "../../api/courseApi";
+import { getCourses, deleteCourse } from "../../api/courseApi"; // Treat courses as products
 import userApi from "../../api/userApi";
 import { toast } from "react-hot-toast";
+import {
+  FaBoxOpen,
+  FaList,
+  FaUsers,
+  FaRupeeSign,
+  FaPlus,
+  FaChartLine,
+} from "react-icons/fa";
 
 const AdminDashboard = () => {
   console.log("AdminDashboard - Rendering...");
   const { currentUser } = useAuth();
   const navigate = useNavigate();
   const [categories, setCategories] = useState([]);
-  const [courses, setCourses] = useState([]);
+  const [products, setProducts] = useState([]); // Renamed courses to products
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const handleDeleteCourse = async (id) => {
-    if (window.confirm("Are you sure you want to delete this course?")) {
-      try {
-        await deleteCourse(id);
-        // Refresh the courses list after deletion
-        const response = await getCourses();
-        setCourses(response.data || []);
-        toast.success("Course deleted successfully");
-      } catch (error) {
-        console.error("Error deleting course:", error);
-        toast.error("Failed to delete course");
-      }
-    }
-  };
+  // Calculate Total Revenue (mock logic based on existing structure)
+  // Assuming 'directPayments' exists on course/product object
+  const totalRevenue = products.reduce(
+    (acc, product) =>
+      acc +
+      (product.directPayments || []).reduce(
+        (acc2, payment) => acc2 + (payment.paymentAmount || 0),
+        0
+      ),
+    0
+  );
 
   useEffect(() => {
-    console.log("AdminDashboard - useEffect running");
     const fetchData = async () => {
-      console.log("Fetching dashboard data...");
       try {
         setLoading(true);
 
-        // Fetch categories
+        // 1. Fetch Collections (Categories)
         try {
           const categoriesRes = await getCategories();
-          console.log("Categories response:", categoriesRes);
           const categoriesData = categoriesRes.data || categoriesRes || [];
           setCategories(categoriesData);
-          console.log("Processed categories:", categoriesData);
         } catch (error) {
           console.error("Error fetching categories:", error);
-          toast.error("Failed to load categories");
+          toast.error("Failed to load collections");
         }
 
-        // Fetch courses
+        // 2. Fetch Products (Courses)
         try {
-          const coursesRes = await getCourses();
-          console.log("Courses response:", coursesRes);
-          const coursesData = coursesRes.data || coursesRes || [];
-          setCourses(coursesData);
-          console.log("Processed courses:", coursesData);
+          const productsRes = await getCourses();
+          const productsData = productsRes.data || productsRes || [];
+          setProducts(productsData);
         } catch (error) {
-          console.error("Error fetching courses:", error);
-          toast.error("Failed to load courses");
+          console.error("Error fetching products:", error);
+          toast.error("Failed to load products");
         }
 
-        // Fetch users
+        // 3. Fetch Customers (Users)
         try {
           const usersRes = await userApi.getUsers();
-          console.log("Users response:", usersRes);
           const usersData = usersRes.data || usersRes || [];
           setUsers(usersData);
-          console.log("Processed users:", usersData);
         } catch (error) {
           console.error("Error fetching users:", error);
-          toast.error("Failed to load users");
+          toast.error("Failed to load customers");
         }
       } catch (error) {
         console.error("Error fetching dashboard data:", error);
-        toast.error("Failed to load dashboard data");
       } finally {
         setLoading(false);
       }
@@ -84,207 +79,203 @@ const AdminDashboard = () => {
     fetchData();
   }, []);
 
-  console.log("AdminDashboard - Render with state:", { loading, categories });
-
   if (loading) {
     return (
       <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-emerald-600"></div>
       </div>
     );
   }
 
-  // Quick Actions
+  // Quick Actions Config
   const quickActions = [
     {
-      label: "Add New Course",
-      icon: "plus",
+      label: "Add New Product",
+      icon: <FaPlus />,
       link: "/admin/collections/new",
-      color: "indigo",
+      color: "bg-emerald-100 text-emerald-700 hover:bg-emerald-200",
     },
     {
-      label: "Add New Category",
-      icon: "plus",
+      label: "Add New Collection",
+      icon: <FaPlus />,
       link: "/admin/categories/new",
-      color: "green",
+      color: "bg-amber-100 text-amber-700 hover:bg-amber-200",
     },
   ];
 
-  const totalRevenue = courses.reduce(
-    (acc, course) =>
-      acc +
-      (course.directPayments || []).reduce(
-        (acc2, payment) => acc2 + payment.paymentAmount,
-        0
-      ),
-    0
-  );
-  console.log("Total Revenue:", totalRevenue);
+  // Dashboard Stats Cards
+  const statsCards = [
+    {
+      title: "Total Products",
+      value: products.length,
+      icon: <FaBoxOpen className="w-6 h-6" />,
+      color: "bg-emerald-500",
+      link: "/admin/collections",
+    },
+    {
+      title: "Collections",
+      value: categories.length,
+      icon: <FaList className="w-6 h-6" />,
+      color: "bg-amber-500",
+      link: "/admin/categories",
+    },
+    {
+      title: "Total Customers",
+      value: users.length,
+      icon: <FaUsers className="w-6 h-6" />,
+      color: "bg-blue-500",
+      link: "/admin/users",
+    },
+    {
+      title: "Total Revenue",
+      value: `₹${totalRevenue.toLocaleString()}`,
+      icon: <FaRupeeSign className="w-6 h-6" />,
+      color: "bg-rose-500",
+      link: "/admin/payments",
+    },
+  ];
+
   return (
-    <div className="p-6">
-      <h2 className="text-2xl font-semibold text-gray-800 mb-6">
-        Dashboard Overview
-      </h2>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-        {/* Categories Card */}
-        <div
-          className="bg-white p-6 rounded-lg shadow-md cursor-pointer hover:shadow-lg transition-shadow"
-          onClick={() => navigate("/admin/categories")}
-        >
-          <div className="flex items-center">
-            <div className="p-3 rounded-full bg-green-100 text-green-600">
-              <svg
-                className="w-8 h-8"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
-                />
-              </svg>
-            </div>
-            <div className="ml-4">
-              <h3 className="text-gray-500 text-sm font-medium">Categories</h3>
-              <p className="text-2xl font-semibold text-gray-800">
-                {Array.isArray(categories) ? categories.length : 0}
-              </p>
-            </div>
-          </div>
+    <div className="p-6 max-w-7xl mx-auto">
+      {/* Header */}
+      <div className="flex justify-between items-center mb-8">
+        <div>
+          <h2 className="text-3xl font-bold text-gray-800 font-serif">
+            Store Overview
+          </h2>
+          <p className="text-gray-500 mt-1">
+            Welcome back, {currentUser?.fullname || "Admin"}. Here's what's
+            happening today.
+          </p>
         </div>
-
-        {/* Total Courses Card */}
-        <div
-          className="bg-white p-6 rounded-lg shadow-md cursor-pointer hover:shadow-lg transition-shadow"
-          onClick={() => navigate("/admin/collections")}
-        >
-          <div className="flex items-center">
-            <div className="p-3 rounded-full bg-indigo-100 text-indigo-600">
-              <svg
-                className="w-8 h-8"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
-                />
-              </svg>
-            </div>
-            <div className="ml-4">
-              <h3 className="text-gray-500 text-sm font-medium">
-                Total Courses
-              </h3>
-              <p className="text-2xl font-semibold text-gray-800">
-                {courses.length}
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* Total Students Card */}
-        <div
-          className="bg-white p-6 rounded-lg shadow-md cursor-pointer hover:shadow-lg transition-shadow"
-          onClick={() => navigate("/admin/users")}
-        >
-          <div className="flex items-center">
-            <div className="p-3 rounded-full bg-purple-100 text-purple-600">
-              <svg
-                className="w-8 h-8"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0111.357-3.182M15 21v-1a4 4 0 00-4-4H8m11-9a4 4 0 11-8 0 4 4 0 018 0z"
-                />
-              </svg>
-            </div>
-            <div className="ml-4">
-              <h3 className="text-gray-500 text-sm font-medium">
-                Total Students
-              </h3>
-              <p className="text-2xl font-semibold text-gray-800">
-                {Array.isArray(users) ? users.length : 0}
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* Total Revenue Card */}
-        <div className="bg-white p-6 rounded-lg shadow-md">
-          <div className="flex items-center">
-            <div className="p-3 rounded-full bg-purple-100 text-purple-600">
-              <svg
-                className="w-8 h-8"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
-            </div>
-            <div className="ml-4">
-              <h3 className="text-gray-500 text-sm font-medium">
-                Total Revenue
-              </h3>
-              <p className="text-2xl font-semibold text-gray-800">
-                {totalRevenue}
-              </p>
-            </div>
-          </div>
+        <div className="hidden md:block">
+          <span className="px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm text-gray-600 shadow-sm">
+            {new Date().toLocaleDateString("en-IN", {
+              weekday: "long",
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+            })}
+          </span>
         </div>
       </div>
 
-      {/* Quick Actions */}
-      <div className="flex flex-col gap-6">
-        <div className="bg-white p-6 rounded-lg shadow-md">
-          <h3 className="text-lg font-medium text-gray-900 mb-4">
-            Quick Actions
-          </h3>
-          <div className="flex flex-row space-x-3">
-            {quickActions.map((action) => (
-              <Link
-                key={action.label}
-                to={action.link}
-                className={`flex items-center p-3 rounded-md bg-${action.color}-50 text-${action.color}-700 hover:bg-${action.color}-100`}
+      {/* Stats Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+        {statsCards.map((stat, index) => (
+          <div
+            key={index}
+            onClick={() => navigate(stat.link)}
+            className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 cursor-pointer hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group"
+          >
+            <div className="flex items-center justify-between mb-4">
+              <div
+                className={`p-3 rounded-xl ${stat.color} text-white shadow-lg group-hover:scale-110 transition-transform`}
               >
-                <svg
-                  className="w-5 h-5 mr-2"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-                  />
-                </svg>
-                {action.label}
-              </Link>
+                {stat.icon}
+              </div>
+              <span className="text-xs font-semibold text-gray-400 bg-gray-50 px-2 py-1 rounded-md border border-gray-100">
+                View
+              </span>
+            </div>
+            <div>
+              <h3 className="text-gray-500 text-sm font-medium uppercase tracking-wide">
+                {stat.title}
+              </h3>
+              <p className="text-2xl font-bold text-gray-800 mt-1">
+                {stat.value}
+              </p>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Recent Activity & Quick Actions Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Quick Actions */}
+        <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 h-fit">
+          <h3 className="text-lg font-bold text-gray-800 mb-6 flex items-center gap-2">
+            <FaChartLine className="text-emerald-600" /> Quick Actions
+          </h3>
+          <div className="space-y-4">
+            {quickActions.map((action, index) => (
+              <button
+                key={index}
+                onClick={() => navigate(action.link)}
+                className={`w-full flex items-center justify-between p-4 rounded-xl transition-colors ${action.color}`}
+              >
+                <span className="font-semibold">{action.label}</span>
+                <span className="bg-white/50 p-2 rounded-full text-sm">
+                  {action.icon}
+                </span>
+              </button>
             ))}
+          </div>
+        </div>
+
+        {/* Recent Products (Placeholder for Activity) */}
+        <div className="lg:col-span-2 bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+          <div className="flex justify-between items-center mb-6">
+            <h3 className="text-lg font-bold text-gray-800">
+              Recent Inventory
+            </h3>
+            <Link
+              to="/admin/collections"
+              className="text-sm text-emerald-600 font-semibold hover:underline"
+            >
+              View All
+            </Link>
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="w-full text-left">
+              <thead>
+                <tr className="border-b border-gray-100 text-gray-400 text-xs uppercase tracking-wider">
+                  <th className="pb-3 pl-2">Product Name</th>
+                  <th className="pb-3">Category</th>
+                  <th className="pb-3">Price</th>
+                  <th className="pb-3">Status</th>
+                </tr>
+              </thead>
+              <tbody className="text-sm text-gray-600">
+                {products.slice(0, 5).map((product) => (
+                  <tr
+                    key={product._id}
+                    className="border-b border-gray-50 last:border-0 hover:bg-gray-50 transition-colors"
+                  >
+                    <td className="py-3 pl-2 font-medium text-gray-800">
+                      {product.title}
+                    </td>
+                    <td className="py-3">
+                      <span className="px-2 py-1 bg-gray-100 text-gray-600 rounded text-xs">
+                        {product.category?.name || "Uncategorized"}
+                      </span>
+                    </td>
+                    <td className="py-3 font-semibold text-emerald-700">
+                      {product.price > 0 ? `₹${product.price}` : "Free"}
+                    </td>
+                    <td className="py-3">
+                      <span
+                        className={`px-2 py-1 rounded text-xs font-bold ${
+                          product.isPublished
+                            ? "bg-green-100 text-green-700"
+                            : "bg-yellow-100 text-yellow-700"
+                        }`}
+                      >
+                        {product.isPublished ? "Live" : "Draft"}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+                {products.length === 0 && (
+                  <tr>
+                    <td colSpan="4" className="py-8 text-center text-gray-400">
+                      No products found. Start by adding one!
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
           </div>
         </div>
       </div>
