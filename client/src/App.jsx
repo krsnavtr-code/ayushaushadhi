@@ -179,7 +179,7 @@ function App() {
           />
 
           <Route
-            path="/free-courses"
+            path="/herbal-store"
             element={
               <MainLayout>
                 <FreeCourses />

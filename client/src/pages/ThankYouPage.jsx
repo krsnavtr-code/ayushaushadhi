@@ -1,6 +1,6 @@
-import React, { useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { FaCheckCircle } from 'react-icons/fa';
+import React, { useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { FaCheck, FaLeaf, FaHome } from "react-icons/fa";
 
 const ThankYouPage = () => {
   const location = useLocation();
@@ -12,39 +12,60 @@ const ThankYouPage = () => {
     if (window.gtag) {
       window.gtag("event", "conversion", {
         send_to: "AW-16986190204/pOYXCKjcwfwaEPzi0qM_",
-        transaction_id: "",
-        value: 1.0,
-        currency: "INR",
+        transaction_id: state?.conversionData?.transaction_id || "",
+        value: state?.conversionData?.value || 1.0,
+        currency: state?.conversionData?.currency || "INR",
         event_callback: function () {
           console.log("Conversion tracked on thank you page");
         },
       });
     }
-  }, []);
+  }, [state]);
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center px-4">
-      <div className="max-w-md w-full bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8 text-center">
-        <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-green-100">
-          <FaCheckCircle className="h-10 w-10 text-green-600" />
+    <div className="min-h-screen bg-emerald-50/50 dark:bg-gray-900 flex items-center justify-center px-4 relative overflow-hidden transition-colors duration-300">
+      {/* Decorative Background Elements */}
+      <FaLeaf className="absolute top-10 left-10 text-emerald-200 dark:text-emerald-900/20 text-9xl transform -rotate-45 pointer-events-none opacity-50" />
+      <FaLeaf className="absolute bottom-10 right-10 text-amber-200 dark:text-amber-900/20 text-8xl transform rotate-12 pointer-events-none opacity-50" />
+
+      <div className="max-w-md w-full bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-emerald-100 dark:border-gray-700 p-8 text-center relative z-10">
+        {/* Success Icon Animation */}
+        <div className="mx-auto flex items-center justify-center h-20 w-20 rounded-full bg-emerald-100 dark:bg-emerald-900/30 mb-6 animate-bounce">
+          <FaCheck className="h-8 w-8 text-emerald-600 dark:text-emerald-400" />
         </div>
-        <h2 className="mt-4 text-2xl font-bold text-gray-900 dark:text-white">
-          Thank You!
+
+        <h2 className="text-3xl font-bold text-emerald-900 dark:text-white font-serif mb-2">
+          Namaste!
         </h2>
-        <p className="mt-2 text-gray-600 dark:text-gray-300">
-          {state?.message || 'Your message has been sent successfully!'}
+
+        <h3 className="text-xl font-medium text-gray-800 dark:text-gray-200 mb-4">
+          Thank You
+        </h3>
+
+        <p className="text-gray-600 dark:text-gray-400 leading-relaxed mb-8">
+          {state?.message ||
+            "Your request has been received successfully. We appreciate you choosing the natural path to wellness."}
         </p>
-        <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-          We'll get back to you soon.
-        </p>
-        <div className="mt-6">
+
+        <div className="space-y-4">
           <button
-            onClick={() => navigate('/')}
-            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            onClick={() => navigate("/")}
+            className="w-full flex items-center justify-center gap-2 py-3 px-6 rounded-full shadow-lg text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition-all transform hover:-translate-y-1"
           >
-            Return to Home
+            <FaHome /> Return to Home
+          </button>
+
+          <button
+            onClick={() => navigate("/courses")}
+            className="w-full py-3 px-6 rounded-full border border-emerald-200 dark:border-gray-600 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-gray-700 transition-colors"
+          >
+            Browse More Products
           </button>
         </div>
+
+        <p className="mt-8 text-xs text-gray-400 dark:text-gray-500">
+          A confirmation email has been sent to you.
+        </p>
       </div>
     </div>
   );

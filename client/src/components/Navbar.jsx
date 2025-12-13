@@ -322,7 +322,7 @@ function Navbar() {
 
   // Updated Navigation Items for Ayurveda Store
   const navItems = [
-    { to: "/free-courses", label: "Herbal Store" }, // Renamed from Free Courses
+    { to: "/herbal-store", label: "Herbal Store" }, // Renamed from Free Courses
     ...(isAdmin ? [{ to: "/admin", label: "Admin Panel" }] : []),
   ];
 

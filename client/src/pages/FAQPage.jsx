@@ -1,7 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import SEO from '../components/SEO';
-import { getFAQs } from '../api/faqApi';
-import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
+import React, { useState, useEffect } from "react";
+import SEO from "../components/SEO";
+import { getFAQs } from "../api/faqApi";
+import {
+  FaChevronDown,
+  FaChevronUp,
+  FaLeaf,
+  FaQuestionCircle,
+} from "react-icons/fa";
 
 const FAQPage = () => {
   const [faqs, setFaqs] = useState([]);
@@ -12,22 +17,20 @@ const FAQPage = () => {
   useEffect(() => {
     const fetchFAQs = async () => {
       try {
-        console.log('Fetching FAQs...');
+        console.log("Fetching FAQs...");
+        // Ideally, this API should return product-related FAQs
         const data = await getFAQs();
-        console.log('Received FAQs data:', data);
-        
+
         if (!Array.isArray(data)) {
-          console.error('Expected an array of FAQs but got:', data);
-          setError('Invalid data format received from server');
+          setError("Invalid data format received from server");
           setFaqs([]);
           return;
         }
-        
+
         setFaqs(data);
-        console.log(`Loaded ${data.length} FAQs`);
       } catch (err) {
-        console.error('Error fetching FAQs:', err);
-        setError('Failed to load FAQs. Please try again later.');
+        console.error("Error fetching FAQs:", err);
+        setError("Failed to load FAQs. Please try again later.");
       } finally {
         setLoading(false);
       }
@@ -43,10 +46,8 @@ const FAQPage = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-16 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-4xl mx-auto">
-          <div className="flex justify-center items-center h-64">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-          </div>
+        <div className="max-w-4xl mx-auto flex justify-center h-64 items-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-emerald-600"></div>
         </div>
       </div>
     );
@@ -56,7 +57,7 @@ const FAQPage = () => {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto">
-          <div className="bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-300 p-4 rounded-lg">
+          <div className="bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-300 p-4 rounded-lg text-center border border-red-200 dark:border-red-800">
             {error}
           </div>
         </div>
@@ -65,87 +66,102 @@ const FAQPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <SEO 
-        title="Frequently Asked Questions | FirstVITE"
-        description="Find answers to common questions about our courses, payments, enrollment process, and more. Get help with your learning journey at FirstVITE."
-        keywords="FAQ, frequently asked questions, course help, payment questions, enrollment help, FirstVITE support, learning platform"
+    <div className="min-h-screen bg-emerald-50/30 dark:bg-gray-900 relative overflow-hidden transition-colors duration-300">
+      <SEO
+        title="Help Center & FAQs | Ayushaushadhi"
+        description="Find answers about our herbal products, dosage, shipping, and returns. Ayushaushadhi support."
+        keywords="ayurveda faq, herbal medicine questions, shipping help, return policy, product usage"
         og={{
-          title: 'Frequently Asked Questions | FirstVITE',
-          description: 'Get answers to common questions about our courses, payments, and learning platform. Everything you need to know about FirstVITE in one place.',
-          type: 'website'
+          title: "Frequently Asked Questions | Ayushaushadhi",
+          description:
+            "Get answers to your questions about our natural remedies and wellness products.",
+          type: "website",
         }}
       />
-      <div className="py-16 px-4 sm:px-6 lg:px-8">
 
-      <div className="max-w-4xl mx-auto">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
-            Frequently Asked Questions
-          </h1>
-          <p className="text-xl text-gray-600 dark:text-gray-300">
-            Find answers to common questions about our courses, payments, and more.
-          </p>
-        </div>
+      {/* Decorative Background */}
+      <FaLeaf className="absolute top-0 left-0 text-[15rem] text-emerald-100/50 dark:text-emerald-900/10 transform -rotate-45 -translate-x-1/3 -translate-y-1/3 pointer-events-none" />
 
-        <div className="space-y-4">
-          {faqs.length > 0 ? (
-            faqs.map((faq, index) => (
-              <div 
-                key={faq._id || faq.id} 
-                className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden"
-              >
-                <button
-                  className={`w-full px-6 py-4 text-left flex justify-between items-center focus:outline-none ${
-                    activeIndex === index 
-                      ? 'bg-blue-50 dark:bg-gray-700' 
-                      : 'hover:bg-gray-50 dark:hover:bg-gray-700'
+      <div className="py-16 px-4 sm:px-6 lg:px-8 relative z-10">
+        <div className="max-w-3xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-sm font-bold text-amber-600 dark:text-amber-500 uppercase tracking-widest mb-2">
+              Help Center
+            </h2>
+            <h1 className="text-3xl md:text-4xl font-bold text-emerald-900 dark:text-emerald-50 font-serif mb-4">
+              Frequently Asked Questions
+            </h1>
+            <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+              Everything you need to know about our products, ingredients, and
+              ordering process.
+            </p>
+          </div>
+
+          <div className="space-y-4">
+            {faqs.length > 0 ? (
+              faqs.map((faq, index) => (
+                <div
+                  key={faq._id || faq.id}
+                  className={`bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-emerald-100 dark:border-gray-700 overflow-hidden transition-all duration-300 ${
+                    activeIndex === index
+                      ? "shadow-md ring-1 ring-emerald-200 dark:ring-emerald-800"
+                      : ""
                   }`}
-                  onClick={() => toggleFAQ(index)}
                 >
-                  <span className="text-lg font-medium text-gray-900 dark:text-white">
-                    {faq.question}
-                  </span>
-                  {activeIndex === index ? (
-                    <FaChevronUp className="text-gray-500" />
-                  ) : (
-                    <FaChevronDown className="text-gray-500" />
-                  )}
-                </button>
-                {activeIndex === index && (
-                  <div className="px-6 pb-4 pt-2 text-gray-600 dark:text-gray-300">
-                    <div 
-                      className="prose dark:prose-invert max-w-none"
-                      dangerouslySetInnerHTML={{ __html: faq.answer }}
-                    />
-                  </div>
-                )}
-              </div>
-            ))
-          ) : (
-            <div className="text-center py-12">
-              <p className="text-gray-500 dark:text-gray-400">
-                No FAQs found. Please check back later.
-              </p>
-            </div>
-          )}
-        </div>
+                  <button
+                    className={`w-full px-6 py-5 text-left flex justify-between items-center focus:outline-none transition-colors ${
+                      activeIndex === index
+                        ? "bg-emerald-50 dark:bg-emerald-900/20"
+                        : "hover:bg-gray-50 dark:hover:bg-gray-700/50"
+                    }`}
+                    onClick={() => toggleFAQ(index)}
+                  >
+                    <span className="text-lg font-semibold text-emerald-900 dark:text-emerald-100 pr-8">
+                      {faq.question}
+                    </span>
+                    {activeIndex === index ? (
+                      <FaChevronUp className="text-emerald-600 flex-shrink-0" />
+                    ) : (
+                      <FaChevronDown className="text-gray-400 flex-shrink-0" />
+                    )}
+                  </button>
 
-        <div className="mt-12 text-center">
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-            Still have questions?
-          </h2>
-          <p className="text-gray-600 dark:text-gray-300 mb-6">
-            Can't find the answer you're looking for? Our support team is here to help.
-          </p>
-          <a
-            href="/contact"
-            className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-          >
-            Contact Support
-          </a>
+                  {activeIndex === index && (
+                    <div className="px-6 py-5 border-t border-emerald-100 dark:border-emerald-900/30 bg-white dark:bg-gray-800">
+                      <div
+                        className="prose prose-emerald dark:prose-invert max-w-none text-gray-600 dark:text-gray-300 leading-relaxed"
+                        dangerouslySetInnerHTML={{ __html: faq.answer }}
+                      />
+                    </div>
+                  )}
+                </div>
+              ))
+            ) : (
+              <div className="text-center py-16 bg-white dark:bg-gray-800 rounded-2xl border border-dashed border-gray-300 dark:border-gray-700">
+                <FaQuestionCircle className="mx-auto h-12 w-12 text-gray-300 mb-4" />
+                <p className="text-gray-500 dark:text-gray-400">
+                  No FAQs found at the moment.
+                </p>
+              </div>
+            )}
+          </div>
+
+          <div className="mt-16 text-center bg-amber-50 dark:bg-amber-900/10 p-8 rounded-2xl border border-amber-100 dark:border-amber-800/30">
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+              Still have questions regarding your health?
+            </h2>
+            <p className="text-gray-600 dark:text-gray-400 mb-6">
+              Our Ayurvedic experts are here to guide you towards the right
+              remedy.
+            </p>
+            <a
+              href="/contact"
+              className="inline-flex items-center px-8 py-3 border border-transparent text-base font-bold rounded-full shadow-lg text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition-all transform hover:-translate-y-1"
+            >
+              Consult an Expert
+            </a>
+          </div>
         </div>
-      </div>
       </div>
     </div>
   );

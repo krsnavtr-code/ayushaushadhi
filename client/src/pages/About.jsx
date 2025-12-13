@@ -1,291 +1,220 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import SEO from "../components/SEO";
-import { FaBookOpen, FaGraduationCap, FaUsers, FaAward } from "react-icons/fa";
+import { FaLeaf, FaFlask, FaUserMd, FaGlobeAsia } from "react-icons/fa";
 
 export default function About() {
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <SEO 
-        title="About Us | FirstVITE - Empowering Minds Through Education"
-        description="Learn about FirstVITE's mission to provide accessible, high-quality education. Discover our story, values, and the team behind our innovative e-learning platform."
-        keywords="about FirstVITE, e-learning platform, online education, learn online, FirstVITE mission, education technology, online courses, professional development"
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+      <SEO
+        title="About Us | Ayushaushadhi - Rediscovering Nature's Wisdom"
+        description="Learn about Ayushaushadhi's mission to bring authentic Ayurvedic remedies to the modern world. Discover our heritage, our commitment to purity, and our holistic wellness journey."
+        keywords="about ayushaushadhi, ayurveda story, herbal wellness, natural medicine, indian heritage, holistic health mission"
         og={{
-          title: 'About FirstVITE - Empowering Learners Worldwide',
-          description: 'Discover how FirstVITE is transforming education through accessible, high-quality online learning experiences for students everywhere.',
-          type: 'website'
+          title: "About Ayushaushadhi - Purity & Tradition",
+          description:
+            "From ancient texts to your doorstep. Discover how Ayushaushadhi creates authentic herbal remedies for a balanced life.",
+          type: "website",
         }}
       />
+
       {/* Hero Section */}
-      <section className="relative py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-blue-600 to-indigo-700 text-white">
-        <div className="max-w-7xl mx-auto text-center">
-          <h1 className="text-4xl md:text-5xl font-bold mb-6">
-            About Us – FirstVITE
+      <section className="relative py-24 px-4 sm:px-6 lg:px-8 bg-emerald-900 overflow-hidden">
+        {/* Decorative Background */}
+        <div className="absolute inset-0 opacity-10">
+          <FaLeaf className="absolute top-0 left-0 text-9xl text-white transform -rotate-45 -translate-x-1/2 -translate-y-1/2" />
+          <FaLeaf className="absolute bottom-0 right-0 text-9xl text-white transform rotate-12 translate-x-1/3 translate-y-1/3" />
+        </div>
+
+        <div className="max-w-4xl mx-auto text-center relative z-10">
+          <h1 className="text-4xl md:text-5xl font-bold text-white mb-6 font-serif">
+            Our Roots
           </h1>
-          <p className="text-xl md:text-2xl max-w-3xl mx-auto">
-            Empowering minds through knowledge and learning resources
+          <div className="w-24 h-1 bg-amber-400 mx-auto mb-8 rounded-full"></div>
+          <p className="text-xl md:text-2xl text-emerald-100 leading-relaxed font-light">
+            "Bridging the gap between ancient Vedic wisdom and modern wellness
+            needs."
           </p>
         </div>
       </section>
 
       {/* Our Story */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8">
+      <section className="py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold text-black dark:text-white mb-4">
-              Empowering Learners. Shaping Futures.
-            </h2>
-            <div className="w-20 h-1 bg-blue-600 mx-auto mb-8"></div>
-            <p className="text-lg text-black dark:text-white max-w-4xl mx-auto">
-              We believe that education should be accessible, practical, and
-              aligned with real-world needs. As a leading e-learning platform,
-              we offer high-quality certification programs, degree courses, and
-              career development tools — designed for students, graduates, and
-              working professionals seeking to stay competitive in today’s
-              fast-changing world.
-            </p>
-          </div>
-          <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold text-black dark:text-white mb-4">
-              Who We Are
-            </h2>
-            <div className="w-20 h-1 bg-blue-600 mx-auto mb-8"></div>
-            <p className="text-lg text-black dark:text-white max-w-4xl mx-auto">
-              Our journey began with a clear purpose: to bridge the gap between
-              theoretical education and industry requirements. Backed by a
-              passionate team of academic experts, corporate trainers, and
-              technology professionals, we are committed to delivering a
-              future-ready learning experience.
-            </p>
-            <p className="text-lg text-black dark:text-white max-w-4xl mx-auto mt-5">
-              We work in collaboration with recognized universities, global
-              educators, and experienced mentors to develop relevant,
-              career-focused content that supports learners at every stage of
-              their professional journey.
-            </p>
-          </div>
-          <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold text-black dark:text-white mb-4">
-              What We Offer
-            </h2>
-            <div className="w-20 h-1 bg-blue-600 mx-auto mb-8"></div>
-            <p className="text-lg text-black dark:text-white max-w-4xl mx-auto">
-              We provide a wide range of{" "}
-              <strong>online programs and skill-based training,</strong>{" "}
-              including:
-            </p>
-            <ul className="list-disc list-inside font-bold text-lg text-black dark:text-white max-w-4xl mx-auto">
-              <li>Professional Certifications & Short-Term Courses</li>
-              <li>Corporate Training & Skill Development Modules</li>
-            </ul>
-            <p className="text-lg text-black dark:text-white max-w-4xl mx-auto mt-5">
-              Every course is designed to be{" "}
-              <strong>
-                flexible, mobile-friendly, and globally recognized,
-              </strong>{" "}
-              allowing learners to study at their own pace and convenience.
-            </p>
-          </div>
-          <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold text-black dark:text-white mb-4">
-              Our Vision
-            </h2>
-            <div className="w-20 h-1 bg-blue-600 mx-auto mb-8"></div>
-            <p className="text-lg text-black dark:text-white max-w-4xl mx-auto">
-              To become a trusted learning destination for individuals and
-              professionals seeking to build skills, grow careers, and embrace
-              lifelong learning through modern education.
-            </p>
-          </div>
-          <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold text-black dark:text-white mb-4">
+            <h2 className="text-sm font-bold text-amber-600 dark:text-amber-500 uppercase tracking-widest mb-2">
               Our Mission
             </h2>
-            <div className="w-20 h-1 bg-blue-600 mx-auto mb-8"></div>
-            <ul className="list-disc list-none list-inside text-lg text-black dark:text-white max-w-4xl mx-auto">
-              <li>
-                Make{" "}
-                <strong>quality education accessible and affordable</strong>
-              </li>
-              <li>
-                Promote{" "}
-                <strong>career-centric, industry-relevant skills</strong>
-              </li>
-              <li>
-                Offer flexible programs that suit different learning needs
-              </li>
-              <li>
-                Empower learners to{" "}
-                <strong> achieve career success and personal growth</strong>
-              </li>
-            </ul>
-          </div>
-          <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold text-black dark:text-white mb-4">
-              Focused on Learner Success
+            <h2 className="text-3xl md:text-4xl font-bold text-emerald-900 dark:text-emerald-50 mb-6 font-serif">
+              Healing with Nature, Backed by Science
             </h2>
-            <div className="w-20 h-1 bg-blue-600 mx-auto mb-8"></div>
-            <p className="text-lg text-black dark:text-white max-w-4xl mx-auto">
-              Each learner’s journey is unique, and our platform is designed to
-              support that:
-            </p>
-            <ul className="list-disc list-none list-inside text-lg text-black dark:text-white max-w-4xl mx-auto">
-              <li>Interactive Learning Modules</li>
-              <li>Live Webinars & Mentorship Sessions</li>
-              <li>Placement Assistance & Interview Prep</li>
-              <li>Progress Tracking & Certification</li>
-            </ul>
-          </div>
-          <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold text-black dark:text-white mb-4">
-              Trusted by Thousands
-            </h2>
-            <div className="w-20 h-1 bg-blue-600 mx-auto mb-8"></div>
-            <p className="text-lg text-black dark:text-white max-w-4xl mx-auto">
-              With a growing base of satisfied learners across India and beyond,
-              we have built a platform that is trusted by students, working
-              professionals, and even corporate clients. Whether you're looking
-              to upskill, change careers, or prepare for the future, we’re here
-              to guide you every step of the way.
+            <p className="text-lg text-gray-700 dark:text-gray-300 max-w-4xl mx-auto leading-relaxed">
+              We believe that true wellness comes from balance. Ayushaushadhi
+              was born from a desire to make authentic, chemical-free Ayurvedic
+              remedies accessible to everyone. In a world full of synthetic
+              supplements, we return to the roots—using potent herbs,
+              traditional formulation methods (Bhavana), and rigorous quality
+              testing.
             </p>
           </div>
-          <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold text-black dark:text-white mb-4">
-              Let’s Learn, Grow & Succeed Together
-            </h2>
-            <div className="w-20 h-1 bg-blue-600 mx-auto mb-8"></div>
-            <p className="text-lg text-black dark:text-white max-w-4xl mx-auto">
-              Education is more than just a certificate — it's a pathway to
-              opportunity. Begin your learning journey with us today and take
-              one step closer to achieving your professional and personal goals.
-            </p>
+
+          <div className="grid md:grid-cols-2 gap-12 items-center mb-24">
+            <div className="space-y-6">
+              <h3 className="text-2xl font-bold text-gray-900 dark:text-white font-serif">
+                Who We Are
+              </h3>
+              <div className="w-16 h-1 bg-emerald-500 rounded-full"></div>
+              <p className="text-lg text-gray-600 dark:text-gray-300">
+                Our journey began with a simple observation: the modern
+                lifestyle has disconnected us from nature. Backed by a
+                passionate team of Ayurvedic Vaidyas, botanists, and wellness
+                experts, we are committed to delivering a holistic health
+                experience.
+              </p>
+              <p className="text-lg text-gray-600 dark:text-gray-300">
+                We work directly with organic farmers to source the purest
+                Ashwagandha, Tulsi, Giloy, and other vital herbs, ensuring that
+                every product you receive carries the pristine energy of the
+                earth.
+              </p>
+            </div>
+            <div className="relative">
+              <div className="absolute inset-0 bg-emerald-200 dark:bg-emerald-900 rounded-2xl transform rotate-3"></div>
+              <img
+                src="https://images.unsplash.com/photo-1600609842388-3e4b7c8d9e2a?q=80&w=2070&auto=format&fit=crop"
+                alt="Herbal Preparation"
+                className="relative rounded-2xl shadow-xl w-full object-cover h-80"
+              />
+            </div>
           </div>
-          {/* Features */}
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
+
+          {/* Features Grid */}
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-24">
             {[
               {
-                icon: <FaBookOpen className="text-4xl text-blue-600 mb-4" />,
-                title: "Wide Selection",
+                icon: (
+                  <FaLeaf className="text-4xl text-emerald-600 dark:text-emerald-400 mb-4" />
+                ),
+                title: "100% Natural",
                 description:
-                  "Thousands of books across various subjects and disciplines.",
+                  "No parabens, sulfates, or synthetic fillers. Just pure herbs.",
               },
               {
                 icon: (
-                  <FaGraduationCap className="text-4xl text-blue-600 mb-4" />
+                  <FaUserMd className="text-4xl text-emerald-600 dark:text-emerald-400 mb-4" />
                 ),
-                title: "Expert Educators",
+                title: "Vaidya Approved",
                 description:
-                  "Learn from industry professionals and experienced educators.",
+                  "Formulations crafted by experienced Ayurvedic doctors.",
               },
               {
-                icon: <FaUsers className="text-4xl text-blue-600 mb-4" />,
-                title: "Community",
-                description: "Join a growing community of passionate learners.",
+                icon: (
+                  <FaFlask className="text-4xl text-emerald-600 dark:text-emerald-400 mb-4" />
+                ),
+                title: "Lab Tested",
+                description:
+                  "Rigorous quality checks for safety, purity, and potency.",
               },
               {
-                icon: <FaAward className="text-4xl text-blue-600 mb-4" />,
-                title: "Quality Content",
+                icon: (
+                  <FaGlobeAsia className="text-4xl text-emerald-600 dark:text-emerald-400 mb-4" />
+                ),
+                title: "Sustainable",
                 description:
-                  "Carefully curated content to ensure the best learning experience.",
+                  "Eco-friendly packaging and ethical sourcing practices.",
               },
             ].map((feature, index) => (
               <div
                 key={index}
-                className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md text-center"
+                className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-sm border border-emerald-50 dark:border-gray-700 text-center hover:-translate-y-2 transition-transform duration-300"
               >
                 <div className="flex justify-center">{feature.icon}</div>
-                <h3 className="text-xl font-semibold mb-2 text-black dark:text-white">
+                <h3 className="text-xl font-bold mb-3 text-gray-900 dark:text-white font-serif">
                   {feature.title}
                 </h3>
-                <p className="text-black dark:text-white">
+                <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
                   {feature.description}
                 </p>
               </div>
             ))}
           </div>
+
           {/* Team Section */}
-          <div className="text-center">
-            <h2 className="text-3xl font-bold text-black dark:text-white mb-4">
-              Our Team
+          <div className="text-center mb-16">
+            <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-6 font-serif">
+              The People Behind the Purity
             </h2>
-            <div className="w-20 h-1 bg-blue-600 mx-auto mb-12"></div>
+            <div className="w-20 h-1 bg-amber-400 mx-auto mb-12 rounded-full"></div>
+
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {[
                 {
-                  name: "Sachin Sharma",
-                  role: "SEO Expert",
-                  bio: "Experienced SEO strategist helping educational platforms rank higher and reach the right audience.",
-                  image: "/images/team-1.jpg",
+                  name: "Dr. Rajesh Sharma",
+                  role: "Chief Ayurveda Consultant",
+                  bio: "30+ years of clinical experience in Nadi Pariksha and Panchakarma therapies.",
+                  image: "https://randomuser.me/api/portraits/men/32.jpg",
                 },
                 {
-                  name: "Krishna Avtar",
-                  role: "Developer",
-                  bio: "Full-stack developer with a strong focus on building scalable and secure learning platforms.",
-                  image: "/images/team-5.jpg",
+                  name: "Priya Singh",
+                  role: "Head of Formulation",
+                  bio: "Botanist specializing in preserving herbal potency through traditional extraction methods.",
+                  image: "https://randomuser.me/api/portraits/women/44.jpg",
                 },
                 {
-                  name: "Ritik Kumar",
-                  role: "Content Writer",
-                  bio: "Crafts compelling educational content that simplifies complex concepts for learners of all ages.",
-                  image: "/images/team-3.jpg",
-                },
-                {
-                  name: "Sudev Mohan",
-                  role: "Designer",
-                  bio: "Passionate UI/UX designer focused on creating intuitive and visually appealing e-learning interfaces.",
-                  image: "/images/team-4.jpg",
-                },
-                {
-                  name: "Kiran Rawat",
-                  role: "SEO Team",
-                  bio: "Optimizes website visibility through data-driven SEO practices tailored for the education sector.",
-                  image: "/images/team-2.jpg",
-                },
-                {
-                  name: "Mohit Rajput",
-                  role: "Content Writer",
-                  bio: "Specializes in writing impactful content that enhances user engagement in digital education platforms.",
-                  image: "/images/team-6.jpg",
+                  name: "Amit Verma",
+                  role: "Supply Chain Manager",
+                  bio: "Ensures ethical sourcing from certified organic farms across the Himalayas.",
+                  image: "https://randomuser.me/api/portraits/men/45.jpg",
                 },
               ].map((member, index) => (
                 <div
                   key={index}
-                  className="bg-white dark:bg-gray-800 rounded-lg overflow-hidden shadow-md"
+                  className="bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-lg transition-shadow"
                 >
                   <img
                     src={member.image}
                     alt={member.name}
-                    className="w-full h-64 object-cover"
+                    className="w-full h-64 object-cover filter grayscale hover:grayscale-0 transition-all duration-500"
                   />
                   <div className="p-6">
-                    <h3 className="text-xl font-semibold text-black dark:text-white">
+                    <h3 className="text-xl font-bold text-emerald-900 dark:text-white mb-1">
                       {member.name}
                     </h3>
-                    <p className="text-blue-600 mb-3">{member.role}</p>
-                    <p className="text-black dark:text-white">{member.bio}</p>
+                    <p className="text-amber-600 dark:text-amber-500 font-medium text-sm mb-4 uppercase tracking-wide">
+                      {member.role}
+                    </p>
+                    <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed">
+                      {member.bio}
+                    </p>
                   </div>
                 </div>
               ))}
             </div>
           </div>
+
           {/* CTA Section */}
-          <div className="mt-20 bg-blue-900 rounded-xl p-8 text-center">
-            <h2 className="text-2xl font-bold text-white dark:text-white mb-4">
-              Ready to start learning?
+          <div className="mt-24 bg-gradient-to-r from-emerald-800 to-teal-900 rounded-3xl p-10 md:p-16 text-center shadow-2xl relative overflow-hidden">
+            {/* Decorative Overlay */}
+            <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-5 rounded-full blur-3xl transform translate-x-1/2 -translate-y-1/2"></div>
+
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-6 font-serif relative z-10">
+              Ready to Embrace a Healthier Life?
             </h2>
-            <p className="text-white dark:text-white mb-6 max-w-2xl mx-auto">
-              Join thousands of students who are already advancing their careers
-              with our courses.
+            <p className="text-emerald-100 mb-8 max-w-2xl mx-auto text-lg relative z-10">
+              Join thousands of others who have found relief and vitality
+              through our natural remedies.
             </p>
             <Link
               to="/courses"
-              className="inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-lg transition duration-300"
+              className="inline-block bg-amber-400 hover:bg-amber-500 text-emerald-900 font-bold py-4 px-10 rounded-full shadow-lg transition-transform hover:-translate-y-1 relative z-10"
             >
-              Browse Courses
+              Shop Herbal Collection
             </Link>
           </div>
-          <p className="text-center text-lg text-black dark:text-white mt-12">
-            Welcome to FirstVITE — your partner in skill-building and success.
+
+          <p className="text-center text-lg text-gray-500 dark:text-gray-400 mt-12 font-serif italic">
+            "Health is not just the absence of disease, but the harmony of mind,
+            body, and spirit."
           </p>
         </div>
       </section>

@@ -10,10 +10,10 @@ import {
   FaTwitter,
   FaInstagram,
   FaLinkedin,
+  FaLeaf,
 } from "react-icons/fa";
 import { toast } from "react-toastify";
 import { submitContactForm } from "../api/contactApi";
-import { getCourses } from "../api/courseApi";
 import { Link } from "react-router-dom";
 
 export default function Contact() {
@@ -22,84 +22,27 @@ export default function Contact() {
     email: "",
     phone: "",
     message: "",
-    courseInterest: "", // Changed from array to single value
-    courseInterests: [], // Keeping for backward compatibility
+    subject: "General Inquiry", // Replaced courseInterest with a generic subject
     agreedToTerms: false,
   });
-
-  const [courses, setCourses] = useState([]);
-  const [isLoadingCourses, setIsLoadingCourses] = useState(true);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
 
-  // Fetch courses from API
-  useEffect(() => {
-    const fetchCourses = async () => {
-      try {
-        console.log("Fetching courses...");
-        const response = await getCourses("", false); // Empty string for category to get all courses, false for published only
-        console.log("Courses API response:", response);
-
-        // Check different possible response structures
-        let coursesData = [];
-
-        if (Array.isArray(response)) {
-          // If response is directly an array
-          coursesData = response;
-        } else if (response && Array.isArray(response.data)) {
-          // If response has a data property that's an array
-          coursesData = response.data;
-        } else if (
-          response &&
-          response.success &&
-          Array.isArray(response.data)
-        ) {
-          // If response has success and data properties
-          coursesData = response.data;
-        }
-
-        if (coursesData.length > 0) {
-          // Map the API response to match the expected format
-          const formattedCourses = coursesData.map((course) => ({
-            id: course._id || course.id,
-            name: course.title || course.name || "Untitled Course",
-          }));
-
-          console.log("Formatted courses:", formattedCourses);
-          setCourses(formattedCourses);
-        } else {
-          console.warn("No courses found in the response");
-          setCourses([]);
-        }
-      } catch (error) {
-        console.error("Error fetching courses:", error);
-        toast.error(
-          "Failed to load course options. " +
-            (error.response?.data?.message || "")
-        );
-      } finally {
-        setIsLoadingCourses(false);
-      }
-    };
-
-    fetchCourses();
-  }, []);
+  // Inquiry options for an e-commerce store
+  const inquiryTypes = [
+    "Product Inquiry",
+    "Order Status",
+    "Consultation with Vaidya",
+    "Wholesale/Distribution",
+    "Other",
+  ];
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value, type, checked } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: value,
-    }));
-  };
-
-  // Keeping handleCheckboxChange for backward compatibility
-  const handleCheckboxChange = (courseId) => {
-    setFormData((prev) => ({
-      ...prev,
-      courseInterest: courseId,
-      courseInterests: [courseId], // Maintain compatibility with existing code
+      [name]: type === "checkbox" ? checked : value,
     }));
   };
 
@@ -124,7 +67,7 @@ export default function Contact() {
         email: "",
         phone: "",
         message: "",
-        courseInterests: [],
+        subject: "General Inquiry",
         agreedToTerms: false,
       });
 
@@ -134,6 +77,8 @@ export default function Contact() {
       });
     } catch (error) {
       console.error("Error submitting form:", error);
+      // For demo purposes, we can simulate success if API fails (optional)
+      // setIsSuccess(true);
       toast.error(
         error.response?.data?.message ||
           "Failed to send message. Please try again.",
@@ -148,295 +93,300 @@ export default function Contact() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
       <SEO
-        title="Contact Us | FirstVITE - Get in Touch"
-        description="Have questions? Contact the FirstVITE team today. We're here to help with any inquiries about our courses, enrollment process, or technical support."
-        keywords="contact FirstVITE, support, help, inquiry, course information, customer service, email, phone, address"
+        title="Contact Us | Ayushaushadhi - Wellness Support"
+        description="Have questions about our herbal products? Contact the Ayushaushadhi team for consultations, order support, or general inquiries."
+        keywords="contact ayushaushadhi, ayurveda support, herbal consultation, customer service, email, phone"
         og={{
-          title: "Contact FirstVITE - We're Here to Help",
+          title: "Contact Ayushaushadhi - We're Here to Help",
           description:
-            "Get in touch with our team for any questions about our courses, enrollment, or support. We look forward to hearing from you!",
+            "Get in touch with our wellness experts for any questions about our products or your health journey.",
           type: "website",
         }}
       />
-      <div className="py-16 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          {/* Page Header */}
-          <div className="text-center mb-16">
-            <h1 className="text-4xl font-bold text-black dark:text-white mb-4">
-              Contact Us
-            </h1>
-            <div className="w-20 h-1 bg-blue-600 mx-auto mb-6"></div>
-            <p className="text-lg text-black dark:text-white max-w-3xl mx-auto">
-              Have questions or feedback? We'd love to hear from you. Fill out
-              the form below or reach out to us directly.
-            </p>
-          </div>
-          <div className="w-20 h-1 bg-blue-600 mx-auto mb-6"></div>
-          <p className="text-lg text-black dark:text-white max-w-3xl mx-auto">
-            Have questions or feedback? We'd love to hear from you. Fill out the
-            form below or reach out to us directly.
+
+      {/* Header Banner */}
+      <div className="relative bg-emerald-900 py-16 overflow-hidden">
+        <div className="absolute inset-0 opacity-10">
+          <FaLeaf className="text-9xl text-white absolute -top-10 -left-10 transform -rotate-45" />
+          <FaLeaf className="text-9xl text-white absolute -bottom-10 -right-10 transform rotate-12" />
+        </div>
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h1 className="text-4xl font-bold text-white mb-4 font-serif">
+            Contact Us
+          </h1>
+          <div className="w-20 h-1 bg-amber-400 mx-auto mb-6 rounded-full"></div>
+          <p className="text-lg text-emerald-100 max-w-2xl mx-auto">
+            Whether you need guidance on choosing the right herb or have a
+            question about your order, our dedicated team is here to assist you
+            on your path to wellness.
           </p>
         </div>
+      </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-          {/* Contact Information */}
-          <div className="space-y-8">
-            <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
-              <h2 className="text-2xl font-semibold text-black dark:text-white mb-6">
-                Get in Touch
-              </h2>
+      <div className="py-16 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+            {/* Contact Information & Socials */}
+            <div className="space-y-8">
+              <div className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-sm border border-emerald-50 dark:border-gray-700">
+                <h2 className="text-2xl font-bold text-emerald-900 dark:text-emerald-100 mb-8 font-serif">
+                  Get in Touch
+                </h2>
 
-              <div className="space-y-6">
-                <div className="flex items-start">
-                  <div className="flex-shrink-0 bg-blue-100 dark:bg-blue-900 p-3 rounded-full">
-                    <FaMapMarkerAlt className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+                <div className="space-y-8">
+                  <div className="flex items-start">
+                    <div className="flex-shrink-0 bg-emerald-100 dark:bg-emerald-900/30 p-3 rounded-xl">
+                      <FaMapMarkerAlt className="h-6 w-6 text-emerald-600 dark:text-emerald-400" />
+                    </div>
+                    <div className="ml-5">
+                      <h3 className="text-lg font-bold text-gray-900 dark:text-white">
+                        Headquarters
+                      </h3>
+                      <p className="mt-1 text-gray-600 dark:text-gray-300 leading-relaxed">
+                        H-161 BSI Business Park, Sector-63
+                        <br />
+                        Noida, Gautam Budh Nagar, UP - 201301
+                      </p>
+                    </div>
                   </div>
-                  <div className="ml-4">
-                    <h3 className="text-lg font-medium text-black dark:text-white">
-                      Address
-                    </h3>
-                    <p className="mt-1 text-gray-600 dark:text-gray-300">
-                      H-161 BSI Sector-63 Noida Gautam Budh Nagar <br /> Uttar
-                      Pradesh 201301
-                    </p>
+
+                  <div className="flex items-start">
+                    <div className="flex-shrink-0 bg-emerald-100 dark:bg-emerald-900/30 p-3 rounded-xl">
+                      <FaPhone className="h-6 w-6 text-emerald-600 dark:text-emerald-400" />
+                    </div>
+                    <div className="ml-5">
+                      <h3 className="text-lg font-bold text-gray-900 dark:text-white">
+                        Phone Support
+                      </h3>
+                      <p className="mt-1 text-gray-600 dark:text-gray-300">
+                        <a
+                          href="tel:+919990056799"
+                          className="hover:text-emerald-600 transition-colors"
+                        >
+                          +91 9990056799
+                        </a>
+                        <br />
+                        <span className="text-sm text-gray-500">
+                          Mon - Sat, 9:00 AM - 6:00 PM
+                        </span>
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start">
+                    <div className="flex-shrink-0 bg-emerald-100 dark:bg-emerald-900/30 p-3 rounded-xl">
+                      <FaEnvelope className="h-6 w-6 text-emerald-600 dark:text-emerald-400" />
+                    </div>
+                    <div className="ml-5">
+                      <h3 className="text-lg font-bold text-gray-900 dark:text-white">
+                        Email Us
+                      </h3>
+                      <p className="mt-1 text-gray-600 dark:text-gray-300">
+                        <a
+                          href="mailto:info@ayushaushadhi.com"
+                          className="hover:text-emerald-600 transition-colors"
+                        >
+                          info@ayushaushadhi.com
+                        </a>
+                        <br />
+                        <span className="text-sm text-gray-500">
+                          We respond within 24 hours
+                        </span>
+                      </p>
+                    </div>
                   </div>
                 </div>
+              </div>
 
-                <div className="flex items-start">
-                  <div className="flex-shrink-0 bg-blue-100 dark:bg-blue-900 p-3 rounded-full">
-                    <FaPhone className="h-6 w-6 text-blue-600 dark:text-blue-400" />
-                  </div>
-                  <div className="ml-4">
-                    <h3 className="text-lg font-medium text-black dark:text-white">
-                      Phone
-                    </h3>
-                    <p className="mt-1 text-gray-600 dark:text-gray-300">
-                      +91 9990056799
-                      <br />
-                      Mon - Fri, 9:00 AM - 6:00 PM
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-start">
-                  <div className="flex-shrink-0 bg-blue-100 dark:bg-blue-900 p-3 rounded-full">
-                    <FaEnvelope className="h-6 w-6 text-blue-600 dark:text-blue-400" />
-                  </div>
-                  <div className="ml-4">
-                    <h3 className="text-lg font-medium text-black dark:text-white">
-                      Email
-                    </h3>
-                    <p className="mt-1 text-black dark:text-white">
-                      info@firstvite.com
-                      <br />
-                      We'll respond within 24 hours
-                    </p>
-                  </div>
+              <div className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-sm border border-emerald-50 dark:border-gray-700">
+                <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-6">
+                  Follow Our Journey
+                </h2>
+                <div className="flex space-x-4">
+                  {[
+                    {
+                      name: "Facebook",
+                      icon: FaFacebook,
+                      color: "text-blue-600",
+                    },
+                    {
+                      name: "Twitter",
+                      icon: FaTwitter,
+                      color: "text-blue-400",
+                    },
+                    {
+                      name: "Instagram",
+                      icon: FaInstagram,
+                      color: "text-pink-600",
+                    },
+                    {
+                      name: "LinkedIn",
+                      icon: FaLinkedin,
+                      color: "text-blue-700",
+                    },
+                  ].map((social) => {
+                    const Icon = social.icon;
+                    return (
+                      <a
+                        key={social.name}
+                        href={`#${social.name.toLowerCase()}`}
+                        className={`p-3 rounded-full bg-gray-50 dark:bg-gray-700 ${social.color} hover:bg-gray-100 dark:hover:bg-gray-600 transition-all transform hover:-translate-y-1`}
+                        aria-label={social.name}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <Icon className="h-6 w-6" />
+                      </a>
+                    );
+                  })}
                 </div>
               </div>
             </div>
 
-            <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
-              <h2 className="text-xl font-semibold text-black dark:text-white mb-4">
-                Follow Us
+            {/* Contact Form */}
+            <div className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-lg border-t-4 border-emerald-500">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+                Send us a Message
               </h2>
-              <div className="flex space-x-4">
-                {[
-                  {
-                    name: "Facebook",
-                    icon: FaFacebook,
-                    color: "text-blue-600",
-                  },
-                  { name: "Twitter", icon: FaTwitter, color: "text-blue-400" },
-                  {
-                    name: "Instagram",
-                    icon: FaInstagram,
-                    color: "text-pink-500",
-                  },
-                  {
-                    name: "LinkedIn",
-                    icon: FaLinkedin,
-                    color: "text-blue-700",
-                  },
-                ].map((social) => {
-                  const Icon = social.icon;
-                  return (
-                    <a
-                      key={social.name}
-                      href={`#${social.name.toLowerCase()}`}
-                      className={`${social.color} hover:opacity-80 transition-opacity`}
-                      aria-label={social.name}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      <span className="sr-only">{social.name}</span>
-                      <Icon className="h-6 w-6" aria-hidden="true" />
-                    </a>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
+              <p className="text-gray-500 dark:text-gray-400 mb-8 text-sm">
+                Fill out the form below and we will get back to you shortly.
+              </p>
 
-          {/* Contact Form */}
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
-            <h2 className="text-2xl font-semibold text-black dark:text-white mb-6">
-              Send us a Message
-            </h2>
-
-            {isSuccess ? (
-              <div className="text-center py-12">
-                <FaCheckCircle className="mx-auto h-16 w-16 text-green-500 mb-4" />
-                <h3 className="text-xl font-medium text-black dark:text-white mb-2">
-                  Message Sent Successfully!
-                </h3>
-                <p className="text-black dark:text-white mb-6">
-                  Thank you for contacting us. We'll get back to you soon.
-                </p>
-                <button
-                  onClick={() => setIsSuccess(false)}
-                  className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                >
-                  Send Another Message
-                </button>
-              </div>
-            ) : (
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div>
-                  <label
-                    htmlFor="name"
-                    className="block text-sm font-medium text-black dark:text-white mb-1"
+              {isSuccess ? (
+                <div className="text-center py-12 bg-emerald-50 dark:bg-emerald-900/20 rounded-xl">
+                  <FaCheckCircle className="mx-auto h-16 w-16 text-emerald-500 mb-4 animate-bounce" />
+                  <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+                    Message Sent Successfully!
+                  </h3>
+                  <p className="text-gray-600 dark:text-gray-300 mb-6 px-4">
+                    Thank you for contacting us. Our team will review your
+                    inquiry and respond soon.
+                  </p>
+                  <button
+                    onClick={() => setIsSuccess(false)}
+                    className="inline-flex items-center px-6 py-3 border border-transparent text-sm font-bold rounded-full shadow-md text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition-colors"
                   >
-                    Full Name <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    id="name"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleChange}
-                    required
-                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
-                    placeholder="Your name"
-                  />
+                    Send Another Message
+                  </button>
                 </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              ) : (
+                <form onSubmit={handleSubmit} className="space-y-6">
                   <div>
                     <label
-                      htmlFor="email"
-                      className="block text-sm font-medium text-black dark:text-white mb-1"
+                      htmlFor="name"
+                      className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2"
                     >
-                      Email <span className="text-red-500">*</span>
+                      Full Name <span className="text-red-500">*</span>
                     </label>
                     <input
-                      type="email"
-                      id="email"
-                      name="email"
-                      value={formData.email}
+                      type="text"
+                      id="name"
+                      name="name"
+                      value={formData.name}
                       onChange={handleChange}
                       required
-                      className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
-                      placeholder="your.email@example.com"
+                      className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 dark:bg-gray-700 dark:text-white outline-none transition-all"
+                      placeholder="Your name"
                     />
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <label
+                        htmlFor="email"
+                        className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2"
+                      >
+                        Email <span className="text-red-500">*</span>
+                      </label>
+                      <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        value={formData.email}
+                        onChange={handleChange}
+                        required
+                        className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 dark:bg-gray-700 dark:text-white outline-none transition-all"
+                        placeholder="you@example.com"
+                      />
+                    </div>
+
+                    <div>
+                      <label
+                        htmlFor="phone"
+                        className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2"
+                      >
+                        Phone Number
+                      </label>
+                      <input
+                        type="tel"
+                        id="phone"
+                        name="phone"
+                        value={formData.phone}
+                        onChange={handleChange}
+                        className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 dark:bg-gray-700 dark:text-white outline-none transition-all"
+                        placeholder="+91 98765 43210"
+                      />
+                    </div>
                   </div>
 
                   <div>
                     <label
-                      htmlFor="phone"
-                      className="block text-sm font-medium text-black dark:text-white mb-1"
+                      htmlFor="subject"
+                      className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2"
                     >
-                      Phone Number
+                      Subject
                     </label>
-                    <input
-                      type="tel"
-                      id="phone"
-                      name="phone"
-                      value={formData.phone}
-                      onChange={handleChange}
-                      className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
-                      placeholder="+91 8080808080"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label
-                    htmlFor="courseInterest"
-                    className="block text-sm font-medium text-black dark:text-white mb-1"
-                  >
-                    I'm interested in: (Optional)
-                  </label>
-                  {isLoadingCourses ? (
                     <div className="relative">
                       <select
-                        id="courseInterest"
-                        name="courseInterest"
-                        disabled
-                        className="mt-1 block w-full pl-3 pr-10 py-2 text-base border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400"
-                      >
-                        <option>Loading courses...</option>
-                      </select>
-                      <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
-                      </div>
-                    </div>
-                  ) : courses.length > 0 ? (
-                    <div className="mt-1">
-                      <select
-                        id="courseInterest"
-                        name="courseInterest"
-                        value={formData.courseInterest}
+                        id="subject"
+                        name="subject"
+                        value={formData.subject}
                         onChange={(e) =>
                           setFormData((prev) => ({
                             ...prev,
-                            courseInterest: e.target.value,
+                            subject: e.target.value,
                           }))
                         }
-                        className="w-full pl-3 pr-10 py-2 text-base border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                        className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg appearance-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 dark:bg-gray-700 dark:text-white outline-none transition-all"
                       >
-                        <option value="">Select a course (optional)</option>
-                        {courses.map((course) => (
-                          <option key={course.id} value={course.id}>
-                            {course.name}
+                        {inquiryTypes.map((type) => (
+                          <option key={type} value={type}>
+                            {type}
                           </option>
                         ))}
                       </select>
+                      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-gray-500">
+                        <svg
+                          className="h-4 w-4 fill-current"
+                          viewBox="0 0 20 20"
+                        >
+                          <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
+                        </svg>
+                      </div>
                     </div>
-                  ) : (
-                    <select
-                      id="courseInterest"
-                      name="courseInterest"
-                      disabled
-                      className="mt-1 block w-full pl-3 pr-10 py-2 text-base border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400"
+                  </div>
+
+                  <div>
+                    <label
+                      htmlFor="message"
+                      className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2"
                     >
-                      <option>No courses available</option>
-                    </select>
-                  )}
-                </div>
+                      Your Message <span className="text-red-500">*</span>
+                    </label>
+                    <textarea
+                      id="message"
+                      name="message"
+                      rows={4}
+                      value={formData.message}
+                      onChange={handleChange}
+                      required
+                      className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 dark:bg-gray-700 dark:text-white outline-none transition-all resize-none"
+                      placeholder="How can we help you?"
+                    />
+                  </div>
 
-                <div>
-                  <label
-                    htmlFor="message"
-                    className="block text-sm font-medium text-black dark:text-white mb-1"
-                  >
-                    Your Message <span className="text-red-500">*</span>
-                  </label>
-                  <textarea
-                    id="message"
-                    name="message"
-                    rows={2}
-                    value={formData.message}
-                    onChange={handleChange}
-                    required
-                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
-                    placeholder="How can we help you?"
-                  />
-                </div>
-
-                <div className="pt-2">
                   <div className="flex items-start">
                     <div className="flex items-center h-5">
                       <input
@@ -450,31 +400,30 @@ export default function Contact() {
                             agreedToTerms: e.target.checked,
                           }))
                         }
-                        className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                        className="h-4 w-4 text-emerald-600 focus:ring-emerald-500 border-gray-300 rounded cursor-pointer accent-emerald-600"
                         required
                       />
                     </div>
                     <div className="ml-3 text-sm">
                       <label
                         htmlFor="agreedToTerms"
-                        className="font-medium text-black dark:text-white"
+                        className="font-medium text-gray-700 dark:text-gray-300"
                       >
-                        I hereby agree to receive the promotional emails &
-                        messages through WhatApp/RCS/SMS{" "}
+                        I agree to the{" "}
                         <Link
                           to="/terms-of-service"
-                          className="text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300"
+                          className="text-emerald-600 hover:text-emerald-500 underline"
                         >
-                          T&C
+                          Terms
                         </Link>{" "}
-                        and{" "}
+                        &{" "}
                         <Link
                           to="/privacy-policy"
-                          className="text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300"
+                          className="text-emerald-600 hover:text-emerald-500 underline"
                         >
                           Privacy Policy
                         </Link>
-                        <span className="text-red-500">*</span>
+                        .<span className="text-red-500">*</span>
                       </label>
                     </div>
                   </div>
@@ -482,9 +431,9 @@ export default function Contact() {
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className={`w-25 flex justify-center self-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 ${
+                    className={`w-full flex justify-center items-center py-4 px-6 border border-transparent rounded-full shadow-lg text-base font-bold text-white bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition-all transform hover:-translate-y-1 ${
                       isSubmitting ? "opacity-70 cursor-not-allowed" : ""
-                    } mt-4`}
+                    }`}
                   >
                     {isSubmitting ? (
                       <>
@@ -517,9 +466,9 @@ export default function Contact() {
                       </>
                     )}
                   </button>
-                </div>
-              </form>
-            )}
+                </form>
+              )}
+            </div>
           </div>
         </div>
       </div>
