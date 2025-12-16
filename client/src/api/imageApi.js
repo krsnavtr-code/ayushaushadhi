@@ -19,19 +19,19 @@ export const getImageUrl = (filename) => {
         const url = new URL(filename);
         const pathParts = url.pathname.split('/');
         const cleanFilename = pathParts[pathParts.length - 1];
-        return `${API_URL}/upload/file/${encodeURIComponent(cleanFilename)}`;
+        return `/upload/file/${encodeURIComponent(cleanFilename)}`;
     }
     
     // If it's a path, extract just the filename
     const cleanFilename = getFilename(filename);
-    return `${API_URL}/upload/file/${encodeURIComponent(cleanFilename)}`;
+    return `/upload/file/${encodeURIComponent(cleanFilename)}`;
 };
 
 // Get all uploaded media files (images and videos)
 export const getUploadedImages = async () => {
   try {
     const token = localStorage.getItem('token');
-    const response = await axios.get(`${API_URL}/upload/files`, {
+    const response = await axios.get(`/upload/files`, {
       headers: {
         'Authorization': token ? `Bearer ${token}` : undefined,
       },
@@ -75,7 +75,7 @@ export const uploadImage = async (file) => {
     const formData = new FormData();
     formData.append('file', file);
 
-    const response = await axios.post(`${API_URL}/upload/image`, formData, {
+    const response = await axios.post(`/upload/image`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
         'Authorization': token ? `Bearer ${token}` : undefined,
@@ -108,7 +108,7 @@ export const uploadImage = async (file) => {
 export const deleteMediaFile = async (filename) => {
   try {
     const token = localStorage.getItem('token');
-    const response = await axios.delete(`${API_URL}/upload/file/${encodeURIComponent(filename)}`, {
+    const response = await axios.delete(`/upload/file/${encodeURIComponent(filename)}`, {
       headers: {
         'Authorization': token ? `Bearer ${token}` : undefined,
       },
@@ -128,7 +128,7 @@ export const uploadVideo = async (file) => {
     const formData = new FormData();
     formData.append('file', file);
 
-    const response = await axios.post(`${API_URL}/upload/video`, formData, {
+    const response = await axios.post(`/upload/video`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
         'Authorization': token ? `Bearer ${token}` : undefined,
