@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-const API_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:4002/api';
+// Using relative path since API is served from the same domain in production
+const API_URL = '';
 
 // Helper function to extract filename from URL or path
 const getFilename = (urlOrPath) => {
@@ -19,19 +20,19 @@ export const getImageUrl = (filename) => {
         const url = new URL(filename);
         const pathParts = url.pathname.split('/');
         const cleanFilename = pathParts[pathParts.length - 1];
-        return `/upload/file/${encodeURIComponent(cleanFilename)}`;
+      return `/api/upload/file/${encodeURIComponent(cleanFilename)}`;
     }
     
     // If it's a path, extract just the filename
     const cleanFilename = getFilename(filename);
-    return `/upload/file/${encodeURIComponent(cleanFilename)}`;
+  return `/api/upload/file/${encodeURIComponent(cleanFilename)}`;
 };
 
 // Get all uploaded media files (images and videos)
 export const getUploadedImages = async () => {
   try {
     const token = localStorage.getItem('token');
-    const response = await axios.get(`/upload/files`, {
+    const response = await axios.get(`/api/upload/files`, {
       headers: {
         'Authorization': token ? `Bearer ${token}` : undefined,
       },
@@ -75,7 +76,7 @@ export const uploadImage = async (file) => {
     const formData = new FormData();
     formData.append('file', file);
 
-    const response = await axios.post(`/upload/image`, formData, {
+    const response = await axios.post(`/api/upload/image`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
         'Authorization': token ? `Bearer ${token}` : undefined,
@@ -108,7 +109,7 @@ export const uploadImage = async (file) => {
 export const deleteMediaFile = async (filename) => {
   try {
     const token = localStorage.getItem('token');
-    const response = await axios.delete(`/upload/file/${encodeURIComponent(filename)}`, {
+    const response = await axios.delete(`/api/upload/file/${encodeURIComponent(filename)}`, {
       headers: {
         'Authorization': token ? `Bearer ${token}` : undefined,
       },
@@ -128,7 +129,7 @@ export const uploadVideo = async (file) => {
     const formData = new FormData();
     formData.append('file', file);
 
-    const response = await axios.post(`/upload/video`, formData, {
+    const response = await axios.post(`/api/upload/video`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
         'Authorization': token ? `Bearer ${token}` : undefined,
