@@ -34,9 +34,8 @@ const userSchema = new mongoose.Schema({
   },
   department: {
     type: String,
-    required: function() {
-      return this.role === 'teacher' || this.role === 'student';
-    }
+    default: undefined,
+    required: false
   },
   phone: {
     type: String,

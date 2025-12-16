@@ -38,7 +38,7 @@ export function AuthProvider({ children }) {
         try {
           // Get fresh user data
           const response = await api.get("/auth/profile");
-          console.log("User profile data:", response.data);
+          // console.log("User profile data:", response.data);
 
           if (response.data && isMounted) {
             // Store the updated user data
@@ -53,7 +53,7 @@ export function AuthProvider({ children }) {
               address: response.data.address || "",
             };
 
-            console.log("Setting user data with isApproved:", userData.isApproved);
+            // console.log("Setting user data with isApproved:", userData.isApproved);
 
             localStorage.setItem("user", JSON.stringify(userData));
             setCurrentUser(userData);
@@ -192,10 +192,10 @@ export function AuthProvider({ children }) {
   // Login function
   const login = async (email, password) => {
     try {
-      console.log("Attempting login for:", email);
+      // console.log("Attempting login for:", email);
       const response = await api.post("/auth/login", { email, password });
 
-      console.log("Login response:", response.data);
+      // console.log("Login response:", response.data);
 
       if (
         response.data &&
@@ -205,7 +205,7 @@ export function AuthProvider({ children }) {
       ) {
         const { token, refreshToken, user } = response.data;
 
-        console.log("Login successful, storing tokens and user data");
+        // console.log("Login successful, storing tokens and user data");
 
         // Store tokens
         localStorage.setItem("token", token);
@@ -233,7 +233,7 @@ export function AuthProvider({ children }) {
         // Set the auth header for future requests
         api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
-        console.log("Login complete, redirecting to dashboard");
+        // console.log("Login complete, redirecting to dashboard");
 
         // Show success message
         message.success("Login successful!");
@@ -294,7 +294,7 @@ export function AuthProvider({ children }) {
 
   // Logout function
   const logout = () => {
-    console.log("Logging out user...");
+    // console.log("Logging out user...");
 
     try {
       // Clear all auth-related data from localStorage
@@ -308,7 +308,7 @@ export function AuthProvider({ children }) {
       // Reset user state
       setCurrentUser(null);
 
-      console.log("User logged out successfully");
+      // console.log("User logged out successfully");
 
       // Redirect to login
       navigate("/login", { replace: true });

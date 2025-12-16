@@ -70,7 +70,7 @@ api.interceptors.request.use(
           config.headers.Authorization = cleanedToken;
         }
         
-        console.log('Added Authorization header to request');
+        // console.log('Added Authorization header to request');
       } else {
         console.warn('No authentication token found for protected endpoint:', config.url);
         // Don't reject here, let the server handle the missing token

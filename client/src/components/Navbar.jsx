@@ -277,25 +277,7 @@ function Navbar() {
 
                   {/* Profile Dropdown */}
                   {isProfileMenuOpen && (
-                    <div className="absolute right-0 mt-3 w-56 bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-100 dark:border-gray-700 py-2 overflow-hidden animate-fade-in-up">
-                      <div className="px-4 py-2 border-b border-gray-100 dark:border-gray-700 mb-1">
-                        <p className="text-sm font-bold text-gray-900 dark:text-white truncate">
-                          {authUser?.fullname || "User"}
-                        </p>
-                        <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
-                          {authUser?.email}
-                        </p>
-                        {isApproved ? (
-                          <span className="text-[10px] text-emerald-600 font-bold bg-emerald-50 px-1.5 py-0.5 rounded mt-1 inline-block">
-                            VERIFIED
-                          </span>
-                        ) : (
-                          <span className="text-[10px] text-amber-600 font-bold bg-amber-50 px-1.5 py-0.5 rounded mt-1 inline-block">
-                            PENDING
-                          </span>
-                        )}
-                      </div>
-
+                    <div className="absolute right-0 mt-3 w-56 bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-100 dark:border-gray-700 py-2 overflow-hidden animate-fade-in-up z-50">
                       <Link
                         to="/profile"
                         className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-emerald-50 dark:hover:bg-emerald-900/20"
@@ -335,7 +317,7 @@ function Navbar() {
             </div>
           </div>
         </div>
-
+        
         {/* =================================================================
             ROW 2: SECONDARY NAVIGATION (Bottom Nav)
             ================================================================= */}
