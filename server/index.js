@@ -56,12 +56,12 @@ app.use(express.urlencoded({ limit: '50mb', extended: true }));
 app.timeout = 300000;
 
 // Middleware
-const allowedOrigins = [
-  'http://localhost:5173',
-  'http://localhost:5174',
-  'https://firstvite.com',
-  'https://www.firstvite.com'
-];
+// const allowedOrigins = [
+//   'http://localhost:5173',
+//   'http://localhost:5174',
+//   'https://firstvite.com',
+//   'https://www.firstvite.com'
+// ];
 
 // CORS configuration
 const corsOptions = {
@@ -75,15 +75,12 @@ const corsOptions = {
         const allowedOrigins = [
             'http://localhost:5173',
             'http://localhost:5174',
-            'https://firstvite.com',
-            'https://www.firstvite.com',
-            'https://firstvite.vercel.app',
-            'https://www.firstvite.vercel.app'
+            'https://ayushaushadhi.com',
+            'https://www.ayushaushadhi.com',
         ];
         
         if (allowedOrigins.includes(origin) || 
-            origin.endsWith('.firstvite.com') || 
-            origin.endsWith('.vercel.app')) {
+            origin.endsWith('.ayushaushadhi.com')) {
             return callback(null, true);
         }
         
