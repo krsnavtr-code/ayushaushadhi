@@ -299,7 +299,7 @@ const ProductCard = ({ product }) => {
   return (
     <div className="group bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-xl border border-emerald-100 dark:border-gray-700 overflow-hidden transition-all duration-300 hover:-translate-y-1 flex flex-col h-full">
       <Link
-        to={`/course/${product.slug || product._id}`}
+        to={`/collections/${product.slug || product._id}`}
         className="flex flex-col h-full"
       >
         {/* Image Area */}

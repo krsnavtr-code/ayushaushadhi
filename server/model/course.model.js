@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
-import Lesson from "./lesson.model.js";
 
-const curriculumItemSchema = new mongoose.Schema({
+// Reuse the curriculum structure for "Usage Guide" or "Dosage Steps"
+const usageGuideSchema = new mongoose.Schema({
     week: {
         type: Number,
         required: true
@@ -9,25 +9,10 @@ const curriculumItemSchema = new mongoose.Schema({
     title: {
         type: String,
         required: true
-    },
+    }, // e.g., "Morning Routine"
     description: String,
-    topics: [String],
-    duration: String
-}, { _id: false });
-
-const mentorSchema = new mongoose.Schema({
-    name: {
-        type: String,
-        required: true
-    },
-    title: String,
-    bio: String,
-    image: String,
-    socialLinks: {
-        linkedin: String,
-        twitter: String,
-        github: String
-    }
+    topics: [String], // e.g., ["Take with warm water", "Avoid coffee"]
+    duration: String  // e.g., "5 mins" (Time required for the routine)
 }, { _id: false });
 
 const faqSchema = new mongoose.Schema({
@@ -41,39 +26,45 @@ const faqSchema = new mongoose.Schema({
     }
 }, { _id: false });
 
-const courseSchema = new mongoose.Schema({
+const productSchema = new mongoose.Schema({
     title: {
         type: String,
         required: true,
         trim: true
+    }, // Product Name
+    slug: {
+        type: String,
+        unique: true,
+        lowercase: true
     },
+
+    // --- Basic Info ---
     shortDescription: {
         type: String,
-        required: false,  // Made this optional
+        required: false,
         trim: true,
         maxlength: 300,
-        default: ''  // Added default empty string
+        default: ''
     },
     description: {
         type: String,
         required: true,
         trim: true
     },
-    benefits: [{
-        type: String,
-        required: true
-    }],
     category: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Category',
         required: true
     },
+
+    // --- Brand / Origin ---
     instructor: {
         type: String,
         required: true,
         trim: true
-    },
-    mentors: [mentorSchema],
+    }, // Brand Name or Vaidya Name (e.g., "Dabur", "Patanjali", "Dr. Sharma")
+
+    // --- Pricing & Inventory ---
     price: {
         type: Number,
         required: true,
@@ -89,42 +80,61 @@ const courseSchema = new mongoose.Schema({
         type: Boolean,
         default: false,
         index: true
-    },
+    }, // Can be used for "Sample" products
+
+    // --- Physical Attributes (Mapped from Course fields) ---
     totalHours: {
         type: Number,
         min: 0,
         default: 0
+    }, // Mapped to: Net Quantity (e.g., 100 for 100g)
+
+    duration: {
+        type: String,
+        required: true
+    }, // Mapped to: Shelf Life (e.g., "24 Months")
+
+    level: {
+        type: String,
+        enum: ['Tablet', 'Syrup', 'Oil', 'Powder', 'Capsule', 'Raw Herb', 'Beginner', 'Intermediate', 'Advanced'],
+        // Added Ayurveda forms, kept old ones to prevent crash on migration
+        default: 'Tablet'
     },
+
+    // --- Media ---
     image: {
         type: String,
         default: ''
     },
     thumbnail: String,
-    previewVideo: String,
-    duration: {
-        type: String,
-        required: true
-    },
+    previewVideo: String, // Can be used for "How to use" video
 
-    level: {
-        type: String,
-        enum: ['Beginner', 'Intermediate', 'Advanced'],
-        default: 'Beginner'
-    },
-    curriculum: [curriculumItemSchema],
+    // --- Content Details ---
+    curriculum: [usageGuideSchema], // Usage Instructions
+
     skills: [{
         type: String,
         trim: true
-    }],
+    }], // Mapped to: Tags / Keywords (e.g., "Immunity", "Digestion")
+
     prerequisites: [{
         type: String,
         trim: true
-    }],
+    }], // Mapped to: Key Ingredients (e.g., "Ashwagandha", "Tulsi")
+
     whatYouWillLearn: [{
         type: String,
         trim: true
+    }], // Mapped to: Health Benefits (e.g., "Reduces Stress", "Better Sleep")
+
+    benefits: [{
+        type: String,
+        required: false // Made optional as we use whatYouWillLearn for benefits mostly
     }],
+
     faqs: [faqSchema],
+
+    // --- Settings ---
     isPublished: {
         type: Boolean,
         default: false
@@ -133,34 +143,21 @@ const courseSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
-    lessons: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Lesson'
-    }],
-    enrollmentCount: {
-        type: Number,
-        default: 0
-    },
-    slug: {
-        type: String,
-        unique: true,
-        lowercase: true
-    },
-    metaTitle: String,
-    metaDescription: String,
-    tags: [String],
-    language: {
-        type: String,
-        default: 'English'
+    isFeatured: {
+        type: Boolean,
+        default: false
     },
     certificateIncluded: {
         type: Boolean,
-        default: true
-    },
-    totalStudents: {
+        default: false
+    }, // Mapped to: Prescription Required? (True/False)
+
+    // --- Stats / Sales ---
+    enrollmentCount: {
         type: Number,
         default: 0
-    },
+    }, // Sales Count
+
     averageRating: {
         type: Number,
         min: 0,
@@ -171,28 +168,41 @@ const courseSchema = new mongoose.Schema({
         type: Number,
         default: 0
     },
-    showOnHome: {
-        type: Boolean,
-        default: false
-    },
+
+    // --- SEO ---
+    metaTitle: String,
+    metaDescription: String,
+    tags: [String],
+
+    language: {
+        type: String,
+        default: 'English'
+    }, // Origin of Medicine (e.g., "Ayurveda", "Unani", "Siddha")
+
     brochureUrl: {
         type: String,
         default: ''
-    },
+    }, // Product Leaflet/PDF
+
     brochureGeneratedAt: {
         type: Date,
         default: null
     }
+
 }, { timestamps: true });
 
 // Create slug from title before saving
-courseSchema.pre('save', function(next) {
+productSchema.pre('save', function (next) {
     if (this.isModified('title')) {
-        this.slug = this.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+        this.slug = this.title.toLowerCase()
+            .replace(/[^a-z0-9]+/g, '-')
+            .replace(/(^-|-$)/g, '');
     }
     next();
 });
 
-const Course = mongoose.model('Course', courseSchema);
+// We name the model 'Collection' to match your API endpoint "/collections"
+// or you can name it 'Product' if you change your controller.
+const Product = mongoose.model('Collection', productSchema);
 
-export default Course;
+export default Product;

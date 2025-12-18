@@ -1,15 +1,15 @@
 import express from 'express';
 import { body } from 'express-validator';
-import { 
-    createCourse, 
-    getAllCourses, 
-    getCourseById, 
-    updateCourse, 
+import {
+    createCourse,
+    getAllCourses,
+    getCourseById,
+    updateCourse,
     deleteCourse,
     uploadCourseImage,
     generatePdf,
     deletePdf
-} from '../controller/course.controller.js';
+} from '../controller/course.controller.js'; // Keeping filename for compatibility
 import { isAdmin } from '../middleware/admin.js';
 import multer from 'multer';
 import path from 'path';
@@ -19,7 +19,7 @@ import fs from 'fs';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Configure multer for file uploads
+// --- File Upload Configuration (Multer) ---
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         const uploadDir = path.join(__dirname, '../public/uploads');
@@ -34,67 +34,85 @@ const storage = multer.diskStorage({
     }
 });
 
-const upload = multer({ 
+const upload = multer({
     storage: storage,
     limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
     fileFilter: function (req, file, cb) {
-        const filetypes = /jpeg|jpg|png|gif/;
+        const filetypes = /jpeg|jpg|png|gif|webp/; // Added webp support
         const mimetype = filetypes.test(file.mimetype);
         const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
-        
+
         if (mimetype && extname) {
             return cb(null, true);
         }
-        cb(new Error('Only image files are allowed'));
+        cb(new Error('Only image files (jpg, png, gif, webp) are allowed'));
     }
 });
 
 const router = express.Router();
 
-// Validation middleware
-const validateCourse = [
+// --- Product Validation Middleware ---
+const validateProduct = [
     body('title')
         .trim()
-        .isLength({ min: 5, max: 100 })
-        .withMessage('Title must be between 5 and 100 characters'),
+        .isLength({ min: 3, max: 150 })
+        .withMessage('Product Name must be between 3 and 150 characters'),
+
     body('description')
         .trim()
         .isLength({ min: 10 })
         .withMessage('Description must be at least 10 characters'),
+
     body('category')
         .isMongoId()
-        .withMessage('Invalid category ID'),
-    body('instructor')
+        .withMessage('Invalid Category ID'),
+
+    body('instructor') // Mapped to Brand/Formulator
         .trim()
         .isLength({ min: 2 })
-        .withMessage('Instructor name is required'),
+        .withMessage('Brand or Vaidya name is required'),
+
     body('price')
         .isFloat({ min: 0 })
         .withMessage('Price must be a positive number'),
-    body('duration')
+
+    body('duration') // Mapped to Shelf Life
         .trim()
         .notEmpty()
-        .withMessage('Duration is required'),
-    body('level')
+        .withMessage('Shelf Life (Duration) is required'),
+
+    body('level') // Mapped to Product Form
         .optional()
-        .isIn(['Beginner', 'Intermediate', 'Advanced'])
-        .withMessage('Invalid level'),
+        .isIn([
+            'Tablet', 'Syrup', 'Oil', 'Powder', 'Capsule', 'Raw Herb',
+            'Beginner', 'Intermediate', 'Advanced' // Kept for backward compatibility
+        ])
+        .withMessage('Invalid Product Form (Must be Tablet, Syrup, Oil, etc.)'),
+
     body('showOnHome')
         .optional()
         .isBoolean()
-        .withMessage('Show on Home must be a boolean value')
+        .withMessage('Show on Home must be a boolean value'),
+
+    body('totalHours') // Mapped to Net Quantity
+        .optional()
+        .isFloat({ min: 0 })
+        .withMessage('Net Quantity must be a positive number')
 ];
 
-// Admin routes
-router.post('/', isAdmin, validateCourse, createCourse);
-router.put('/:id', isAdmin, validateCourse, updateCourse);
+// --- Admin Routes ---
+// Manage Products
+router.post('/', isAdmin, validateProduct, createCourse);
+router.put('/:id', isAdmin, validateProduct, updateCourse);
 router.delete('/:id', isAdmin, deleteCourse);
-router.post('/:id/upload-image', isAdmin, upload.single('image'), uploadCourseImage);
-router.post('/:id/generate-pdf', isAdmin, generatePdf);
-router.delete('/:id/pdf', isAdmin, deletePdf);
 
-// Public routes
-router.get('/', getAllCourses);
-router.get('/:id', getCourseById);
+// Manage Assets
+router.post('/:id/upload-image', isAdmin, upload.single('image'), uploadCourseImage);
+router.post('/:id/generate-pdf', isAdmin, generatePdf); // Brochure Generation
+router.delete('/:id/pdf', isAdmin, deletePdf); // Delete Brochure
+
+// --- Public Routes ---
+router.get('/', getAllCourses); // Shop Page
+router.get('/:id', getCourseById); // Product Detail Page
 
 export default router;
