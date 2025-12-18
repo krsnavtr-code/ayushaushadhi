@@ -55,7 +55,12 @@ const ImageUploader = ({ onUploadSuccess, label = 'Upload Image', className = ''
       const API_URL = '/api';
       
       // Add cache-busting parameter
-      const url = new URL(`${API_URL}/upload/image`);
+      const apiBase = API_URL.startsWith("http")
+        ? API_URL
+        : window.location.origin +
+          (API_URL.startsWith("/") ? "" : "/") +
+          API_URL;
+      const url = new URL("/upload/image", apiBase);
       url.searchParams.append('_t', Date.now());
       
       const headers = {};
