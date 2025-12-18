@@ -1,187 +1,252 @@
- import { useState } from 'react';
-import { toast } from 'react-toastify';
-import { FaUpload, FaTimes } from 'react-icons/fa';
+import { useState, useRef } from "react";
+import { toast } from "react-hot-toast";
+import {
+  FaCloudUploadAlt,
+  FaTimes,
+  FaImage,
+  FaCheckCircle,
+  FaSpinner,
+} from "react-icons/fa";
+import api from "../../utils/api";
+import { motion, AnimatePresence } from "framer-motion";
 
-const ImageUploader = ({ onUploadSuccess, label = 'Upload Image', className = '', maxSizeMB = 5 }) => {
+const ImageUploader = ({
+  onUploadSuccess,
+  label = "Upload Image Asset",
+  className = "",
+  maxSizeMB = 5,
+}) => {
   const [isUploading, setIsUploading] = useState(false);
-  const [previewUrl, setPreviewUrl] = useState('');
+  const [previewUrl, setPreviewUrl] = useState("");
   const [file, setFile] = useState(null);
+  const [dragActive, setDragActive] = useState(false);
+  const inputRef = useRef(null);
 
-  const handleFileChange = (e) => {
-    const selectedFile = e.target.files[0];
-    
+  // --- File Handling Logic ---
+  const processFile = (selectedFile) => {
     if (!selectedFile) return;
 
-    // Check file type
-    const validTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+    // Validate Type
+    const validTypes = ["image/jpeg", "image/png", "image/webp", "image/gif"];
     if (!validTypes.includes(selectedFile.type)) {
-      toast.error('Only JPG, PNG, and WebP images are allowed');
+      toast.error("Invalid format. Accepted: JPG, PNG, WebP, GIF");
       return;
     }
 
-    // Check file size (default 5MB)
-    const maxSize = maxSizeMB * 1024 * 1024; // Convert MB to bytes
+    // Validate Size
+    const maxSize = maxSizeMB * 1024 * 1024;
     if (selectedFile.size > maxSize) {
-      toast.error(`File size must be less than ${maxSizeMB}MB`);
+      toast.error(`File exceeds limit of ${maxSizeMB}MB`);
       return;
     }
 
-    // Create preview
+    // Create Preview
     const fileUrl = URL.createObjectURL(selectedFile);
     setPreviewUrl(fileUrl);
     setFile(selectedFile);
   };
 
-  const removeImage = () => {
-    if (previewUrl) {
-      URL.revokeObjectURL(previewUrl);
-    }
-    setPreviewUrl('');
-    setFile(null);
+  const handleFileChange = (e) => {
+    processFile(e.target.files[0]);
   };
 
+  // --- Drag & Drop Handlers ---
+  const handleDrag = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.type === "dragenter" || e.type === "dragover") {
+      setDragActive(true);
+    } else if (e.type === "dragleave") {
+      setDragActive(false);
+    }
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      processFile(e.dataTransfer.files[0]);
+    }
+  };
+
+  const removeImage = () => {
+    if (previewUrl) URL.revokeObjectURL(previewUrl);
+    setPreviewUrl("");
+    setFile(null);
+    if (inputRef.current) inputRef.current.value = "";
+  };
+
+  // --- Upload Logic ---
   const handleUpload = async () => {
     if (!file) {
-      toast.error('Please select an image to upload');
+      toast.error("No data stream detected.");
       return;
     }
 
     const formData = new FormData();
-    formData.append('file', file);
+    formData.append("file", file);
 
     try {
       setIsUploading(true);
-      const token = localStorage.getItem('token');
-      const API_URL = '/api';
-      
-      // Add cache-busting parameter
-      const apiBase = API_URL.startsWith("http")
-        ? API_URL
-        : window.location.origin +
-          (API_URL.startsWith("/") ? "" : "/") +
-          API_URL;
-      const url = new URL("/upload/image", apiBase);
-      url.searchParams.append('_t', Date.now());
-      
-      const headers = {};
-      if (token) {
-        headers['Authorization'] = `Bearer ${token}`;
-      }
-      
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: headers,
-        credentials: 'include',
-        body: formData,
+      const response = await api.post("/upload/image", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
       });
 
-      // Log response details for debugging
-      console.log('Image upload response status:', response.status);
-      const responseText = await response.text();
-      console.log('Image upload response text:', responseText);
-      
-      let data;
-      try {
-        data = JSON.parse(responseText);
-      } catch (e) {
-        console.error('Failed to parse JSON response:', e);
-        throw new Error('Invalid server response');
+      const data = response.data;
+      const result = data.data || data;
+
+      if (onUploadSuccess && result) {
+        onUploadSuccess({
+          url: result.url || result.path,
+          path: result.path,
+          name: result.name || file.name,
+          type: "image",
+        });
       }
 
-      if (!response.ok) {
-        throw new Error(data.message || `Upload failed with status ${response.status}`);
-      }
-
-      console.log('Image upload successful, response:', data);
-      toast.success('Image uploaded successfully');
-      
-      if (onUploadSuccess) {
-        // Handle both response formats for backward compatibility
-        const result = data.data || data;
-        if (result) {
-          onUploadSuccess({
-            url: result.url || result.path,
-            path: result.path,
-            name: result.name || file.name,
-            type: 'image'
-          });
-        }
-      }
-      
-      // Clean up
       removeImage();
+      toast.success("Image asset secured in database.");
     } catch (error) {
-      console.error('Upload error:', error);
-      toast.error(error.message || 'Failed to upload image');
+      console.error("Upload error:", error);
+      toast.error(error.response?.data?.message || "Upload sequence failed.");
     } finally {
       setIsUploading(false);
     }
   };
 
   return (
-    <div className={`space-y-4 ${className}`}>
-      <div className="flex items-center justify-center w-full">
-        <label
-          htmlFor="image-upload"
-          className={`flex flex-col items-center justify-center w-full h-64 border-2 border-dashed rounded-lg cursor-pointer 
-            ${previewUrl ? 'border-gray-300' : 'border-blue-500 hover:bg-blue-50 dark:border-blue-600 dark:hover:border-blue-500 dark:hover:bg-gray-700'}
-            transition-colors duration-200 relative`}
-        >
+    <div className={`w-full ${className}`}>
+      <motion.div
+        layout
+        className={`relative w-full border-2 border-dashed rounded-2xl transition-all duration-300 overflow-hidden ${
+          dragActive
+            ? "border-blue-500 bg-blue-50 dark:bg-blue-500/10 scale-[1.02]"
+            : "border-gray-300 dark:border-white/10 hover:border-blue-400 dark:hover:border-blue-400"
+        }`}
+        onDragEnter={handleDrag}
+        onDragLeave={handleDrag}
+        onDragOver={handleDrag}
+        onDrop={handleDrop}
+      >
+        <AnimatePresence mode="wait">
           {previewUrl ? (
-            <div className="relative w-full h-full group">
+            // --- Preview State ---
+            <motion.div
+              key="preview"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="relative w-full h-64 bg-black/5 dark:bg-black/40 flex items-center justify-center p-4"
+            >
+              {/* Scan Line Effect */}
+              <div className="absolute inset-0 bg-[linear-gradient(transparent_0%,rgba(59,130,246,0.1)_50%,transparent_100%)] bg-[length:100%_4px] pointer-events-none opacity-20"></div>
+
               <img
                 src={previewUrl}
                 alt="Preview"
-                className="w-full h-full object-cover rounded-lg"
-                onError={(e) => {
-                  e.target.onerror = null;
-                  e.target.src = '/placeholder.svg';
-                }}
+                className="max-h-full max-w-full object-contain rounded-lg shadow-2xl border border-white/10"
               />
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  removeImage();
-                }}
-                className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors"
-              >
-                <FaTimes size={16} />
-              </button>
-            </div>
+
+              <div className="absolute top-3 right-3 flex gap-2">
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    removeImage();
+                  }}
+                  className="p-2 bg-red-500/90 text-white rounded-lg hover:bg-red-600 transition-colors backdrop-blur-sm shadow-lg"
+                  title="Discard Asset"
+                >
+                  <FaTimes />
+                </button>
+              </div>
+
+              {/* File Info Overlay */}
+              <div className="absolute bottom-3 left-3 bg-black/60 backdrop-blur-md text-white text-xs px-3 py-1.5 rounded-lg border border-white/10">
+                {file?.name} ({(file?.size / 1024 / 1024).toFixed(2)} MB)
+              </div>
+            </motion.div>
           ) : (
-            <div className="flex flex-col items-center justify-center p-6 text-center">
-              <FaUpload className="w-8 h-8 mb-2 text-gray-500 dark:text-gray-400" />
-              <p className="text-sm text-gray-500 dark:text-gray-400">
-                <span className="font-semibold">Click to upload</span> or drag and drop
+            // --- Idle/Empty State ---
+            <motion.label
+              key="idle"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              htmlFor="image-upload"
+              className="flex flex-col items-center justify-center w-full h-64 cursor-pointer group"
+            >
+              <div className="w-16 h-16 mb-4 rounded-full bg-blue-50 dark:bg-blue-500/10 flex items-center justify-center text-blue-500 group-hover:scale-110 transition-transform duration-300">
+                <FaCloudUploadAlt size={32} />
+              </div>
+              <p className="text-sm font-bold text-gray-700 dark:text-gray-300">
+                {dragActive ? "Drop Asset Here" : label}
               </p>
-              <p className="text-xs text-gray-500 dark:text-gray-400">
-                PNG, JPG, WebP, GIF (MAX. {maxSizeMB}MB)
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                JPG, PNG, WebP (Max {maxSizeMB}MB)
               </p>
-            </div>
+
+              <input
+                ref={inputRef}
+                id="image-upload"
+                type="file"
+                className="hidden"
+                accept="image/jpeg,image/png,image/webp,image/gif"
+                onChange={handleFileChange}
+                disabled={isUploading}
+              />
+            </motion.label>
           )}
-          <input
-            id="image-upload"
-            type="file"
-            className="hidden"
-            accept="image/*"
-            onChange={handleFileChange}
-            disabled={isUploading}
-          />
-        </label>
-      </div>
-      
-      <div className="flex justify-end">
-        <button
-          type="button"
-          onClick={handleUpload}
-          disabled={!file || isUploading}
-          className={`px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500
-            ${(!file || isUploading) ? 'opacity-50 cursor-not-allowed' : ''}`}
-        >
-          {isUploading ? 'Uploading...' : 'Upload Image'}
-        </button>
-      </div>
+        </AnimatePresence>
+      </motion.div>
+
+      {/* --- Action Bar --- */}
+      <AnimatePresence>
+        {file && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 10 }}
+            className="mt-4 flex justify-between items-center bg-gray-50 dark:bg-white/5 p-4 rounded-xl border border-gray-200 dark:border-white/10"
+          >
+            <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
+              <FaImage className="text-blue-500" />
+              <span>Ready for ingestion</span>
+            </div>
+
+            <button
+              type="button"
+              onClick={handleUpload}
+              disabled={isUploading}
+              className={`flex items-center gap-2 px-6 py-2.5 rounded-lg font-bold text-white transition-all shadow-lg ${
+                isUploading
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-blue-600 hover:bg-blue-700 hover:-translate-y-0.5 shadow-blue-500/30"
+              }`}
+            >
+              {isUploading ? (
+                <>
+                  <FaSpinner className="animate-spin" /> Processing...
+                </>
+              ) : (
+                <>
+                  <FaCheckCircle /> Upload Asset
+                </>
+              )}
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Diagram Context: Only show when idle to explain the process */}
+      {!file && !isUploading && (
+        <div className="mt-4 opacity-50 hover:opacity-100 transition-opacity text-center cursor-help">
+          <span className="text-[10px] uppercase tracking-widest text-gray-400 block mb-1">
+            Architecture
+          </span>
+        </div>
+      )}
     </div>
   );
 };

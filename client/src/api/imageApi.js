@@ -1,159 +1,89 @@
-import axios from 'axios';
+import api from './axios';
 
-// Using relative path since API is served from the same domain in production
-const API_URL = '';
-
-// Helper function to extract filename from URL or path
-const getFilename = (urlOrPath) => {
-    if (!urlOrPath) return '';
-    // Handle both URLs and paths
-    const parts = urlOrPath.split(/[\\/]/);
-    return parts[parts.length - 1];
+// Helper: extract filename
+const getFilename = (urlOrPath = '') => {
+  if (!urlOrPath) return '';
+  return urlOrPath.split(/[\\/]/).pop();
 };
 
-// Helper function to get the full media URL
+// Helper: generate media URL via API
 export const getImageUrl = (filename) => {
-    if (!filename) return '';
-    
-    // If it's already a full URL, convert it to use our API endpoint
-    if (filename.startsWith('http')) {
-        const url = new URL(filename);
-        const pathParts = url.pathname.split('/');
-        const cleanFilename = pathParts[pathParts.length - 1];
-      return `/api/upload/file/${encodeURIComponent(cleanFilename)}`;
-    }
-    
-    // If it's a path, extract just the filename
-    const cleanFilename = getFilename(filename);
+  if (!filename) return '';
+  const cleanFilename = filename.startsWith('http')
+    ? getFilename(new URL(filename).pathname)
+    : getFilename(filename);
+
   return `/api/upload/file/${encodeURIComponent(cleanFilename)}`;
 };
 
-// Get all uploaded media files (images and videos)
+// ================= MEDIA LIST =================
+
+// Get all uploaded media
 export const getUploadedImages = async () => {
-  try {
-    const token = localStorage.getItem('token');
-    const response = await axios.get(`/api/upload/files`, {
-      headers: {
-        'Authorization': token ? `Bearer ${token}` : undefined,
-      },
-      withCredentials: true
-    });
-    
-    // The backend now returns properly formatted data with type information
-    if (response.data && response.data.data) {
-      // Ensure each file has the required fields
-      response.data.data = response.data.data.map(file => ({
-        ...file,
-        // Ensure type is set correctly
-        type: file.type || (file.mimetype?.startsWith('video/') ? 'video' : 'image'),
-        // Ensure URL is properly formatted
-        url: file.url || getImageUrl(file.name || file.path),
-        // Add thumbnail URL (same as URL for now, can be optimized later)
-        thumbnailUrl: file.url || getImageUrl(file.name || file.path)
-      }));
-    }
-    
-    return response.data;
-  } catch (error) {
-    console.error('Error fetching images:', error);
-    if (error.response) {
-      console.error('Response data:', error.response.data);
-      console.error('Response status:', error.response.status);
-      console.error('Response headers:', error.response.headers);
-    } else if (error.request) {
-      console.error('No response received:', error.request);
-    } else {
-      console.error('Error:', error.message);
-    }
-    throw error;
+  const response = await api.get('/upload/files');
+
+  if (response.data?.data) {
+    response.data.data = response.data.data.map(file => ({
+      ...file,
+      type: file.type || (file.mimetype?.startsWith('video/') ? 'video' : 'image'),
+      url: file.url || getImageUrl(file.name || file.path),
+      thumbnailUrl: file.thumbnailUrl || file.url || getImageUrl(file.name || file.path)
+    }));
   }
+
+  return response.data;
 };
 
-// Upload an image
+// ================= UPLOAD IMAGE =================
+
 export const uploadImage = async (file) => {
-  try {
-    const token = localStorage.getItem('token');
-    const formData = new FormData();
-    formData.append('file', file);
+  const formData = new FormData();
+  formData.append('file', file);
 
-    const response = await axios.post(`/api/upload/image`, formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-        'Authorization': token ? `Bearer ${token}` : undefined,
-      },
-      withCredentials: true
-    });
+  const response = await api.post('/upload/image', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  });
 
-    // Transform the response to include the full URL and type
-    if (response.data) {
-      const result = response.data.data || response.data;
-      if (result) {
-        const filename = result.name || getFilename(result.path) || getFilename(result.url);
-        const type = result.mimetype && result.mimetype.startsWith('video/') ? 'video' : 'image';
-        
-        return {
-          ...result,
-          url: getImageUrl(filename),
-          type: type
-        };
-      }
-    }
-    return response.data;
-  } catch (error) {
-    console.error('Error uploading file:', error);
-    throw error;
-  }
+  const result = response.data?.data || response.data;
+  if (!result) return response.data;
+
+  const filename = result.name || getFilename(result.path) || getFilename(result.url);
+
+  return {
+    ...result,
+    url: getImageUrl(filename),
+    type: 'image'
+  };
 };
 
-// Delete a media file
-export const deleteMediaFile = async (filename) => {
-  try {
-    const token = localStorage.getItem('token');
-    const response = await axios.delete(`/api/upload/file/${encodeURIComponent(filename)}`, {
-      headers: {
-        'Authorization': token ? `Bearer ${token}` : undefined,
-      },
-      withCredentials: true
-    });
-    return response.data;
-  } catch (error) {
-    console.error('Error deleting file:', error);
-    throw error;
-  }
-};
+// ================= UPLOAD VIDEO =================
 
-// Upload a video
 export const uploadVideo = async (file) => {
-  try {
-    const token = localStorage.getItem('token');
-    const formData = new FormData();
-    formData.append('file', file);
+  const formData = new FormData();
+  formData.append('file', file);
 
-    const response = await axios.post(`/api/upload/video`, formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-        'Authorization': token ? `Bearer ${token}` : undefined,
-      },
-      withCredentials: true,
-      // Increase timeout for larger video files (in milliseconds)
-      timeout: 300000 // 5 minutes
-    });
+  const response = await api.post('/upload/video', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+    timeout: 300000 // 5 min
+  });
 
-    // Transform the response to include the full URL and type
-    if (response.data) {
-      const result = response.data.data || response.data;
-      if (result) {
-        const filename = result.name || getFilename(result.path) || getFilename(result.url);
-        return {
-          ...result,
-          url: getImageUrl(filename),
-          type: 'video'
-        };
-      }
-    }
-    return response.data;
-  } catch (error) {
-    console.error('Error uploading video:', error);
-    throw error;
-  }
+  const result = response.data?.data || response.data;
+  if (!result) return response.data;
+
+  const filename = result.name || getFilename(result.path) || getFilename(result.url);
+
+  return {
+    ...result,
+    url: getImageUrl(filename),
+    type: 'video'
+  };
+};
+
+// ================= DELETE MEDIA =================
+
+export const deleteMediaFile = async (filename) => {
+  const response = await api.delete(
+    `/upload/file/${encodeURIComponent(filename)}`
+  );
+  return response.data;
 };
