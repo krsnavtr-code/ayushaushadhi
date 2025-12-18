@@ -10,7 +10,7 @@ import {
   getCourseById,
   getCategoriesForForm,
   uploadCourseImage,
-} from "../../../api/courseApi"; // Using existing API endpoints
+} from "../../../api/courseApi";
 import userApi from "../../../api/userApi";
 import {
   FaBoxOpen,
@@ -18,47 +18,14 @@ import {
   FaCloudUploadAlt,
   FaTrash,
   FaPlus,
-  FaExclamationCircle,
+  FaExclamationTriangle,
+  FaInfoCircle,
+  FaPills,
 } from "react-icons/fa";
 
-// Error boundary for file upload
-class ErrorBoundary extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = { hasError: false, error: null };
-  }
+// --- Components ---
 
-  static getDerivedStateFromError(error) {
-    return { hasError: true, error };
-  }
-
-  componentDidCatch(error, errorInfo) {
-    console.error("Error in FileUploadInput:", error, errorInfo);
-  }
-
-  render() {
-    if (this.state.hasError) {
-      return (
-        <div className="text-red-600 p-4 border border-red-300 bg-red-50 rounded flex items-center gap-2">
-          <FaExclamationCircle />
-          <div>
-            <p>Something went wrong with the file upload.</p>
-            <button
-              onClick={() => this.setState({ hasError: false, error: null })}
-              className="mt-1 text-sm text-emerald-600 hover:underline"
-            >
-              Try again
-            </button>
-          </div>
-        </div>
-      );
-    }
-    return this.props.children;
-  }
-}
-
-// File Upload Component
-const FileUploadInput = ({ onFileSelect, thumbnail, onRemove }) => {
+const FileUploadInput = ({ value, onChange }) => {
   const [isUploading, setIsUploading] = useState(false);
 
   const handleFileChange = async (e) => {
@@ -67,233 +34,137 @@ const FileUploadInput = ({ onFileSelect, thumbnail, onRemove }) => {
 
     try {
       setIsUploading(true);
-
       if (file.size > 5 * 1024 * 1024) {
-        toast.error("File size too large. Maximum size is 5MB.");
+        toast.error("File size too large. Max 5MB.");
         return;
       }
-
-      e.target.value = ""; // Reset input
 
       const formData = new FormData();
       formData.append("image", file);
 
       const response = await uploadCourseImage(formData);
-
-      if (!response || !response.success) {
-        throw new Error(response?.message || "Upload failed");
+      if (response && response.success) {
+        // We set the URL string as requested
+        onChange(response.location || response.fullUrl);
+        toast.success("Image uploaded successfully");
       }
-
-      const imagePath = response.location;
-      onFileSelect(imagePath);
-      toast.success("Image uploaded successfully");
     } catch (error) {
-      console.error("Error in file upload:", error);
+      console.error("Upload error:", error);
       toast.error("Failed to upload image");
     } finally {
       setIsUploading(false);
     }
   };
 
-  const getThumbnailUrl = (thumb) => {
-    if (!thumb) return "";
-    try {
-      if (thumb.startsWith("http")) return thumb;
-      const baseUrl = import.meta.env.VITE_API_URL;
-      const path = thumb.startsWith("/") ? thumb : `/${thumb}`;
-      return `${baseUrl}${path}`;
-    } catch (error) {
-      return "";
-    }
-  };
-
-  const thumbnailUrl = getThumbnailUrl(thumbnail);
-
   return (
-    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6">
-      <div className="flex-shrink-0 relative group">
-        <div className="w-40 h-40 bg-emerald-50 rounded-xl overflow-hidden border-2 border-dashed border-emerald-200 flex items-center justify-center relative">
-          {thumbnail ? (
-            <img
-              src={thumbnailUrl}
-              alt="Product thumbnail"
-              className="w-full h-full object-cover"
-              onError={(e) => {
-                e.target.onerror = null;
-                e.target.src =
-                  "https://via.placeholder.com/400x400?text=No+Image";
-              }}
-            />
-          ) : (
-            <div className="text-center p-4">
-              <FaLeaf className="mx-auto text-3xl text-emerald-200 mb-2" />
-              <span className="text-emerald-400 text-xs">No image</span>
-            </div>
-          )}
-
-          {thumbnail && (
-            <button
-              type="button"
-              onClick={onRemove}
-              className="absolute top-2 right-2 bg-red-500 text-white p-1.5 rounded-full shadow-md hover:bg-red-600 transition-colors opacity-0 group-hover:opacity-100"
-              title="Remove Image"
-            >
-              <FaTrash className="w-3 h-3" />
-            </button>
-          )}
-        </div>
-      </div>
-
-      <div className="flex-1">
+    <div className="flex flex-col gap-3">
+      <div className="flex gap-2">
+        <input
+          type="text"
+          value={value || ""}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder="Enter Image URL or Upload..."
+          className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 text-sm"
+        />
         <label
-          className={`relative cursor-pointer inline-flex items-center justify-center px-6 py-3 border border-emerald-300 shadow-sm text-sm font-medium rounded-lg text-emerald-700 bg-white hover:bg-emerald-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition-all ${
-            isUploading ? "opacity-50 cursor-not-allowed" : ""
+          className={`cursor-pointer bg-emerald-600 text-white px-4 py-2 rounded-lg hover:bg-emerald-700 transition-colors flex items-center gap-2 ${
+            isUploading ? "opacity-50" : ""
           }`}
         >
-          {isUploading ? (
-            <span className="flex items-center gap-2">
-              <span className="loading loading-spinner loading-xs"></span>{" "}
-              Uploading...
-            </span>
-          ) : (
-            <span className="flex items-center gap-2">
-              <FaCloudUploadAlt className="text-lg" /> Choose Image
-            </span>
-          )}
+          <FaCloudUploadAlt />
+          <span className="text-sm font-medium">
+            {isUploading ? "..." : "Upload"}
+          </span>
           <input
             type="file"
-            className="sr-only"
+            className="hidden"
             accept="image/*"
-            disabled={isUploading}
             onChange={handleFileChange}
+            disabled={isUploading}
           />
         </label>
-        <p className="mt-3 text-xs text-gray-500">
-          Recommended: Square (1000x1000px). Max 5MB.
-        </p>
       </div>
-    </div>
-  );
-};
-
-// Usage Guide (Curriculum) Item
-const UsageGuideItem = ({
-  week,
-  weekIndex,
-  removeWeek,
-  register,
-  control,
-  errors,
-}) => {
-  const {
-    fields: stepFields,
-    append: appendStep,
-    remove: removeStep,
-  } = useFieldArray({
-    control,
-    name: `curriculum.${weekIndex}.topics`,
-  });
-
-  return (
-    <div className="mb-6 border border-emerald-100 bg-emerald-50/30 rounded-xl p-5 shadow-sm">
-      <div className="flex justify-between items-center mb-4 pb-2 border-b border-emerald-100">
-        <h4 className="text-md font-bold text-emerald-800 flex items-center gap-2">
-          <span className="bg-emerald-200 text-emerald-800 w-6 h-6 rounded-full flex items-center justify-center text-xs">
-            {weekIndex + 1}
-          </span>
-          Usage Phase / Method
-        </h4>
-        <button
-          type="button"
-          onClick={() => removeWeek(weekIndex)}
-          className="text-xs text-red-500 hover:text-red-700 font-medium uppercase tracking-wide flex items-center gap-1"
-        >
-          <FaTrash /> Remove Phase
-        </button>
-      </div>
-
-      <div className="grid grid-cols-1 gap-4 mb-4">
-        <div>
-          <label className="block text-xs font-bold text-gray-500 uppercase mb-1">
-            Method Title *
-          </label>
-          <input
-            type="text"
-            {...register(`curriculum.${weekIndex}.title`, {
-              required: "Title is required",
-            })}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm"
-            placeholder="e.g., Morning Routine"
+      {value && (
+        <div className="w-32 h-32 border border-gray-200 rounded-lg overflow-hidden bg-gray-50 relative group">
+          <img
+            src={
+              value.startsWith("http")
+                ? value
+                : `${import.meta.env.VITE_API_BASE_URL}${value}`
+            }
+            alt="Preview"
+            className="w-full h-full object-cover"
           />
-          {errors.curriculum?.[weekIndex]?.title && (
-            <p className="mt-1 text-xs text-red-600">
-              {errors.curriculum[weekIndex].title.message}
-            </p>
-          )}
-        </div>
-
-        <div>
-          <label className="block text-xs font-bold text-gray-500 uppercase mb-1">
-            Description / Note
-          </label>
-          <textarea
-            {...register(`curriculum.${weekIndex}.description`)}
-            rows={2}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm"
-            placeholder="Brief instruction..."
-          />
-        </div>
-
-        <input
-          type="hidden"
-          {...register(`curriculum.${weekIndex}.duration`)}
-          value="5 mins"
-        />
-      </div>
-
-      <div>
-        <label className="block text-xs font-bold text-gray-500 uppercase mb-2">
-          Steps / Actions
-        </label>
-        <div className="space-y-2">
-          {stepFields.map((step, stepIndex) => (
-            <div key={step.id} className="flex items-center gap-2">
-              <input
-                type="text"
-                {...register(`curriculum.${weekIndex}.topics.${stepIndex}`, {
-                  required: "Step is required",
-                })}
-                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm bg-white"
-                placeholder={`Step ${stepIndex + 1}`}
-              />
-              <button
-                type="button"
-                onClick={() => removeStep(stepIndex)}
-                className="p-2 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-              >
-                <FaTrash />
-              </button>
-            </div>
-          ))}
           <button
             type="button"
-            onClick={() => appendStep("")}
-            className="mt-2 text-xs font-bold text-emerald-600 hover:text-emerald-800 flex items-center gap-1 uppercase tracking-wide"
+            onClick={() => onChange("")}
+            className="absolute top-1 right-1 bg-red-500 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
           >
-            <FaPlus /> Add Step
+            <FaTrash size={10} />
           </button>
         </div>
-      </div>
+      )}
     </div>
   );
 };
+
+const DynamicList = ({
+  fields,
+  append,
+  remove,
+  register,
+  name,
+  placeholder,
+  label,
+  icon: Icon,
+}) => (
+  <div className="bg-white p-6 rounded-2xl shadow-sm border border-emerald-50 h-full">
+    <div className="flex justify-between items-center mb-4">
+      <h3 className="text-lg font-bold text-emerald-900 flex items-center gap-2">
+        {Icon && <Icon className="text-emerald-500" />} {label}
+      </h3>
+      <button
+        type="button"
+        onClick={() => append("")}
+        className="text-xs font-bold text-emerald-600 hover:text-emerald-800 uppercase tracking-wide flex items-center gap-1"
+      >
+        <FaPlus /> Add
+      </button>
+    </div>
+    <div className="space-y-3">
+      {fields.map((field, index) => (
+        <div key={field.id} className="flex gap-2">
+          <input
+            {...register(`${name}.${index}`)}
+            className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 outline-none"
+            placeholder={placeholder}
+          />
+          <button
+            type="button"
+            onClick={() => remove(index)}
+            className="text-red-400 hover:text-red-600 p-2 hover:bg-red-50 rounded-lg transition-colors"
+          >
+            <FaTrash />
+          </button>
+        </div>
+      ))}
+      {fields.length === 0 && (
+        <p className="text-sm text-gray-400 italic text-center py-4 bg-gray-50 rounded-lg border border-dashed border-gray-200">
+          No items added.
+        </p>
+      )}
+    </div>
+  </div>
+);
+
+// --- Main Form Component ---
 
 export const CourseForm = ({ isEdit = false }) => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState([]);
-  const [instructors, setInstructors] = useState([]); // Brands/Vaidyas
+  const [instructors, setInstructors] = useState([]);
 
   const {
     register,
@@ -303,7 +174,6 @@ export const CourseForm = ({ isEdit = false }) => {
     setValue,
     watch,
     reset,
-    trigger,
   } = useForm({
     defaultValues: {
       title: "",
@@ -311,273 +181,228 @@ export const CourseForm = ({ isEdit = false }) => {
       shortDescription: "",
       description: "",
       category: "",
-      instructor: "",
-      isFree: false,
+      instructor: "Ayushaushadhi",
       price: 0,
       originalPrice: 0,
-      totalHours: 100, // Net Qty
-      duration: "12 Months", // Shelf Life
-      level: "Tablet", // Product Form
-      language: "Ayurveda",
-      certificateIncluded: false, // Prescription Req
+      isFree: false,
+      // Ayurveda Specifics
+      ingredients: [],
+      benefits: [],
+      warnings: [],
+      storage: "",
+      additionalInfo: {
+        packagingSize: "",
+        packagingType: "",
+        form: "Capsule",
+        shelfLife: "24 Months",
+        countryOfOrigin: "Made in India",
+        directionOfUse: "",
+        gender: "Unisex",
+      },
+      // System fields
       isFeatured: false,
       isPublished: false,
       showOnHome: false,
-      status: "draft",
       image: "",
       thumbnail: "",
-      // Mapped Arrays
-      prerequisites: ["Ashwagandha"], // Ingredients
-      whatYouWillLearn: ["Boosts Immunity"], // Benefits
-      requirements: ["Store in cool place"], // Storage
-      whoIsThisFor: ["Adults"], // Target Audience
-      skills: ["Immunity"], // Tags
-      faqs: [],
-      curriculum: [
-        {
-          week: 1,
-          title: "Standard Dosage",
-          description: "Recommended daily intake",
-          duration: "0 min",
-          topics: ["Take 1 tablet twice daily with warm water"],
-        },
-      ],
+      curriculum: [{ week: 1, title: "Dosage", description: "", topics: [""] }], // Usage Guide
     },
   });
 
-  const {
-    fields: faqFields,
-    append: appendFaq,
-    remove: removeFaq,
-  } = useFieldArray({ control, name: "faqs" });
-  const {
-    fields: curriculumFields,
-    append: appendWeek,
-    remove: removeWeek,
-  } = useFieldArray({ control, name: "curriculum" });
-
-  // Custom Arrays for Product Details
+  // Dynamic Fields
   const {
     fields: ingredientFields,
     append: appendIngredient,
     remove: removeIngredient,
-  } = useFieldArray({ control, name: "prerequisites" });
+  } = useFieldArray({ control, name: "ingredients" });
   const {
     fields: benefitFields,
     append: appendBenefit,
     remove: removeBenefit,
-  } = useFieldArray({ control, name: "whatYouWillLearn" });
+  } = useFieldArray({ control, name: "benefits" });
   const {
-    fields: storageFields,
-    append: appendStorage,
-    remove: removeStorage,
-  } = useFieldArray({ control, name: "requirements" });
+    fields: warningFields,
+    append: appendWarning,
+    remove: removeWarning,
+  } = useFieldArray({ control, name: "warnings" });
+  const {
+    fields: usageFields,
+    append: appendUsage,
+    remove: removeUsage,
+  } = useFieldArray({ control, name: "curriculum" });
 
   useEffect(() => {
-    const fetchCourseData = async () => {
+    const initData = async () => {
       try {
         setLoading(true);
-        const categoriesData = await getCategoriesForForm();
-        setCategories(categoriesData);
-
-        const instructorsData = await userApi.getUsers({ role: "instructor" });
-        setInstructors(instructorsData);
+        const [cats, users] = await Promise.all([
+          getCategoriesForForm(),
+          userApi.getUsers({ role: "instructor" }),
+        ]);
+        setCategories(cats);
+        setInstructors(users);
 
         if (isEdit && id) {
           const response = await getCourseById(id);
-          const productData = response.data;
+          const data = response.data;
 
-          const ensureArray = (arr) =>
-            Array.isArray(arr) && arr.length > 0 ? arr : [""];
-
+          // Map DB structure to Form
           reset({
-            ...productData,
-            category: productData.category?._id || productData.category || "",
-            // Mapping fields back
-            prerequisites: ensureArray(productData.prerequisites), // Ingredients
-            whatYouWillLearn: ensureArray(productData.whatYouWillLearn), // Benefits
-            requirements: ensureArray(productData.requirements), // Storage
-            whoIsThisFor: ensureArray(productData.whoIsThisFor), // Target Audience
-            skills: ensureArray(productData.skills), // Tags
-            curriculum: productData.curriculum?.length
-              ? productData.curriculum
+            ...data,
+            category: data.category?._id || data.category,
+            ingredients: data.ingredients?.length
+              ? data.ingredients
+              : data.prerequisites || [], // Fallback for old data
+            benefits: data.benefits || [],
+            warnings: data.warnings || [],
+            storage: data.storage || "",
+            additionalInfo: {
+              packagingSize: data.additionalInfo?.packagingSize || "",
+              packagingType: data.additionalInfo?.packagingType || "",
+              form: data.additionalInfo?.form || data.level || "Capsule",
+              shelfLife:
+                data.additionalInfo?.shelfLife || data.duration || "24 Months",
+              countryOfOrigin:
+                data.additionalInfo?.countryOfOrigin || "Made in India",
+              directionOfUse: data.additionalInfo?.directionOfUse || "",
+              gender: data.additionalInfo?.gender || "Unisex",
+            },
+            // Map usage guide
+            curriculum: data.curriculum?.length
+              ? data.curriculum
               : [{ week: 1, title: "Dosage", topics: [""] }],
-
-            isFree: Boolean(productData.isFree),
-            isFeatured: Boolean(productData.isFeatured),
-            isPublished: Boolean(productData.isPublished),
-            showOnHome: Boolean(productData.showOnHome),
-            certificateIncluded: productData.certificateIncluded, // Prescription Req
           });
         }
-      } catch (error) {
-        toast.error("Failed to load product data.");
+      } catch (err) {
+        toast.error("Failed to load data");
       } finally {
         setLoading(false);
       }
     };
-
-    fetchCourseData();
+    initData();
   }, [id, isEdit, reset]);
 
   const onSubmit = async (formData) => {
     try {
       setLoading(true);
 
-      const price = formData.isFree
-        ? 0
-        : Math.max(0, Number(formData.price) || 0);
-
-      const dataToSend = {
+      // Structure data for DB
+      const payload = {
         ...formData,
-        price,
-        originalPrice: Math.max(0, Number(formData.originalPrice) || price),
-        totalHours: Math.max(0, Number(formData.totalHours) || 0), // Net Qty
-
-        // Clean Arrays
-        prerequisites: formData.prerequisites
-          .filter((i) => i && i.toString().trim() !== "")
-          .map((i) => i.toString().trim()),
-        whatYouWillLearn: formData.whatYouWillLearn
-          .filter((b) => b && b.toString().trim() !== "")
-          .map((b) => b.toString().trim()),
-        requirements: formData.requirements
-          .filter((r) => r && r.toString().trim() !== "")
-          .map((r) => r.toString().trim()),
-
-        curriculum: formData.curriculum.map((week, index) => ({
-          week: Number(week.week) || index + 1,
-          title: week.title?.toString().trim() || `Phase ${index + 1}`,
-          description: week.description?.toString().trim() || "",
+        price: Number(formData.price),
+        originalPrice: Number(formData.originalPrice),
+        // Sync top-level fields for compatibility
+        level: formData.additionalInfo.form,
+        duration: formData.additionalInfo.shelfLife,
+        // Ensure arrays are clean strings
+        ingredients: formData.ingredients.filter(Boolean),
+        benefits: formData.benefits.filter(Boolean),
+        warnings: formData.warnings.filter(Boolean),
+        // Map Usage Guide
+        curriculum: formData.curriculum.map((item, idx) => ({
+          ...item,
+          week: idx + 1,
           duration: "5 min",
-          topics: Array.isArray(week.topics)
-            ? week.topics.filter((t) => t).map((t) => t.toString().trim())
-            : [],
         })),
-
-        // Product Metadata
-        level: formData.level, // Form
-        language: "Ayurveda",
       };
 
       if (isEdit) {
-        await updateCourse(id, dataToSend);
-        toast.success("Product updated successfully!");
+        await updateCourse(id, payload);
+        toast.success("Product updated!");
       } else {
-        await createCourse(dataToSend);
-        toast.success("Product created successfully!");
+        await createCourse(payload);
+        toast.success("Product created!");
       }
       navigate("/admin/collections");
     } catch (error) {
+      toast.error("Save failed. Check console.");
       console.error(error);
-      toast.error(error.response?.data?.message || "Failed to save product");
     } finally {
       setLoading(false);
     }
   };
 
-  const updateSlug = (title) => {
-    if (!title) return "";
-    return title
+  const generateSlug = (val) =>
+    val
       .toLowerCase()
-      .replace(/[^\w\s-]/g, "")
-      .replace(/\s+/g, "-")
-      .trim();
-  };
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/(^-|-$)+/g, "");
 
-  if (loading) {
+  if (loading)
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-50">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-emerald-600"></div>
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-emerald-600"></div>
       </div>
     );
-  }
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-8 text-gray-800">
-      {/* Header Actions */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900 font-serif flex items-center gap-2">
-            <FaBoxOpen className="text-emerald-600" />
-            {isEdit ? "Edit Product" : "Add New Remedy"}
-          </h1>
-          <p className="text-gray-500 text-sm mt-1">
-            Manage inventory details, pricing, and health benefits.
-          </p>
-        </div>
-        <div className="flex gap-3 w-full sm:w-auto">
+    <div className="max-w-7xl mx-auto px-4 py-8">
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-3xl font-bold text-gray-900 font-serif flex items-center gap-3">
+          <FaBoxOpen className="text-emerald-600" />
+          {isEdit ? "Edit Product" : "Add New Remedy"}
+        </h1>
+        <div className="flex gap-3">
           <button
             type="button"
             onClick={() => navigate("/admin/collections")}
-            className="flex-1 sm:flex-none px-4 py-2.5 border border-gray-300 rounded-lg text-gray-700 bg-white hover:bg-gray-50 font-medium text-sm"
+            className="px-5 py-2.5 border border-gray-300 rounded-lg text-gray-700 bg-white hover:bg-gray-50 font-medium"
           >
             Cancel
           </button>
           <button
             onClick={handleSubmit(onSubmit)}
-            disabled={loading}
-            className="flex-1 sm:flex-none px-6 py-2.5 rounded-lg shadow-md text-white bg-emerald-600 hover:bg-emerald-700 font-medium text-sm flex items-center justify-center gap-2"
+            className="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-medium shadow-md"
           >
-            {loading ? (
-              <span className="loading loading-spinner loading-xs"></span>
-            ) : (
-              <FaPlus />
-            )}
-            {isEdit ? "Update Product" : "Create Product"}
+            Save Product
           </button>
         </div>
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
-        {/* Basic Info */}
-        <div className="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-emerald-50">
+        {/* --- 1. Basic Info --- */}
+        <div className="bg-white p-6 rounded-2xl shadow-sm border border-emerald-50">
           <h3 className="text-lg font-bold text-emerald-900 mb-6 pb-2 border-b border-gray-100">
-            Basic Details
+            Basic Information
           </h3>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid md:grid-cols-2 gap-6">
             <div className="md:col-span-2">
               <label className="block text-xs font-bold text-gray-500 uppercase mb-1">
-                Product Name *
+                Product Title *
               </label>
               <input
-                type="text"
-                {...register("title", { required: "Name is required" })}
-                onChange={(e) => setValue("slug", updateSlug(e.target.value))}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-lg font-serif"
-                placeholder="e.g., Ashwagandha Immunity Booster"
+                {...register("title", { required: "Required" })}
+                onChange={(e) => setValue("slug", generateSlug(e.target.value))}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 text-lg font-serif"
+                placeholder="e.g. 365 Capsule For Men Power"
               />
               {errors.title && (
-                <p className="mt-1 text-xs text-red-600">
-                  {errors.title.message}
-                </p>
+                <p className="text-red-500 text-xs mt-1">Title is required</p>
               )}
             </div>
 
             <div>
               <label className="block text-xs font-bold text-gray-500 uppercase mb-1">
-                URL Slug
+                Slug
               </label>
               <input
-                type="text"
-                {...register("slug", { required: "Slug is required" })}
-                className="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg text-gray-600 font-mono text-sm"
+                {...register("slug", { required: true })}
+                className="w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg font-mono text-sm text-gray-600"
               />
             </div>
 
             <div>
               <label className="block text-xs font-bold text-gray-500 uppercase mb-1">
-                Collection (Category) *
+                Category *
               </label>
               <select
-                {...register("category", { required: "Category is required" })}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500"
+                {...register("category", { required: true })}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500"
               >
                 <option value="">Select Collection</option>
-                {categories.map((cat) => (
-                  <option key={cat.value} value={cat.value}>
-                    {cat.label}
+                {categories.map((c) => (
+                  <option key={c.value} value={c.value}>
+                    {c.label}
                   </option>
                 ))}
               </select>
@@ -585,74 +410,52 @@ export const CourseForm = ({ isEdit = false }) => {
 
             <div>
               <label className="block text-xs font-bold text-gray-500 uppercase mb-1">
-                Brand / Formulator *
+                Short Description
               </label>
-              <select
-                {...register("instructor", { required: "Required" })}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500"
-              >
-                <option value="">Select Brand</option>
-                <option value="Ayushaushadhi">Ayushaushadhi (In-house)</option>
-                {instructors.map((inst, index) => (
-                  <option key={index} value={inst._id}>
-                    {inst.fullname || inst.name}
-                  </option>
-                ))}
-              </select>
+              <textarea
+                {...register("shortDescription")}
+                rows={3}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500"
+                placeholder="Brief summary for cards..."
+              />
             </div>
 
-            <div>
-              <label className="block text-xs font-bold text-gray-500 uppercase mb-1">
-                Product Form
+            <div className="bg-emerald-50/50 p-4 rounded-xl border border-emerald-100">
+              <label className="block text-xs font-bold text-emerald-800 uppercase mb-2">
+                Product Image (URL)
               </label>
-              <select
-                {...register("level")}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500"
-              >
-                <option value="Tablet">Tablet</option>
-                <option value="Syrup">Syrup</option>
-                <option value="Oil">Oil</option>
-                <option value="Powder">Powder (Churan)</option>
-                <option value="Capsule">Capsule</option>
-                <option value="Raw Herb">Raw Herb</option>
-              </select>
+              <Controller
+                name="image"
+                control={control}
+                render={({ field: { onChange, value } }) => (
+                  <FileUploadInput
+                    value={value}
+                    onChange={(val) => {
+                      onChange(val);
+                      setValue("thumbnail", val); // Sync thumbnail
+                    }}
+                  />
+                )}
+              />
             </div>
-          </div>
-
-          <div className="mt-6">
-            <label className="block text-xs font-bold text-gray-500 uppercase mb-1">
-              Short Summary *
-            </label>
-            <textarea
-              {...register("shortDescription", {
-                required: "Required",
-                maxLength: { value: 300, message: "Max 300 chars" },
-              })}
-              rows={3}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 text-sm"
-              placeholder="Brief description for product cards..."
-            />
           </div>
         </div>
 
-        {/* Pricing & Stock */}
-        <div className="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-emerald-50">
+        {/* --- 2. Pricing & Specs --- */}
+        <div className="bg-white p-6 rounded-2xl shadow-sm border border-emerald-50">
           <h3 className="text-lg font-bold text-emerald-900 mb-6 pb-2 border-b border-gray-100">
-            Pricing & Attributes
+            Pricing & Specifications
           </h3>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+          <div className="grid md:grid-cols-4 gap-6">
+            {/* Price */}
             <div>
               <label className="block text-xs font-bold text-gray-500 uppercase mb-1">
                 Sale Price (₹)
               </label>
               <input
                 type="number"
-                {...register("price", {
-                  required: true,
-                  min: 0,
-                  valueAsNumber: true,
-                })}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 font-bold text-emerald-700 text-lg"
+                {...register("price", { required: true })}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg font-bold text-emerald-700"
               />
             </div>
             <div>
@@ -661,165 +464,124 @@ export const CourseForm = ({ isEdit = false }) => {
               </label>
               <input
                 type="number"
-                {...register("originalPrice", { min: 0 })}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg text-gray-500 line-through decoration-red-400"
+                {...register("originalPrice")}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-500 line-through"
               />
             </div>
 
-            {/* Net Quantity */}
+            {/* Additional Info Fields */}
             <div>
               <label className="block text-xs font-bold text-gray-500 uppercase mb-1">
-                Net Qty / Weight
+                Packaging Size
               </label>
-              <div className="relative">
-                <input
-                  type="number"
-                  {...register("totalHours", { min: 0 })}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg"
-                />
-                <span className="absolute right-4 top-3.5 text-gray-400 text-xs font-bold">
-                  g / ml
-                </span>
-              </div>
+              <input
+                {...register("additionalInfo.packagingSize")}
+                placeholder="e.g. 60 Capsules"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+              />
             </div>
-
-            {/* Shelf Life */}
+            <div>
+              <label className="block text-xs font-bold text-gray-500 uppercase mb-1">
+                Form
+              </label>
+              <select
+                {...register("additionalInfo.form")}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+              >
+                <option value="Capsule">Capsule</option>
+                <option value="Tablet">Tablet</option>
+                <option value="Syrup">Syrup</option>
+                <option value="Powder">Powder</option>
+                <option value="Oil">Oil</option>
+              </select>
+            </div>
             <div>
               <label className="block text-xs font-bold text-gray-500 uppercase mb-1">
                 Shelf Life
               </label>
               <input
-                type="text"
-                {...register("duration", { required: true })}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg"
+                {...register("additionalInfo.shelfLife")}
                 placeholder="e.g. 24 Months"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-bold text-gray-500 uppercase mb-1">
+                Brand
+              </label>
+              <input
+                {...register("instructor")}
+                placeholder="Ayushaushadhi"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg"
               />
             </div>
           </div>
 
-          <div className="mt-8 grid grid-cols-2 md:grid-cols-4 gap-4 bg-gray-50 p-4 rounded-xl border border-gray-200">
-            <label className="flex items-center gap-3 cursor-pointer p-2 hover:bg-white rounded-lg transition-colors">
+          {/* Toggles */}
+          <div className="mt-6 flex flex-wrap gap-6 bg-gray-50 p-4 rounded-xl">
+            <label className="flex items-center gap-2 cursor-pointer">
               <input
                 type="checkbox"
                 {...register("isFeatured")}
-                className="w-5 h-5 text-emerald-600 rounded border-gray-300 focus:ring-emerald-500"
-              />
+                className="w-4 h-4 text-emerald-600 rounded"
+              />{" "}
               <span className="text-sm font-medium">Bestseller</span>
             </label>
-            <label className="flex items-center gap-3 cursor-pointer p-2 hover:bg-white rounded-lg transition-colors">
+            <label className="flex items-center gap-2 cursor-pointer">
               <input
                 type="checkbox"
                 {...register("showOnHome")}
-                className="w-5 h-5 text-emerald-600 rounded border-gray-300 focus:ring-emerald-500"
-              />
-              <span className="text-sm font-medium">Featured on Home</span>
+                className="w-4 h-4 text-emerald-600 rounded"
+              />{" "}
+              <span className="text-sm font-medium">Show on Home</span>
             </label>
-            <label className="flex items-center gap-3 cursor-pointer p-2 hover:bg-white rounded-lg transition-colors">
+            <label className="flex items-center gap-2 cursor-pointer">
               <input
                 type="checkbox"
                 {...register("isPublished")}
-                className="w-5 h-5 text-emerald-600 rounded border-gray-300 focus:ring-emerald-500"
-              />
+                className="w-4 h-4 text-emerald-600 rounded"
+              />{" "}
               <span className="text-sm font-bold text-emerald-700">
                 Publish Live
               </span>
             </label>
-            <label className="flex items-center gap-3 cursor-pointer p-2 hover:bg-white rounded-lg transition-colors">
-              <input
-                type="checkbox"
-                {...register("certificateIncluded")}
-                className="w-5 h-5 text-red-500 rounded border-gray-300 focus:ring-red-500"
-              />
-              <span className="text-sm font-medium text-red-600">
-                Prescription Req.
-              </span>
-            </label>
           </div>
         </div>
 
-        {/* Dynamic Lists Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Key Ingredients */}
-          <div className="bg-white p-6 rounded-2xl shadow-sm border border-emerald-50">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-bold text-emerald-900">
-                Key Ingredients
-              </h3>
-              <button
-                type="button"
-                onClick={() => appendIngredient("")}
-                className="text-sm text-emerald-600 font-bold hover:underline"
-              >
-                + Add Ingredient
-              </button>
-            </div>
-            {ingredientFields.map((field, index) => (
-              <div key={field.id} className="flex gap-2 mb-3">
-                <input
-                  {...register(`prerequisites.${index}`)}
-                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 outline-none"
-                  placeholder={`Ingredient ${index + 1}`}
-                />
-                <button
-                  type="button"
-                  onClick={() => removeIngredient(index)}
-                  className="text-red-400 hover:text-red-600 p-2"
-                >
-                  <FaTrash />
-                </button>
-              </div>
-            ))}
-            {ingredientFields.length === 0 && (
-              <p className="text-sm text-gray-400 italic">
-                No ingredients added yet.
-              </p>
-            )}
-          </div>
-
-          {/* Health Benefits */}
-          <div className="bg-white p-6 rounded-2xl shadow-sm border border-emerald-50">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-bold text-emerald-900">
-                Health Benefits
-              </h3>
-              <button
-                type="button"
-                onClick={() => appendBenefit("")}
-                className="text-sm text-emerald-600 font-bold hover:underline"
-              >
-                + Add Benefit
-              </button>
-            </div>
-            {benefitFields.map((field, index) => (
-              <div key={field.id} className="flex gap-2 mb-3">
-                <input
-                  {...register(`whatYouWillLearn.${index}`)}
-                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 outline-none"
-                  placeholder={`Benefit ${index + 1}`}
-                />
-                <button
-                  type="button"
-                  onClick={() => removeBenefit(index)}
-                  className="text-red-400 hover:text-red-600 p-2"
-                >
-                  <FaTrash />
-                </button>
-              </div>
-            ))}
-            {benefitFields.length === 0 && (
-              <p className="text-sm text-gray-400 italic">
-                No benefits listed.
-              </p>
-            )}
-          </div>
+        {/* --- 3. Product Content (Ingredients, Benefits, Warnings) --- */}
+        <div className="grid md:grid-cols-2 gap-8">
+          <DynamicList
+            fields={ingredientFields}
+            append={appendIngredient}
+            remove={removeIngredient}
+            register={register}
+            name="ingredients"
+            label="Key Ingredients"
+            icon={FaLeaf}
+            placeholder="e.g. Ashwagandha"
+          />
+          <DynamicList
+            fields={benefitFields}
+            append={appendBenefit}
+            remove={removeBenefit}
+            register={register}
+            name="benefits"
+            label="Health Benefits"
+            icon={FaPills}
+            placeholder="e.g. Boosts Stamina"
+          />
         </div>
 
-        {/* Detailed Info */}
-        <div className="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-emerald-50">
-          <h3 className="text-lg font-bold text-emerald-900 mb-4">
-            Detailed Description
+        {/* --- 4. Safety & Description --- */}
+        <div className="bg-white p-6 rounded-2xl shadow-sm border border-emerald-50">
+          <h3 className="text-lg font-bold text-emerald-900 mb-6 pb-2 border-b border-gray-100">
+            Detailed Information
           </h3>
-          <div className="prose max-w-none">
+
+          <div className="mb-6">
+            <label className="block text-xs font-bold text-gray-500 uppercase mb-2">
+              Full Description
+            </label>
             <Controller
               name="description"
               control={control}
@@ -829,74 +591,127 @@ export const CourseForm = ({ isEdit = false }) => {
                   theme="snow"
                   value={value || ""}
                   onChange={onChange}
-                  className="h-64 mb-12 rounded-lg overflow-hidden"
+                  className="h-48 mb-12 rounded-lg"
                 />
               )}
             />
           </div>
+
+          <div className="grid md:grid-cols-2 gap-8">
+            <div>
+              <h4 className="text-sm font-bold text-red-700 mb-2 flex items-center gap-2">
+                <FaExclamationTriangle /> Safety Warnings
+              </h4>
+              <div className="space-y-2">
+                {warningFields.map((field, index) => (
+                  <div key={field.id} className="flex gap-2">
+                    <input
+                      {...register(`warnings.${index}`)}
+                      className="flex-1 px-3 py-2 border border-red-200 bg-red-50 rounded text-sm"
+                      placeholder="Warning..."
+                    />
+                    <button
+                      type="button"
+                      onClick={() => removeWarning(index)}
+                      className="text-red-400"
+                    >
+                      <FaTrash />
+                    </button>
+                  </div>
+                ))}
+                <button
+                  type="button"
+                  onClick={() => appendWarning("")}
+                  className="text-xs font-bold text-red-600"
+                >
+                  + Add Warning
+                </button>
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-xs font-bold text-blue-700 uppercase mb-2 flex items-center gap-2">
+                <FaInfoCircle /> Storage Instructions
+              </label>
+              <textarea
+                {...register("storage")}
+                rows={3}
+                className="w-full px-4 py-2 border border-blue-200 bg-blue-50 rounded-lg text-sm"
+                placeholder="e.g. Store in a cool, dry place..."
+              />
+            </div>
+          </div>
         </div>
 
-        {/* Usage Guide (Curriculum) */}
-        <div className="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-emerald-50">
-          <div className="flex justify-between items-center mb-6">
+        {/* --- 5. Usage Guide --- */}
+        <div className="bg-white p-6 rounded-2xl shadow-sm border border-emerald-50">
+          <div className="flex justify-between items-center mb-4">
             <h3 className="text-lg font-bold text-emerald-900">
-              Dosage & Usage Guide
+              Dosage & Usage
             </h3>
             <button
               type="button"
               onClick={() =>
-                appendWeek({
-                  week: curriculumFields.length + 1,
+                appendUsage({
+                  week: usageFields.length + 1,
                   title: "",
-                  description: "",
                   topics: [""],
                 })
               }
-              className="px-4 py-2 bg-amber-100 text-amber-800 rounded-lg text-sm font-bold hover:bg-amber-200 transition-colors shadow-sm"
+              className="text-sm font-bold text-emerald-600 hover:underline"
             >
-              + Add Usage Phase
+              + Add Usage Step
             </button>
           </div>
-          <div className="space-y-4">
-            {curriculumFields.map((week, index) => (
-              <UsageGuideItem
-                key={week.id}
-                week={week}
-                weekIndex={index}
-                removeWeek={removeWeek}
-                register={register}
-                control={control}
-                errors={errors}
-              />
-            ))}
-            {curriculumFields.length === 0 && (
-              <div className="text-center p-8 bg-gray-50 rounded-xl border-2 border-dashed border-gray-200">
-                <p className="text-gray-500 text-sm">
-                  No usage instructions added yet.
-                </p>
-              </div>
-            )}
-          </div>
-        </div>
 
-        {/* Image Upload */}
-        <div className="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-emerald-50">
-          <h3 className="text-lg font-bold text-emerald-900 mb-4">
-            Product Image
-          </h3>
-          <ErrorBoundary>
-            <Controller
-              name="thumbnail"
-              control={control}
-              render={({ field: { onChange, value } }) => (
-                <FileUploadInput
-                  thumbnail={value}
-                  onFileSelect={(path) => onChange(path)}
-                  onRemove={() => onChange("")}
-                />
-              )}
-            />
-          </ErrorBoundary>
+          <div className="space-y-4">
+            {usageFields.map((item, index) => (
+              <div
+                key={item.id}
+                className="p-4 border border-gray-200 rounded-lg bg-gray-50"
+              >
+                <div className="flex justify-between mb-2">
+                  <span className="font-bold text-gray-700">
+                    Step {index + 1}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => removeUsage(index)}
+                    className="text-red-500 text-xs uppercase font-bold"
+                  >
+                    Remove
+                  </button>
+                </div>
+                <div className="grid gap-3">
+                  <input
+                    {...register(`curriculum.${index}.title`)}
+                    placeholder="Title (e.g. Morning Dose)"
+                    className="w-full px-3 py-2 border border-gray-300 rounded"
+                  />
+                  <textarea
+                    {...register(`curriculum.${index}.description`)}
+                    placeholder="Instructions..."
+                    rows={2}
+                    className="w-full px-3 py-2 border border-gray-300 rounded"
+                  />
+
+                  {/* Nested Topics for specific steps */}
+                  <Controller
+                    control={control}
+                    name={`curriculum.${index}.topics`}
+                    render={({ field }) => (
+                      <input
+                        value={field.value?.[0] || ""}
+                        onChange={(e) => field.onChange([e.target.value])}
+                        placeholder="Specific instruction (e.g. Take with warm milk)"
+                        className="w-full px-3 py-2 border border-gray-300 rounded bg-white"
+                      />
+                    )}
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </form>
     </div>

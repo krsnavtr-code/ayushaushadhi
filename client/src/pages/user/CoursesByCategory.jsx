@@ -270,7 +270,7 @@ const ProductCard = ({ product }) => {
       }
 
       try {
-        const url = getImageUrl(product.thumbnail);
+        const url = product.thumbnail;
         if (isMounted)
           setImageState({ url: url, isLoading: true, hasError: false });
 
