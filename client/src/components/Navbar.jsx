@@ -129,7 +129,7 @@ function Navbar() {
   // --- Navigation Links Configuration ---
   const navLinks = [
     { to: "/", label: "Home" },
-    { to: "/store", label: "Herbal Store" },
+    { to: "/collections", label: "Herbal Store" },
     { to: "/blog", label: "Wellness Journal" },
     { to: "/about", label: "Our Story" },
     { to: "/contact", label: "Contact" },
@@ -324,7 +324,7 @@ function Navbar() {
         <div className="bg-emerald-900 text-white h-12 shadow-inner relative z-40 hidden lg:block">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center">
             {/* 1. Shop By Category Dropdown */}
-            <div className="relative h-full" id="category-menu-container">
+            <div className="relative h-full flex" id="category-menu-container">
               <CourseMenu />
             </div>
 

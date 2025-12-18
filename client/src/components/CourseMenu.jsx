@@ -244,7 +244,7 @@ const CourseMenu = ({ isMobile = false, onItemClick = () => {} }) => {
       {/* Main Menu Button - Only show in desktop or as a toggle in mobile */}
       {!isMobile && (
         <button
-          className={`h-full flex items-center gap-2 px-4 text-sm font-semibold tracking-wide transition-colors ${
+          className={`h-full flex items-center justify-center gap-2 px-4 text-sm font-semibold tracking-wide transition-colors ${
             isOpen
               ? "bg-emerald-800 text-amber-400"
               : "hover:bg-emerald-800 text-white"
