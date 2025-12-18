@@ -53,7 +53,7 @@ const VideoUploader = ({ onUploadSuccess, label = 'Upload Video', className = ''
     try {
       setIsUploading(true);
       const token = localStorage.getItem('token');
-      const API_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:4002/api';
+      const API_URL = '/api';
       
       // Show uploading toast
       const toastId = toast.loading('Uploading video...');
