@@ -135,7 +135,7 @@ const HerbalStore = () => {
                 key={product._id}
                 className="group bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-emerald-50 dark:border-gray-700 overflow-hidden hover:shadow-xl hover:border-emerald-200 dark:hover:border-emerald-800 transition-all duration-300 hover:-translate-y-1"
               >
-                <Link to={`/course/${product._id}`}>
+                <Link to={`/collections/${product._id}`}>
                   <div className="h-48 bg-gray-100 dark:bg-gray-700 relative overflow-hidden">
                     {product.thumbnail ? (
                       <img

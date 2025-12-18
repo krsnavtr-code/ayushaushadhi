@@ -385,7 +385,7 @@ function App() {
               path="/admin/collections/:id/edit"
               element={<CourseForm isEdit={true} />}
             />
-            <Route path="/admin/course/:id" element={<CourseDetail />} />
+            <Route path="/admin/collections/:id" element={<CourseDetail />} />
             <Route path="/admin/users" element={<Users />} />
             <Route path="/admin/contacts" element={<ContactsList />} />
             <Route path="/admin/faqs" element={<ManageFAQs />} />

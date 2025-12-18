@@ -430,7 +430,7 @@ const CourseMenu = ({ isMobile = false, onItemClick = () => {} }) => {
                               {categoryCourses[category.id].map((course) => (
                                 <Link
                                   key={course._id}
-                                  to={`/course/${course.slug || course._id}`}
+                                  to={`/collections/${course.slug || course._id}`}
                                   className="block px-3 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 rounded"
                                   onClick={() => {
                                     setIsOpen(false);

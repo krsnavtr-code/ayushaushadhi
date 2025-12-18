@@ -121,7 +121,7 @@ function Navbar() {
   };
 
   const handleResultClick = (item) => {
-    navigate(`/course/${item.slug || item._id}`);
+    navigate(`/collections/${item.slug || item._id}`);
     setShowResults(false);
     setSearchQuery("");
   };

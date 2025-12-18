@@ -104,7 +104,7 @@ const ProductCard = ({ course: product }) => {
 
   return (
     <div className="group bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-emerald-100 dark:border-gray-700 overflow-hidden hover:shadow-xl hover:shadow-emerald-900/10 transition-all duration-300 hover:-translate-y-1">
-      <Link to={`/course/${product.slug || product._id}`}>
+      <Link to={`/collections/${product.slug || product._id}`}>
         {/* Image Container */}
         <div className="relative aspect-[4/3] overflow-hidden bg-gray-100 dark:bg-gray-700">
           {imageState.loading ? (
