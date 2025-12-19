@@ -739,11 +739,6 @@ const SendBrochure = () => {
 </div>
 `,
       },
-      custom: {
-        name: "Custom Message",
-        subject: "",
-        content: "",
-      },
     }),
     []
   );
