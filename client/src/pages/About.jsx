@@ -171,11 +171,11 @@ export default function About() {
                   key={index}
                   className="bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-lg transition-shadow"
                 >
-                  <img
+                  {/* <img
                     src={member.image}
                     alt={member.name}
                     className="w-full h-64 object-cover filter grayscale hover:grayscale-0 transition-all duration-500"
-                  />
+                  /> */}
                   <div className="p-6">
                     <h3 className="text-xl font-bold text-emerald-900 dark:text-white mb-1">
                       {member.name}
