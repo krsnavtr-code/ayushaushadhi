@@ -12,7 +12,7 @@ import axios from "axios";
 
 // Placeholder images - You should replace these with your actual assets
 const BANNER_IMG =
-  "https://images.unsplash.com/photo-1540420773420-3366772f4999?q=80&w=2084&auto=format&fit=crop";
+  "http://ayushaushadhi.com/api/upload/file/img-1766382164512-610533787.png";
 const SECONDARY_IMG =
   "https://images.unsplash.com/photo-1624454002302-36b824d7bd0a?q=80&w=2070&auto=format&fit=crop";
 
