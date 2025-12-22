@@ -14,7 +14,7 @@ const ImageUploader = ({
   onUploadSuccess,
   label = "Upload Image Asset",
   className = "",
-  maxSizeMB = 5,
+  maxSizeMB = 20,
 }) => {
   const [isUploading, setIsUploading] = useState(false);
   const [previewUrl, setPreviewUrl] = useState("");
