@@ -8,14 +8,20 @@ import {
   FaLeaf,
 } from "react-icons/fa";
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
+import { submitContactForm } from "../../api/contactApi";
+import { toast } from "react-toastify";
 
 const ContactSection = () => {
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    subject: "",
-    message: "",
-  });
+ const [formData, setFormData] = useState({
+     name: "",
+     email: "",
+     phone: "",
+     message: "",
+     subject: "General Inquiry", 
+     agreedToTerms: false,
+ });
+  
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
@@ -27,21 +33,61 @@ const ContactSection = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  // Inquiry options for an e-commerce store
+  const inquiryTypes = [
+    "Product Inquiry",
+    "Order Status",
+    "Consultation with Vaidya",
+    "Wholesale/Distribution",
+    "Other",
+  ];
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!formData.agreedToTerms) {
+      toast.error("Please accept the terms & conditions and privacy policy", {
+        position: "top-center",
+        autoClose: 5000,
+      });
+      return;
+    }
+
     setIsSubmitting(true);
 
-    // Simulate form submission
-    setTimeout(() => {
-      console.log("Wellness Query submitted:", formData);
-      setIsSubmitting(false);
+    try {
+      await submitContactForm(formData);
       setIsSubmitted(true);
-      setFormData({ name: "", email: "", subject: "", message: "" });
+      setFormData({
+        name: "",
+        email: "",
+        phone: "",
+        message: "",
+        subject: "General Inquiry",
+        agreedToTerms: false,
+      });
 
-      // Reset submission status after 5 seconds
-      setTimeout(() => setIsSubmitted(false), 5000);
-    }, 1500);
+      toast.success("Your message has been sent successfully!", {
+        position: "top-center",
+        autoClose: 5000,
+      });
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      // For demo purposes, we can simulate success if API fails (optional)
+      // setIsSuccess(true);
+      toast.error(
+        error.response?.data?.message ||
+          "Failed to send message. Please try again.",
+        {
+          position: "top-center",
+          autoClose: 5000,
+        }
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   };
+
 
   const contactInfo = [
     {
@@ -165,42 +211,60 @@ const ContactSection = () => {
                 </div>
               ) : (
                 <form onSubmit={handleSubmit} className="space-y-6">
-                  <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                  <div>
+                    <label
+                      htmlFor="name"
+                      className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2"
+                    >
+                      Full Name <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      id="name"
+                      name="name"
+                      value={formData.name}
+                      onChange={handleChange}
+                      required
+                      className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 dark:bg-gray-700 dark:text-white outline-none transition-all"
+                      placeholder="Your name"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                       <label
-                        htmlFor="name"
-                        className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1"
+                        htmlFor="email"
+                        className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2"
                       >
-                        Full Name <span className="text-red-500">*</span>
+                        Email <span className="text-red-500">*</span>
                       </label>
                       <input
-                        type="text"
-                        name="name"
-                        id="name"
-                        required
-                        value={formData.name}
+                        type="email"
+                        id="email"
+                        name="email"
+                        value={formData.email}
                         onChange={handleChange}
-                        className="block w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:ring-emerald-500 focus:border-emerald-500 dark:bg-gray-700 dark:text-white transition-colors"
-                        placeholder="John Doe"
+                        required
+                        className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 dark:bg-gray-700 dark:text-white outline-none transition-all"
+                        placeholder="you@example.com"
                       />
                     </div>
 
                     <div>
                       <label
-                        htmlFor="email"
-                        className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1"
+                        htmlFor="phone"
+                        className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2"
                       >
-                        Email Address <span className="text-red-500">*</span>
+                        Phone Number
                       </label>
                       <input
-                        type="email"
-                        name="email"
-                        id="email"
-                        required
-                        value={formData.email}
+                        type="tel"
+                        id="phone"
+                        name="phone"
+                        value={formData.phone}
                         onChange={handleChange}
-                        className="block w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:ring-emerald-500 focus:border-emerald-500 dark:bg-gray-700 dark:text-white transition-colors"
-                        placeholder="you@example.com"
+                        className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 dark:bg-gray-700 dark:text-white outline-none transition-all"
+                        placeholder="+91 98765 43210"
                       />
                     </div>
                   </div>
@@ -208,59 +272,138 @@ const ContactSection = () => {
                   <div>
                     <label
                       htmlFor="subject"
-                      className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1"
+                      className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2"
                     >
-                      Subject <span className="text-red-500">*</span>
+                      Subject
                     </label>
-                    <input
-                      type="text"
-                      name="subject"
-                      id="subject"
-                      required
-                      value={formData.subject}
-                      onChange={handleChange}
-                      className="block w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:ring-emerald-500 focus:border-emerald-500 dark:bg-gray-700 dark:text-white transition-colors"
-                      placeholder="Product inquiry, Order status, Consultation..."
-                    />
+                    <div className="relative">
+                      <select
+                        id="subject"
+                        name="subject"
+                        value={formData.subject}
+                        onChange={(e) =>
+                          setFormData((prev) => ({
+                            ...prev,
+                            subject: e.target.value,
+                          }))
+                        }
+                        className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg appearance-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 dark:bg-gray-700 dark:text-white outline-none transition-all"
+                      >
+                        {inquiryTypes.map((type) => (
+                          <option key={type} value={type}>
+                            {type}
+                          </option>
+                        ))}
+                      </select>
+                      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-gray-500">
+                        <svg
+                          className="h-4 w-4 fill-current"
+                          viewBox="0 0 20 20"
+                        >
+                          <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
+                        </svg>
+                      </div>
+                    </div>
                   </div>
 
                   <div>
                     <label
                       htmlFor="message"
-                      className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1"
+                      className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2"
                     >
                       Your Message <span className="text-red-500">*</span>
                     </label>
                     <textarea
                       id="message"
                       name="message"
-                      rows={5}
-                      required
+                      rows={4}
                       value={formData.message}
                       onChange={handleChange}
-                      className="block w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:ring-emerald-500 focus:border-emerald-500 dark:bg-gray-700 dark:text-white transition-colors resize-none"
-                      placeholder="Type your message here..."
+                      required
+                      className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 dark:bg-gray-700 dark:text-white outline-none transition-all resize-none"
+                      placeholder="How can we help you?"
                     />
                   </div>
 
-                  <div className="flex justify-end pt-2">
-                    <motion.button
-                      type="submit"
-                      disabled={isSubmitting}
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                      className="inline-flex items-center px-8 py-3.5 border border-transparent text-base font-bold rounded-full shadow-lg shadow-emerald-600/20 text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 disabled:opacity-70 disabled:cursor-not-allowed transition-all duration-300"
-                    >
-                      {isSubmitting ? (
-                        "Sending..."
-                      ) : (
-                        <>
-                          <FaPaperPlane className="mr-2" />
-                          Send Message
-                        </>
-                      )}
-                    </motion.button>
+                  <div className="flex items-start">
+                    <div className="flex items-center h-5">
+                      <input
+                        id="agreedToTerms"
+                        name="agreedToTerms"
+                        type="checkbox"
+                        checked={formData.agreedToTerms}
+                        onChange={(e) =>
+                          setFormData((prev) => ({
+                            ...prev,
+                            agreedToTerms: e.target.checked,
+                          }))
+                        }
+                        className="h-4 w-4 text-emerald-600 focus:ring-emerald-500 border-gray-300 rounded cursor-pointer accent-emerald-600"
+                        required
+                      />
+                    </div>
+                    <div className="ml-3 text-sm">
+                      <label
+                        htmlFor="agreedToTerms"
+                        className="font-medium text-gray-700 dark:text-gray-300"
+                      >
+                        I agree to the{" "}
+                        <Link
+                          to="/terms-of-service"
+                          className="text-emerald-600 hover:text-emerald-500 underline"
+                        >
+                          Terms
+                        </Link>{" "}
+                        &{" "}
+                        <Link
+                          to="/privacy-policy"
+                          className="text-emerald-600 hover:text-emerald-500 underline"
+                        >
+                          Privacy Policy
+                        </Link>
+                        .<span className="text-red-500">*</span>
+                      </label>
+                    </div>
                   </div>
+
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className={`w-full flex justify-center items-center py-4 px-6 border border-transparent rounded-full shadow-lg text-base font-bold text-white bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition-all transform hover:-translate-y-1 ${
+                      isSubmitting ? "opacity-70 cursor-not-allowed" : ""
+                    }`}
+                  >
+                    {isSubmitting ? (
+                      <>
+                        <svg
+                          className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                        >
+                          <circle
+                            className="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            strokeWidth="4"
+                          ></circle>
+                          <path
+                            className="opacity-75"
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                          ></path>
+                        </svg>
+                        Sending...
+                      </>
+                    ) : (
+                      <>
+                        <FaPaperPlane className="mr-2 h-5 w-5" />
+                        Send Message
+                      </>
+                    )}
+                  </button>
                 </form>
               )}
             </div>
