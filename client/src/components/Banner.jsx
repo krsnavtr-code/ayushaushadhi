@@ -138,7 +138,7 @@ function Banner() {
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
               <Link
-                to="/store"
+                to="/collections"
                 className="group relative px-8 py-4 bg-emerald-800 text-white rounded-full font-semibold shadow-xl hover:bg-emerald-900 transition-all hover:shadow-emerald-900/20 overflow-hidden"
               >
                 <span className="relative z-10 flex items-center gap-2">

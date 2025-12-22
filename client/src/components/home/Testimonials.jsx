@@ -109,11 +109,11 @@ const Testimonials = () => {
             >
               <div className="flex items-center mb-6">
                 <div className="flex-shrink-0 relative">
-                  <img
+                  {/* <img
                     className="h-14 w-14 rounded-full object-cover border-2 border-white dark:border-gray-700 shadow-sm"
                     src={testimonial.avatar}
                     alt={`${testimonial.name}'s avatar`}
-                  />
+                  /> */}
                   <div className="absolute -bottom-1 -right-1 bg-emerald-500 text-white p-1 rounded-full text-xs">
                     <FaQuoteLeft size={10} />
                   </div>
