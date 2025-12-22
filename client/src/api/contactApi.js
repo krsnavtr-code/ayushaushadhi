@@ -1,7 +1,7 @@
 // contactApi.js - API functions for contact-related operations
 import axios from 'axios';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4002';
+const API_URL = '';
 
 // Create axios instance with default config
 const api = axios.create({
@@ -9,7 +9,7 @@ const api = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
-  timeout: 10000, // 10 seconds
+  timeout: 30000, // 30 seconds for better reliability
   withCredentials: true, // Important for cookies/sessions
 });
 
@@ -193,7 +193,9 @@ const submitContactForm = async (formData) => {
         }
         
         // Make the API call with the correct endpoint
-        const response = await api.post('/api/contacts', requestData);
+        const response = await api.post('/api/contact', requestData, {
+          validateStatus: (status) => status < 500 // Don't reject on server errors
+        });
         lastResponse = response;
         
         // If we get here, the request was successful
@@ -383,9 +385,9 @@ const getContacts = async (options = {}) => {
     if (options.date) params.append('date', options.date);
     if (options.course) params.append('course', options.course);
 
-    console.log('Making request to:', `/api/contacts?${params.toString()}`);
+    console.log('Making request to:', `/api/contact?${params.toString()}`);
     
-    const response = await api.get(`/api/contacts?${params.toString()}`, {
+    const response = await api.get(`/api/contact?${params.toString()}`, {
       headers: {
         Authorization: `Bearer ${authToken}`,
         'Content-Type': 'application/json'

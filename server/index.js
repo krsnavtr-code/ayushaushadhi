@@ -336,7 +336,7 @@ app.get('/api/test-categories', async (req, res) => {
 app.use("/api/books", bookRoute);
 app.use("/api/categories", categoryRoute);
 app.use("/api/collections", courseRoute);
-app.use("/api/contacts", contactRoute);
+app.use("/api/contact", contactRoute);
 app.use("/api/faqs", faqRoute);
 app.use("/api/blog", blogRoutes);
 

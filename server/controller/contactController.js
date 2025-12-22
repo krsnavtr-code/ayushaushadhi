@@ -26,19 +26,6 @@ export const submitContactForm = async (req, res) => {
 
     const { name, email, phone, message, courseId, courseTitle, subject } = req.body;
     
-    // Check if this is a duplicate submission (same email and message within last 5 minutes)
-    const recentSubmission = await Contact.findOne({
-      email,
-      message,
-      submittedAt: { $gt: new Date(Date.now() - 5 * 60 * 1000) } // Last 5 minutes
-    });
-    
-    if (recentSubmission) {
-      return res.status(429).json({
-        success: false,
-        message: 'You have recently submitted a similar message. Please wait before submitting again.'
-      });
-    }
     
     // Create new contact
     const contactData = {
