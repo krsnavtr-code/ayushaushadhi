@@ -162,10 +162,10 @@ export default function Contact() {
                       </h3>
                       <p className="mt-1 text-gray-600 dark:text-gray-300">
                         <a
-                          href="tel:+919990056799"
+                          href="tel:+919891030303"
                           className="hover:text-emerald-600 transition-colors"
                         >
-                          +91 9990056799
+                          +91 9891030303
                         </a>
                         <br />
                         <span className="text-sm text-gray-500">

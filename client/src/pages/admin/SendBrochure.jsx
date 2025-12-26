@@ -735,7 +735,7 @@ const SendBrochure = () => {
     <span style="color: rgb(244, 124, 38)">First</span><span style="color: rgb(30, 144, 255)">VITE</span> E-Learning Pvt. Ltd.
   </p>
   <p style="margin: 0 0 4px 0;">📧 info@firstvite.com</p>
-  <p style="margin: 0;">📞 +91-9990056799 | 🌐 www.firstvite.com</p>
+  <p style="margin: 0;">📞 +91-9891030303 | 🌐 www.firstvite.com</p>
 </div>
 `,
       },

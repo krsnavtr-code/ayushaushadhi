@@ -103,8 +103,8 @@ const ContactSection = () => {
     {
       icon: <FaPhone className="text-2xl text-amber-600 dark:text-amber-400" />,
       title: "Phone Number",
-      description: "+91 9990056799",
-      link: "tel:+919990056799",
+      description: "+91 9891030303",
+      link: "tel:+919891030303",
       linkText: "Call us",
     },
     {

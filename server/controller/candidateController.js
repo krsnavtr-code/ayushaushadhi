@@ -211,7 +211,7 @@ export const createCandidate = async (req, res) => {
     const city = 'Noida, Uttar Pradesh 201301';
     const mapLink = 'https://maps.app.goo.gl/PjBJ8U51Kn1as9Aq6';
     const supportEmail = 'info@firstvite.com';
-    const supportPhone = '9990056799';
+    const supportPhone = '9891030303';
     const website = 'https://firstvite.com';
     const yourName = 'FirstVITE E-Learning';
 

@@ -150,7 +150,7 @@ const PrivacyPolicy = () => {
                   info@ayushaushadhi.com
                 </a>
                 <br />
-                <strong>Phone:</strong> +91 9990056799
+                <strong>Phone:</strong> +91 9891030303
               </address>
             </div>
           </div>

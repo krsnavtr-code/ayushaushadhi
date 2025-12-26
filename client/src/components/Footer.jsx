@@ -53,7 +53,7 @@ function Footer() {
             {/* Social Media Pills */}
             <div className="flex space-x-3">
               {[
-                { icon: FaWhatsapp, link: "https://wa.me/919990056799" },
+                { icon: FaWhatsapp, link: "https://wa.me/919891030303" },
                 { icon: FaFacebook, link: "https://facebook.com" },
                 { icon: FaTwitter, link: "https://twitter.com" },
                 { icon: FaLinkedin, link: "https://linkedin.com" },
@@ -141,10 +141,10 @@ function Footer() {
                   <FaPhoneAlt className="text-amber-600 text-xs" />
                 </div>
                 <a
-                  href="tel:+919990056799"
+                  href="tel:+919891030303"
                   className="text-sm text-gray-600 dark:text-gray-300 hover:text-emerald-700 font-medium"
                 >
-                  +91 9990056799
+                  +91 9891030303
                 </a>
               </li>
               <li className="flex items-center gap-3">

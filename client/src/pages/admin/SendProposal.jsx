@@ -44,7 +44,7 @@ We look forward to seeing you at the event!
 
 Warm regards,
 <strong style="font-weight: 600;"><span style="color: rgb(244, 124, 38)">First</span><span style="color: rgb(30, 144, 255)">VITE</span> E-Learning Pvt. Ltd.</strong>
-📞 <span style="font-weight: 600; color: #007BFF;">9990056799</span> 
+📞 <span style="font-weight: 600; color: #007BFF;">9891030303</span> 
 📧 <span style="font-weight: 600; color: #007BFF;">info@firstvite.com</span>
 🌐 <span style="font-weight: 600; color: #007BFF;">https://firstvite.com</span>
 </div>
@@ -72,7 +72,7 @@ We look forward to having your institution join us in empowering the next genera
 
 Warm regards,
 <span style="font-weight: 600;"><span style="color: rgb(244, 124, 38)">First</span><span style="color: rgb(30, 144, 255)">VITE</span> E-Learning Pvt. Ltd.</span>
-📞 <span style="font-weight: 600; color: #007BFF;">9990056799</span> 
+📞 <span style="font-weight: 600; color: #007BFF;">9891030303</span> 
 📧 <span style="font-weight: 600; color: #007BFF;">info@firstvite.com</span>
 🌐 <span style="font-weight: 600; color: #007BFF;">https://firstvite.com</span>
 </div>
@@ -103,7 +103,7 @@ For details and bookings, feel free to contact:
 
 Warm regards,
 <span style="font-weight: 600;"><span style="color: rgb(244, 124, 38)">First</span><span style="color: rgb(30, 144, 255)">VITE</span> E-Learning Pvt. Ltd.</span>
-📞 <span style="font-weight: 600; color: #007BFF;">9990056799</span> 
+📞 <span style="font-weight: 600; color: #007BFF;">9891030303</span> 
 📧 <span style="font-weight: 600; color: #007BFF;">info@firstvite.com</span>
 🌐 <span style="font-weight: 600; color: #007BFF;">https://firstvite.com</span>
 </div>
