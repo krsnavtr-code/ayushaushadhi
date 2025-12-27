@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import SEO from "../../components/SEO";
-import { getCourseById } from "../../api/courseApi"; 
+import { getCourseById } from "../../api/courseApi";
 import { toast } from "react-hot-toast";
 import { useAuth } from "../../contexts/AuthContext";
 import { useCart } from "../../contexts/CartContext";
+import { AnimatePresence } from "framer-motion";
 import {
   FaStar,
   FaLeaf,
@@ -16,8 +17,11 @@ import {
   FaShieldAlt,
   FaBoxOpen,
   FaHeart,
+  FaExclamationTriangle,
+  FaInfoCircle,
+  FaPills,
+  FaClock,
 } from "react-icons/fa";
-import { motion, AnimatePresence } from "framer-motion";
 import { formatPrice } from "../../utils/format";
 import { getImageUrl } from "../../utils/imageUtils";
 import PaymentForm from "../../components/PaymentForm";
@@ -26,12 +30,11 @@ import axios from "axios";
 const ProductDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { isAuthenticated, currentUser } = useAuth();
+  const { isAuthenticated } = useAuth();
   const { addToCart } = useCart();
 
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState("overview");
   const [qty, setQty] = useState(1);
   const [showPaymentForm, setShowPaymentForm] = useState(false);
 
@@ -61,6 +64,31 @@ const ProductDetail = () => {
     toast.success(`${product.title} added to cart!`);
   };
 
+  const downloadBrochure = async () => {
+    if (!product?.brochureUrl) {
+      toast.error("Brochure not available");
+      return;
+    }
+    const toastId = toast.loading("Downloading brochure...");
+    try {
+      const response = await axios.get(
+        `/api/collections/${product._id}/download-brochure`,
+        { responseType: "blob" }
+      );
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", `${product.slug}-brochure.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(link);
+      toast.success("Download complete", { id: toastId });
+    } catch (error) {
+      toast.error("Download failed", { id: toastId });
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
@@ -79,16 +107,24 @@ const ProductDetail = () => {
         )
       : 0;
 
+  // Formatting Key Data
+  const specs = product.additionalInfo || {};
+  const ingredients =
+    product.ingredients && product.ingredients.length > 0
+      ? product.ingredients
+      : product.prerequisites || [];
+  const warnings = product.warnings || [];
+
   return (
-    <div className="min-h-screen bg-white text-gray-800 font-sans">
+    <div className="min-h-screen bg-stone-50 text-gray-800 font-sans">
       <SEO
-        title={`${product.title} - Product Details | Authentic Ayurveda | Ayushaushadhi`}
+        title={`${product.title} - Authentic Ayurveda | Ayushaushadhi`}
         description={product.shortDescription}
         image={getImageUrl(product.thumbnail)}
       />
 
       {/* Breadcrumb */}
-      <div className="bg-gray-50 border-b border-gray-100">
+      <div className="bg-white border-b border-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 text-sm text-gray-500">
           <Link to="/" className="hover:text-emerald-600">
             Home
@@ -106,12 +142,12 @@ const ProductDetail = () => {
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         <div className="flex flex-col lg:flex-row gap-12">
-          {/* Left Column: Images */}
+          {/* LEFT COLUMN: IMAGES (Sticky) */}
           <div className="lg:w-1/2">
             <div className="sticky top-24">
               <div className="relative rounded-2xl overflow-hidden shadow-lg border border-gray-100 bg-white group">
                 <img
-                  src={product.thumbnail}
+                  src={getImageUrl(product.thumbnail)}
                   alt={product.title}
                   className="w-full h-auto object-cover transform group-hover:scale-105 transition-transform duration-700"
                 />
@@ -127,176 +163,162 @@ const ProductDetail = () => {
                 )}
               </div>
 
-              {/* Thumbnails / Gallery Placeholder */}
-              <div className="mt-4 flex gap-4 overflow-x-auto pb-2">
-                <div className="w-20 h-20 rounded-lg border-2 border-emerald-500 overflow-hidden cursor-pointer">
-                  <img
-                    src={product.thumbnail}
-                    className="w-full h-full object-cover"
-                  />
+              {/* Trust Badges */}
+              <div className="grid grid-cols-4 gap-2 mt-6">
+                <div className="flex flex-col items-center text-center gap-1 p-2 bg-white rounded-lg shadow-sm border border-emerald-50">
+                  <FaLeaf className="text-emerald-600 text-xl" />
+                  <span className="text-[10px] font-bold text-gray-600">
+                    100% Herbal
+                  </span>
                 </div>
-                {/* Map other images here if available */}
+                <div className="flex flex-col items-center text-center gap-1 p-2 bg-white rounded-lg shadow-sm border border-emerald-50">
+                  <FaShieldAlt className="text-blue-600 text-xl" />
+                  <span className="text-[10px] font-bold text-gray-600">
+                    Quality Assured
+                  </span>
+                </div>
+                <div className="flex flex-col items-center text-center gap-1 p-2 bg-white rounded-lg shadow-sm border border-emerald-50">
+                  <FaTruck className="text-amber-600 text-xl" />
+                  <span className="text-[10px] font-bold text-gray-600">
+                    Fast Delivery
+                  </span>
+                </div>
+                <div className="flex flex-col items-center text-center gap-1 p-2 bg-white rounded-lg shadow-sm border border-emerald-50">
+                  <FaBoxOpen className="text-purple-600 text-xl" />
+                  <span className="text-[10px] font-bold text-gray-600">
+                    Easy Returns
+                  </span>
+                </div>
               </div>
             </div>
           </div>
 
-          {/* Right Column: Product Details */}
-          <div className="lg:w-1/2">
-            <div className="mb-2">
-              <span className="text-emerald-600 font-bold text-sm tracking-wide uppercase bg-emerald-50 px-2 py-1 rounded">
-                {product.category?.name || "Herbal Remedy"}
-              </span>
-            </div>
-
-            <h1 className="text-3xl md:text-4xl font-bold text-gray-900 font-serif mb-3 leading-tight">
-              {product.title}
-            </h1>
-
-            <div className="flex items-center gap-4 mb-6">
-              <div className="flex text-amber-400 text-sm">
-                {[...Array(5)].map((_, i) => (
-                  <FaStar
-                    key={i}
-                    className={
-                      i < (product.rating || 4)
-                        ? "text-amber-400"
-                        : "text-gray-300"
-                    }
-                  />
-                ))}
-              </div>
-              <span className="text-sm text-gray-500">
-                ({product.reviews?.length || 45} Reviews)
-              </span>
-              <span className="text-gray-300">|</span>
-              <span className="text-sm text-gray-500 flex items-center gap-1">
-                <FaCheckCircle className="text-emerald-500" /> In Stock
-              </span>
-            </div>
-
-            {/* Price Block */}
-            <div className="bg-gray-50 rounded-xl p-5 border border-gray-100 mb-8">
-              <div className="flex items-end gap-3 mb-2">
-                <span className="text-3xl font-bold text-emerald-800">
-                  {product.price > 0 ? formatPrice(product.price) : "Free"}
+          {/* RIGHT COLUMN: DETAILS & CONTENT */}
+          <div className="lg:w-1/2 flex flex-col gap-10">
+            {/* 1. Header & Purchase Info */}
+            <div>
+              <div className="mb-2 flex items-center gap-2">
+                <span className="text-emerald-700 font-bold text-xs tracking-wide uppercase bg-emerald-100 px-2 py-1 rounded">
+                  {product.category?.name || "Herbal Supplement"}
                 </span>
-                {product.originalPrice > product.price && (
-                  <span className="text-lg text-gray-400 line-through mb-1">
-                    {formatPrice(product.originalPrice)}
+                {specs.form && (
+                  <span className="text-amber-700 font-bold text-xs tracking-wide uppercase bg-amber-100 px-2 py-1 rounded flex items-center gap-1">
+                    <FaPills className="text-[10px]" /> {specs.form}
                   </span>
                 )}
               </div>
-              <p className="text-xs text-gray-500">
-                Inclusive of all taxes. Free shipping on orders above ₹999.
+
+              <h1 className="text-3xl md:text-4xl font-bold text-gray-900 font-serif mb-2 leading-tight">
+                {product.title}
+              </h1>
+
+              <p className="text-sm text-gray-500 mb-4">
+                By{" "}
+                <span className="text-emerald-700 font-semibold">
+                  {product.instructor || "Ayushaushadhi"}
+                </span>
               </p>
+
+              <div className="flex items-center gap-4 mb-6">
+                <div className="flex text-amber-400 text-sm">
+                  {[...Array(5)].map((_, i) => (
+                    <FaStar
+                      key={i}
+                      className={
+                        i < (product.rating || 4)
+                          ? "text-amber-400"
+                          : "text-gray-300"
+                      }
+                    />
+                  ))}
+                </div>
+                <span className="text-sm text-gray-500 underline decoration-gray-300 underline-offset-4">
+                  {product.reviews?.length || 45} Reviews
+                </span>
+              </div>
+
+              {/* Short Description */}
+              <p className="text-gray-600 leading-relaxed mb-6">
+                {product.shortDescription}
+              </p>
+
+              {/* Price Block */}
+              <div className="bg-white rounded-xl p-5 border border-emerald-100 shadow-sm mb-8">
+                <div className="flex items-end gap-3 mb-2">
+                  <span className="text-3xl font-bold text-emerald-800">
+                    {product.price > 0 ? formatPrice(product.price) : "Free"}
+                  </span>
+                  {product.originalPrice > product.price && (
+                    <span className="text-lg text-gray-400 line-through mb-1">
+                      {formatPrice(product.originalPrice)}
+                    </span>
+                  )}
+                </div>
+
+                <div className="flex items-center gap-2 text-sm text-green-600 bg-green-50 w-fit px-2 py-1 rounded mb-4">
+                  <FaCheckCircle /> Inclusive of all taxes
+                </div>
+
+                {/* Actions */}
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <div className="flex items-center border border-gray-300 rounded-lg bg-gray-50 w-max">
+                    <button
+                      onClick={() => setQty(Math.max(1, qty - 1))}
+                      className="px-4 py-3 text-gray-600 hover:bg-gray-200 rounded-l-lg"
+                    >
+                      -
+                    </button>
+                    <span className="px-4 font-bold w-12 text-center">
+                      {qty}
+                    </span>
+                    <button
+                      onClick={() => setQty(qty + 1)}
+                      className="px-4 py-3 text-gray-600 hover:bg-gray-200 rounded-r-lg"
+                    >
+                      +
+                    </button>
+                  </div>
+
+                  <button
+                    onClick={handleAddToCart}
+                    className="flex-1 bg-emerald-800 text-white font-bold py-3 px-6 rounded-lg hover:bg-emerald-900 transition-all shadow-lg hover:shadow-emerald-900/30 flex items-center justify-center gap-2"
+                  >
+                    <FaShoppingCart /> Add to Cart
+                  </button>
+
+                  <button className="p-3 border border-gray-300 rounded-lg hover:bg-gray-50 text-gray-500 hover:text-red-500 transition-colors">
+                    <FaHeart size={20} />
+                  </button>
+                </div>
+              </div>
+
+              {/* Quick Specs */}
+              {specs.shelfLife && (
+                <div className="flex gap-4 text-sm text-gray-600 mb-6 bg-amber-50/50 p-3 rounded-lg border border-amber-100">
+                  <div className="flex items-center gap-2">
+                    <FaClock className="text-amber-600" />
+                    <span className="font-semibold">Shelf Life:</span>{" "}
+                    {specs.shelfLife}
+                  </div>
+                  {specs.packagingSize && (
+                    <div className="flex items-center gap-2">
+                      <FaBoxOpen className="text-amber-600" />
+                      <span className="font-semibold">Pack:</span>{" "}
+                      {specs.packagingSize}
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
 
-            {/* Short Description */}
-            <p className="text-gray-600 leading-relaxed mb-8 text-lg">
-              {product.shortDescription ||
-                "Experience the healing power of nature with this authentic Ayurvedic formulation. Crafted with care to restore balance and vitality."}
-            </p>
+            <hr className="border-gray-200" />
 
-            {/* Actions */}
-            <div className="flex flex-col sm:flex-row gap-4 mb-8">
-              <div className="flex items-center border border-gray-300 rounded-lg bg-white w-max">
-                <button
-                  onClick={() => setQty(Math.max(1, qty - 1))}
-                  className="px-4 py-3 text-gray-600 hover:bg-gray-100 rounded-l-lg"
-                >
-                  -
-                </button>
-                <span className="px-4 font-bold w-12 text-center">{qty}</span>
-                <button
-                  onClick={() => setQty(qty + 1)}
-                  className="px-4 py-3 text-gray-600 hover:bg-gray-100 rounded-r-lg"
-                >
-                  +
-                </button>
-              </div>
-
-              <button
-                onClick={handleAddToCart}
-                className="flex-1 bg-emerald-800 text-white font-bold py-3 px-6 rounded-lg hover:bg-emerald-900 transition-all shadow-lg hover:shadow-emerald-900/30 flex items-center justify-center gap-2"
-              >
-                <FaShoppingCart /> Add to Cart
-              </button>
-
-              <button
-                onClick={() => {
-                  /* Wishlist Logic */
-                }}
-                className="p-3 border border-gray-300 rounded-lg hover:bg-gray-50 text-gray-500 hover:text-red-500 transition-colors"
-              >
-                <FaHeart size={20} />
-              </button>
-            </div>
-
-            {/* Trust Badges */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 border-t border-gray-100 pt-8">
-              <div className="flex flex-col items-center text-center gap-2">
-                <div className="w-10 h-10 bg-green-50 rounded-full flex items-center justify-center text-green-600">
-                  <FaLeaf />
-                </div>
-                <span className="text-xs font-bold text-gray-600">
-                  100% Natural
-                </span>
-              </div>
-              <div className="flex flex-col items-center text-center gap-2">
-                <div className="w-10 h-10 bg-blue-50 rounded-full flex items-center justify-center text-blue-600">
-                  <FaShieldAlt />
-                </div>
-                <span className="text-xs font-bold text-gray-600">
-                  Quality Assured
-                </span>
-              </div>
-              <div className="flex flex-col items-center text-center gap-2">
-                <div className="w-10 h-10 bg-amber-50 rounded-full flex items-center justify-center text-amber-600">
-                  <FaTruck />
-                </div>
-                <span className="text-xs font-bold text-gray-600">
-                  Fast Delivery
-                </span>
-              </div>
-              <div className="flex flex-col items-center text-center gap-2">
-                <div className="w-10 h-10 bg-purple-50 rounded-full flex items-center justify-center text-purple-600">
-                  <FaBoxOpen />
-                </div>
-                <span className="text-xs font-bold text-gray-600">
-                  Easy Returns
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Tabs Section */}
-        <div className="mt-16">
-          <div className="border-b border-gray-200">
-            <nav className="flex space-x-8 overflow-x-auto" aria-label="Tabs">
-              {["overview", "ingredients", "usage", "reviews"].map((tab) => (
-                <button
-                  key={tab}
-                  onClick={() => setActiveTab(tab)}
-                  className={`
-                    whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm capitalize transition-colors
-                    ${
-                      activeTab === tab
-                        ? "border-emerald-600 text-emerald-700"
-                        : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-                    }
-                  `}
-                >
-                  {tab === "usage" ? "Usage Guide" : tab}
-                </button>
-              ))}
-            </nav>
-          </div>
-
-          <div className="py-8 animate-fade-in">
-            {/* Overview Tab */}
-            {activeTab === "overview" && (
-              <div className="prose prose-emerald max-w-none text-gray-600">
+            {/* 2. Description & Benefits */}
+            <div>
+              <h3 className="text-xl font-bold text-gray-900 font-serif mb-4">
+                Product Overview
+              </h3>
+              <div className="prose prose-emerald max-w-none text-gray-600 mb-8">
                 <div
                   dangerouslySetInnerHTML={{
                     __html:
@@ -304,105 +326,172 @@ const ProductDetail = () => {
                       "<p>No detailed description available.</p>",
                   }}
                 />
+              </div>
 
-                {product.whatYouWillLearn?.length > 0 && (
-                  <div className="mt-8 grid md:grid-cols-2 gap-4">
-                    <h3 className="text-xl font-bold text-gray-900 col-span-full font-serif mb-2">
-                      Key Health Benefits
-                    </h3>
-                    {product.whatYouWillLearn.map((benefit, idx) => (
-                      <div
-                        key={idx}
-                        className="flex items-start gap-3 p-3 bg-emerald-50 rounded-lg"
-                      >
+              {product.benefits?.length > 0 && (
+                <div className="bg-stone-50 p-6 rounded-xl border border-stone-100">
+                  <h4 className="text-lg font-bold text-gray-900 mb-4">
+                    Key Health Benefits
+                  </h4>
+                  <div className="grid md:grid-cols-2 gap-3">
+                    {product.benefits.map((benefit, idx) => (
+                      <div key={idx} className="flex items-start gap-3">
                         <FaCheckCircle className="text-emerald-500 mt-1 flex-shrink-0" />
-                        <span className="text-sm font-medium text-emerald-900">
+                        <span className="text-sm font-medium text-gray-700">
                           {benefit}
                         </span>
                       </div>
                     ))}
                   </div>
-                )}
-              </div>
-            )}
+                </div>
+              )}
+            </div>
 
-            {/* Ingredients Tab (Formerly Prerequisites/Skills) */}
-            {activeTab === "ingredients" && (
+            <hr className="border-gray-200" />
+
+            {/* 3. Ingredients */}
+            {ingredients.length > 0 && (
               <div>
                 <h3 className="text-xl font-bold text-gray-900 font-serif mb-6">
-                  Key Ingredients
+                  Natural Ingredients
                 </h3>
-                {product.prerequisites?.length > 0 ? (
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-                    {product.prerequisites.map((ing, idx) => (
-                      <div
-                        key={idx}
-                        className="text-center p-4 border border-gray-100 rounded-xl hover:shadow-md transition-shadow"
-                      >
-                        <div className="w-16 h-16 bg-gray-100 rounded-full mx-auto mb-3 flex items-center justify-center text-gray-400">
-                          <FaLeaf /> {/* Placeholder for ingredient image */}
-                        </div>
-                        <p className="font-bold text-gray-800">{ing}</p>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                  {ingredients.map((ing, idx) => (
+                    <div
+                      key={idx}
+                      className="flex items-center gap-3 p-3 border border-emerald-50 bg-emerald-50/20 rounded-lg hover:shadow-sm transition-shadow"
+                    >
+                      <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-emerald-500 shadow-sm shrink-0">
+                        <FaLeaf />
                       </div>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="text-gray-500 italic">
-                    Ingredients list coming soon.
-                  </p>
-                )}
-              </div>
-            )}
-
-            {/* Usage Guide Tab (Formerly Curriculum) */}
-            {activeTab === "usage" && (
-              <div className="max-w-3xl">
-                <h3 className="text-xl font-bold text-gray-900 font-serif mb-6">
-                  How to Use
-                </h3>
-                <div className="space-y-6">
-                  {product.curriculum?.map((step, idx) => (
-                    <div key={idx} className="flex gap-4">
-                      <div className="flex-shrink-0 w-8 h-8 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold">
-                        {idx + 1}
-                      </div>
-                      <div>
-                        <h4 className="font-bold text-gray-900 mb-1">
-                          {step.title}
-                        </h4>
-                        <p className="text-gray-600 text-sm mb-2">
-                          {step.description}
-                        </p>
-                        {step.topics?.length > 0 && (
-                          <ul className="list-disc list-inside text-sm text-gray-500 space-y-1">
-                            {step.topics.map((topic, tIdx) => (
-                              <li key={tIdx}>{topic}</li>
-                            ))}
-                          </ul>
-                        )}
-                      </div>
+                      <span className="font-semibold text-gray-800 text-sm">
+                        {ing}
+                      </span>
                     </div>
-                  )) || (
-                    <p className="text-gray-500">
-                      Usage instructions will be updated soon.
-                    </p>
-                  )}
+                  ))}
                 </div>
               </div>
             )}
 
-            {/* Reviews Tab (Placeholder) */}
-            {activeTab === "reviews" && (
-              <div className="text-center py-10 bg-gray-50 rounded-xl border border-dashed border-gray-300">
-                <FaStar className="text-amber-400 text-4xl mx-auto mb-3" />
-                <h3 className="text-lg font-bold text-gray-900">
-                  Customer Reviews
+            <hr className="border-gray-200" />
+
+            {/* 4. Dosage & Usage */}
+            <div>
+              <h3 className="text-xl font-bold text-gray-900 font-serif mb-6">
+                Dosage & Direction of Use
+              </h3>
+
+              {specs.directionOfUse && (
+                <div className="bg-amber-50 border-l-4 border-amber-400 p-4 mb-6 rounded-r-lg">
+                  <p className="font-bold text-amber-900 text-sm uppercase tracking-wide mb-1">
+                    Recommended Dosage
+                  </p>
+                  <p className="text-amber-800 font-medium">
+                    {specs.directionOfUse}
+                  </p>
+                </div>
+              )}
+
+              <div className="space-y-4">
+                {product.curriculum?.map((step, idx) => (
+                  <div
+                    key={idx}
+                    className="flex gap-4 p-4 bg-white border border-gray-100 rounded-xl shadow-sm"
+                  >
+                    <div className="flex-shrink-0 w-8 h-8 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-sm">
+                      {idx + 1}
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-gray-900 mb-1">
+                        {step.title}
+                      </h4>
+                      {step.description && (
+                        <p className="text-gray-600 text-sm mb-2">
+                          {step.description}
+                        </p>
+                      )}
+                      {step.topics?.length > 0 && (
+                        <ul className="list-disc list-inside text-sm text-gray-500 space-y-1 ml-1">
+                          {step.topics.map((topic, tIdx) => (
+                            <li key={tIdx}>{topic}</li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <hr className="border-gray-200" />
+
+            {/* 5. Safety & Specs */}
+            <div className="grid md:grid-cols-2 gap-8">
+              {/* Safety */}
+              <div>
+                <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+                  <FaExclamationTriangle className="text-red-500" /> Safety
+                  Information
                 </h3>
-                <p className="text-gray-500 mb-6">
-                  Be the first to review this product!
-                </p>
-                <button className="px-6 py-2 bg-white border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50">
-                  Write a Review
+                <div className="bg-red-50 border border-red-100 rounded-xl p-5">
+                  <ul className="list-disc list-inside text-sm text-red-800 space-y-2">
+                    {warnings.length > 0 ? (
+                      warnings.map((warn, i) => <li key={i}>{warn}</li>)
+                    ) : (
+                      <li>
+                        No specific warnings. Consult physician if unsure.
+                      </li>
+                    )}
+                  </ul>
+                </div>
+              </div>
+
+              {/* Storage & More Specs */}
+              <div>
+                <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+                  <FaInfoCircle className="text-blue-500" /> Additional Info
+                </h3>
+                <div className="bg-blue-50 border border-blue-100 rounded-xl p-5 space-y-3">
+                  {product.storage && (
+                    <div>
+                      <span className="text-xs font-bold text-blue-800 uppercase block mb-1">
+                        Storage
+                      </span>
+                      <p className="text-sm text-blue-900">{product.storage}</p>
+                    </div>
+                  )}
+                  <div className="pt-2 border-t border-blue-200">
+                    <div className="grid grid-cols-2 gap-2 text-sm">
+                      <div>
+                        <span className="text-blue-800 font-semibold">
+                          Country:
+                        </span>{" "}
+                        <span className="text-blue-900">
+                          {specs.countryOfOrigin}
+                        </span>
+                      </div>
+                      <div>
+                        <span className="text-blue-800 font-semibold">
+                          Type:
+                        </span>{" "}
+                        <span className="text-blue-900">
+                          {specs.typeOfSupplement || "Dietary Supplement"}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Brochure Download */}
+            {product.brochureUrl && (
+              <div className="flex justify-center mt-4">
+                <button
+                  onClick={downloadBrochure}
+                  className="flex items-center gap-2 text-emerald-700 font-bold hover:underline bg-emerald-50 px-6 py-3 rounded-full transition-colors"
+                >
+                  <FaFilePdf /> Download Product Leaflet
                 </button>
               </div>
             )}
@@ -410,7 +499,7 @@ const ProductDetail = () => {
         </div>
       </main>
 
-      {/* Modals */}
+      {/* Payment Modal */}
       <AnimatePresence>
         {showPaymentForm && (
           <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
