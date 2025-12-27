@@ -117,19 +117,39 @@ const productSchema = new mongoose.Schema({
         trim: true
     }], // Mapped to: Tags / Keywords (e.g., "Immunity", "Digestion")
 
+    // Ingredients (mapped from prerequisites)
     prerequisites: [{
         type: String,
         trim: true
-    }], // Mapped to: Key Ingredients (e.g., "Ashwagandha", "Tulsi")
+    }],
+    // Alias for prerequisites to make it more intuitive in the code
+    ingredients: [{
+        type: String,
+        trim: true
+    }],
 
+    // Warnings and safety information
+    warnings: [{
+        type: String,
+        trim: true
+    }],
+
+    // Storage instructions
+    storage: {
+        type: String,
+        trim: true,
+        default: ''
+    },
+
+    // Health benefits
     whatYouWillLearn: [{
         type: String,
         trim: true
-    }], // Mapped to: Health Benefits (e.g., "Reduces Stress", "Better Sleep")
+    }],
 
     benefits: [{
         type: String,
-        required: false // Made optional as we use whatYouWillLearn for benefits mostly
+        required: false
     }],
 
     faqs: [faqSchema],
@@ -191,8 +211,16 @@ const productSchema = new mongoose.Schema({
 
 }, { timestamps: true });
 
-// Create slug from title before saving
+// Ensure ingredients and prerequisites are in sync
 productSchema.pre('save', function (next) {
+    // Sync ingredients with prerequisites
+    if (this.isModified('ingredients') && !this.isModified('prerequisites')) {
+        this.prerequisites = [...new Set([...this.ingredients, ...(this.prerequisites || [])])];
+    } else if (this.isModified('prerequisites') && !this.isModified('ingredients')) {
+        this.ingredients = [...new Set([...this.prerequisites, ...(this.ingredients || [])])];
+    }
+
+// Create slug from title
     if (this.isModified('title')) {
         this.slug = this.title.toLowerCase()
             .replace(/[^a-z0-9]+/g, '-')

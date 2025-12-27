@@ -295,9 +295,11 @@ export const CourseForm = ({ isEdit = false }) => {
         level: formData.additionalInfo.form,
         duration: formData.additionalInfo.shelfLife,
         // Ensure arrays are clean strings
-        ingredients: formData.ingredients.filter(Boolean),
-        benefits: formData.benefits.filter(Boolean),
-        warnings: formData.warnings.filter(Boolean),
+        ingredients: formData.ingredients?.filter(Boolean) || [],
+        benefits: formData.benefits?.filter(Boolean) || [],
+        warnings: formData.warnings?.filter(Boolean) || [],
+        // Include storage instructions
+        storage: formData.storage || "",
         // Map Usage Guide
         curriculum: formData.curriculum.map((item, idx) => ({
           ...item,

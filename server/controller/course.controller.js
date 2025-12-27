@@ -149,7 +149,10 @@ const prepareProductData = (data) => {
         requirements: cleanData.requirements || [], // Precautions
         whoIsThisFor: cleanData.whoIsThisFor || [], // Target Audience
         tags: cleanData.tags || [],
-        prerequisites: cleanData.prerequisites || [] // Ingredients
+        warnings: cleanData.warnings || [], // Safety Warnings
+        prerequisites: cleanData.prerequisites || [], // Ingredients
+        ingredients: cleanData.ingredients || cleanData.prerequisites || [], // Alias for prerequisites
+        storage: data.storage?.toString().trim() || '' // Storage Instructions
     };
 
     console.log('Final prepared product data:', JSON.stringify(result, null, 2));
@@ -324,7 +327,8 @@ export const getCourseById = async (req, res) => {
             'requirements', 'whoIsThisFor', 'curriculum', 'isFeatured',
             'isPublished', 'slug', 'tags', 'faqs', 'certificateIncluded',
             'metaTitle', 'metaDescription', 'previewVideo', 'image',
-            'brochureUrl', 'brochureGeneratedAt', 'totalHours', 'prerequisites'
+            'brochureUrl', 'brochureGeneratedAt', 'totalHours', 'prerequisites',
+            'warnings', 'storage', 'ingredients'
         ];
 
         if (fields) {
@@ -354,6 +358,9 @@ export const getCourseById = async (req, res) => {
             whatYouWillLearn: ensureArray(product.whatYouWillLearn),
             requirements: ensureArray(product.requirements),
             whoIsThisFor: ensureArray(product.whoIsThisFor),
+            warnings: ensureArray(product.warnings || []),
+            ingredients: ensureArray(product.ingredients || product.prerequisites || []),
+            storage: product.storage || '',
             tags: product.tags || [],
             faqs: product.faqs || [],
             curriculum: product.curriculum?.length ? product.curriculum : [{
@@ -414,7 +421,7 @@ export const updateCourse = async (req, res) => {
             certificateIncluded = true, isFeatured = false, isPublished = false,
             showOnHome = false, status = 'draft', image = '', thumbnail = '',
             previewVideo = '', metaTitle = '', metaDescription = '', slug = '',
-            tags = []
+            tags = [], warnings = [], storage = '', ingredients = []
         } = req.body;
 
         const updateData = {
@@ -434,7 +441,10 @@ export const updateCourse = async (req, res) => {
             requirements: cleanArrayField(requirements),
             whoIsThisFor: cleanArrayField(whoIsThisFor),
             whatYouWillLearn: cleanArrayField(whatYouWillLearn),
+            warnings: cleanArrayField(warnings),
+            ingredients: cleanArrayField(ingredients),
             prerequisites: cleanArrayField(prerequisites),
+            storage: storage?.toString()?.trim() || '',
             certificateIncluded: certificateIncluded !== false,
             isFeatured: Boolean(isFeatured),
             isPublished: Boolean(isPublished),
