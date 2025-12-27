@@ -7,8 +7,8 @@ export default function About() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
       <SEO
-        title="About Us | Ayushaushadhi - Rediscovering Nature's Wisdom"
-        description="Learn about Ayushaushadhi's mission to bring authentic Ayurvedic remedies to the modern world. Discover our heritage, our commitment to purity, and our holistic wellness journey."
+        title="Ayushaushadhi | Authentic Ayurvedic Medicine & Holistic Wellness"
+        description="Ayushaushadhi is dedicated to authentic Ayurvedic medicine, offering doctor-formulated herbal remedies for natural healing, balance, and long-term holistic wellness."
         keywords="about ayushaushadhi, ayurveda story, herbal wellness, natural medicine, indian heritage, holistic health mission"
         og={{
           title: "About Ayushaushadhi - Purity & Tradition",
@@ -27,14 +27,14 @@ export default function About() {
         </div>
 
         <div className="max-w-4xl mx-auto text-center relative z-10">
-          <h1 className="text-4xl md:text-5xl font-bold text-white mb-6 font-serif">
+          <p className="text-4xl md:text-5xl font-bold text-white mb-6 font-serif">
             Our Roots
-          </h1>
-          <div className="w-24 h-1 bg-amber-400 mx-auto mb-8 rounded-full"></div>
-          <p className="text-xl md:text-2xl text-emerald-100 leading-relaxed font-light">
-            "Bridging the gap between ancient Vedic wisdom and modern wellness
-            needs."
           </p>
+          <div className="w-24 h-1 bg-amber-400 mx-auto mb-8 rounded-full"></div>
+          <h1 className="text-xl md:text-2xl text-emerald-100 leading-relaxed font-light">
+            "About Ayushaushadhi – Trusted Ayurvedic Medicine for Natural
+            Wellness"
+          </h1>
         </div>
       </section>
 

@@ -107,7 +107,7 @@ const ProductsByCategory = () => {
     : "All Products";
 
   // SEO Metadata
-  const seoTitle = `${formattedCategoryName} | Ayushaushadhi Herbal Store`;
+  const seoTitle = `${formattedCategoryName} | Ayurvedic Herbal Medicines & Wellness Products | Ayushaushadhi`;
   const seoDescription = `Shop authentic ${formattedCategoryName} ayurvedic remedies. 100% natural, doctor-formulated products for your wellness.`;
   const canonicalUrl = `https://ayushaushadhi.com/store/category/${categoryName}`;
 
