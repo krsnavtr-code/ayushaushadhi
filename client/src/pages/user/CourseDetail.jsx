@@ -5,7 +5,6 @@ import { getCourseById } from "../../api/courseApi";
 import { toast } from "react-hot-toast";
 import { useAuth } from "../../contexts/AuthContext";
 import { useCart } from "../../contexts/CartContext";
-import { AnimatePresence } from "framer-motion";
 import {
   FaStar,
   FaLeaf,
@@ -26,6 +25,7 @@ import { formatPrice } from "../../utils/format";
 import { getImageUrl } from "../../utils/imageUtils";
 import PaymentForm from "../../components/PaymentForm";
 import axios from "axios";
+import { AnimatePresence } from "framer-motion";
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -91,7 +91,7 @@ const ProductDetail = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-emerald-600"></div>
       </div>
     );
@@ -107,7 +107,6 @@ const ProductDetail = () => {
         )
       : 0;
 
-  // Formatting Key Data
   const specs = product.additionalInfo || {};
   const ingredients =
     product.ingredients && product.ingredients.length > 0
@@ -116,7 +115,7 @@ const ProductDetail = () => {
   const warnings = product.warnings || [];
 
   return (
-    <div className="min-h-screen bg-stone-50 text-gray-800 font-sans">
+    <div className="min-h-screen bg-stone-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200 font-sans transition-colors duration-300">
       <SEO
         title={`${product.title} - Authentic Ayurveda | Ayushaushadhi`}
         description={product.shortDescription}
@@ -124,17 +123,23 @@ const ProductDetail = () => {
       />
 
       {/* Breadcrumb */}
-      <div className="bg-white border-b border-gray-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 text-sm text-gray-500">
-          <Link to="/" className="hover:text-emerald-600">
+      <div className="bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 text-sm text-gray-500 dark:text-gray-400">
+          <Link
+            to="/"
+            className="hover:text-emerald-600 dark:hover:text-emerald-400"
+          >
             Home
           </Link>{" "}
           /
-          <Link to="/collections" className="hover:text-emerald-600 ml-1">
+          <Link
+            to="/collections"
+            className="hover:text-emerald-600 dark:hover:text-emerald-400 ml-1"
+          >
             Store
           </Link>{" "}
           /
-          <span className="ml-1 text-gray-800 font-medium">
+          <span className="ml-1 text-gray-800 dark:text-gray-200 font-medium">
             {product.title}
           </span>
         </div>
@@ -145,7 +150,7 @@ const ProductDetail = () => {
           {/* LEFT COLUMN: IMAGES (Sticky) */}
           <div className="lg:w-1/2">
             <div className="sticky top-24">
-              <div className="relative rounded-2xl overflow-hidden shadow-lg border border-gray-100 bg-white group">
+              <div className="relative rounded-2xl overflow-hidden shadow-lg border border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800 group">
                 <img
                   src={getImageUrl(product.thumbnail)}
                   alt={product.title}
@@ -165,27 +170,27 @@ const ProductDetail = () => {
 
               {/* Trust Badges */}
               <div className="grid grid-cols-4 gap-2 mt-6">
-                <div className="flex flex-col items-center text-center gap-1 p-2 bg-white rounded-lg shadow-sm border border-emerald-50">
-                  <FaLeaf className="text-emerald-600 text-xl" />
-                  <span className="text-[10px] font-bold text-gray-600">
+                <div className="flex flex-col items-center text-center gap-1 p-2 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-emerald-50 dark:border-gray-700">
+                  <FaLeaf className="text-emerald-600 dark:text-emerald-400 text-xl" />
+                  <span className="text-[10px] font-bold text-gray-600 dark:text-gray-300">
                     100% Herbal
                   </span>
                 </div>
-                <div className="flex flex-col items-center text-center gap-1 p-2 bg-white rounded-lg shadow-sm border border-emerald-50">
-                  <FaShieldAlt className="text-blue-600 text-xl" />
-                  <span className="text-[10px] font-bold text-gray-600">
+                <div className="flex flex-col items-center text-center gap-1 p-2 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-emerald-50 dark:border-gray-700">
+                  <FaShieldAlt className="text-blue-600 dark:text-blue-400 text-xl" />
+                  <span className="text-[10px] font-bold text-gray-600 dark:text-gray-300">
                     Quality Assured
                   </span>
                 </div>
-                <div className="flex flex-col items-center text-center gap-1 p-2 bg-white rounded-lg shadow-sm border border-emerald-50">
-                  <FaTruck className="text-amber-600 text-xl" />
-                  <span className="text-[10px] font-bold text-gray-600">
+                <div className="flex flex-col items-center text-center gap-1 p-2 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-emerald-50 dark:border-gray-700">
+                  <FaTruck className="text-amber-600 dark:text-amber-400 text-xl" />
+                  <span className="text-[10px] font-bold text-gray-600 dark:text-gray-300">
                     Fast Delivery
                   </span>
                 </div>
-                <div className="flex flex-col items-center text-center gap-1 p-2 bg-white rounded-lg shadow-sm border border-emerald-50">
-                  <FaBoxOpen className="text-purple-600 text-xl" />
-                  <span className="text-[10px] font-bold text-gray-600">
+                <div className="flex flex-col items-center text-center gap-1 p-2 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-emerald-50 dark:border-gray-700">
+                  <FaBoxOpen className="text-purple-600 dark:text-purple-400 text-xl" />
+                  <span className="text-[10px] font-bold text-gray-600 dark:text-gray-300">
                     Easy Returns
                   </span>
                 </div>
@@ -198,23 +203,23 @@ const ProductDetail = () => {
             {/* 1. Header & Purchase Info */}
             <div>
               <div className="mb-2 flex items-center gap-2">
-                <span className="text-emerald-700 font-bold text-xs tracking-wide uppercase bg-emerald-100 px-2 py-1 rounded">
+                <span className="text-emerald-700 dark:text-emerald-400 font-bold text-xs tracking-wide uppercase bg-emerald-100 dark:bg-emerald-900/30 px-2 py-1 rounded">
                   {product.category?.name || "Herbal Supplement"}
                 </span>
                 {specs.form && (
-                  <span className="text-amber-700 font-bold text-xs tracking-wide uppercase bg-amber-100 px-2 py-1 rounded flex items-center gap-1">
+                  <span className="text-amber-700 dark:text-amber-400 font-bold text-xs tracking-wide uppercase bg-amber-100 dark:bg-amber-900/30 px-2 py-1 rounded flex items-center gap-1">
                     <FaPills className="text-[10px]" /> {specs.form}
                   </span>
                 )}
               </div>
 
-              <h1 className="text-3xl md:text-4xl font-bold text-gray-900 font-serif mb-2 leading-tight">
+              <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white font-serif mb-2 leading-tight">
                 {product.title}
               </h1>
 
-              <p className="text-sm text-gray-500 mb-4">
+              <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
                 By{" "}
-                <span className="text-emerald-700 font-semibold">
+                <span className="text-emerald-700 dark:text-emerald-400 font-semibold">
                   {product.instructor || "Ayushaushadhi"}
                 </span>
               </p>
@@ -227,53 +232,53 @@ const ProductDetail = () => {
                       className={
                         i < (product.rating || 4)
                           ? "text-amber-400"
-                          : "text-gray-300"
+                          : "text-gray-300 dark:text-gray-600"
                       }
                     />
                   ))}
                 </div>
-                <span className="text-sm text-gray-500 underline decoration-gray-300 underline-offset-4">
+                <span className="text-sm text-gray-500 dark:text-gray-400 underline decoration-gray-300 dark:decoration-gray-600 underline-offset-4">
                   {product.reviews?.length || 45} Reviews
                 </span>
               </div>
 
               {/* Short Description */}
-              <p className="text-gray-600 leading-relaxed mb-6">
+              <p className="text-gray-600 dark:text-gray-300 leading-relaxed mb-6">
                 {product.shortDescription}
               </p>
 
               {/* Price Block */}
-              <div className="bg-white rounded-xl p-5 border border-emerald-100 shadow-sm mb-8">
+              <div className="bg-white dark:bg-gray-800 rounded-xl p-5 border border-emerald-100 dark:border-gray-700 shadow-sm mb-8">
                 <div className="flex items-end gap-3 mb-2">
-                  <span className="text-3xl font-bold text-emerald-800">
+                  <span className="text-3xl font-bold text-emerald-800 dark:text-emerald-400">
                     {product.price > 0 ? formatPrice(product.price) : "Free"}
                   </span>
                   {product.originalPrice > product.price && (
-                    <span className="text-lg text-gray-400 line-through mb-1">
+                    <span className="text-lg text-gray-400 dark:text-gray-500 line-through mb-1">
                       {formatPrice(product.originalPrice)}
                     </span>
                   )}
                 </div>
 
-                <div className="flex items-center gap-2 text-sm text-green-600 bg-green-50 w-fit px-2 py-1 rounded mb-4">
+                <div className="flex items-center gap-2 text-sm text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900/20 w-fit px-2 py-1 rounded mb-4">
                   <FaCheckCircle /> Inclusive of all taxes
                 </div>
 
                 {/* Actions */}
                 <div className="flex flex-col sm:flex-row gap-4">
-                  <div className="flex items-center border border-gray-300 rounded-lg bg-gray-50 w-max">
+                  <div className="flex items-center border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 w-max">
                     <button
                       onClick={() => setQty(Math.max(1, qty - 1))}
-                      className="px-4 py-3 text-gray-600 hover:bg-gray-200 rounded-l-lg"
+                      className="px-4 py-3 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-l-lg"
                     >
                       -
                     </button>
-                    <span className="px-4 font-bold w-12 text-center">
+                    <span className="px-4 font-bold w-12 text-center text-gray-900 dark:text-white">
                       {qty}
                     </span>
                     <button
                       onClick={() => setQty(qty + 1)}
-                      className="px-4 py-3 text-gray-600 hover:bg-gray-200 rounded-r-lg"
+                      className="px-4 py-3 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-r-lg"
                     >
                       +
                     </button>
@@ -281,12 +286,12 @@ const ProductDetail = () => {
 
                   <button
                     onClick={handleAddToCart}
-                    className="flex-1 bg-emerald-800 text-white font-bold py-3 px-6 rounded-lg hover:bg-emerald-900 transition-all shadow-lg hover:shadow-emerald-900/30 flex items-center justify-center gap-2"
+                    className="flex-1 bg-emerald-800 dark:bg-emerald-700 text-white font-bold py-3 px-6 rounded-lg hover:bg-emerald-900 dark:hover:bg-emerald-600 transition-all shadow-lg hover:shadow-emerald-900/30 flex items-center justify-center gap-2"
                   >
                     <FaShoppingCart /> Add to Cart
                   </button>
 
-                  <button className="p-3 border border-gray-300 rounded-lg hover:bg-gray-50 text-gray-500 hover:text-red-500 transition-colors">
+                  <button className="p-3 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-500 dark:text-gray-400 hover:text-red-500 dark:hover:text-red-400 transition-colors">
                     <FaHeart size={20} />
                   </button>
                 </div>
@@ -294,15 +299,15 @@ const ProductDetail = () => {
 
               {/* Quick Specs */}
               {specs.shelfLife && (
-                <div className="flex gap-4 text-sm text-gray-600 mb-6 bg-amber-50/50 p-3 rounded-lg border border-amber-100">
+                <div className="flex gap-4 text-sm text-gray-600 dark:text-gray-300 mb-6 bg-amber-50/50 dark:bg-amber-900/20 p-3 rounded-lg border border-amber-100 dark:border-amber-800/50">
                   <div className="flex items-center gap-2">
-                    <FaClock className="text-amber-600" />
+                    <FaClock className="text-amber-600 dark:text-amber-500" />
                     <span className="font-semibold">Shelf Life:</span>{" "}
                     {specs.shelfLife}
                   </div>
                   {specs.packagingSize && (
                     <div className="flex items-center gap-2">
-                      <FaBoxOpen className="text-amber-600" />
+                      <FaBoxOpen className="text-amber-600 dark:text-amber-500" />
                       <span className="font-semibold">Pack:</span>{" "}
                       {specs.packagingSize}
                     </div>
@@ -311,33 +316,34 @@ const ProductDetail = () => {
               )}
             </div>
 
-            <hr className="border-gray-200" />
+            <hr className="border-gray-200 dark:border-gray-700" />
 
             {/* 2. Description & Benefits */}
             <div>
-              <h3 className="text-xl font-bold text-gray-900 font-serif mb-4">
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white font-serif mb-4">
                 Product Overview
               </h3>
-              <div className="prose prose-emerald max-w-none text-gray-600 mb-8">
-                <div
-                  dangerouslySetInnerHTML={{
-                    __html:
-                      product.description ||
-                      "<p>No detailed description available.</p>",
-                  }}
-                />
-              </div>
+              <div
+                // Added: dark:[&_*]:!text-gray-300
+                // This forces ALL children elements (*) in dark mode to use gray-300, overriding inline styles
+                className="dark:[&_*]:!text-white [&_*]:!bg-transparent"
+                dangerouslySetInnerHTML={{
+                  __html:
+                    product.description ||
+                    "<p>No detailed description available.</p>",
+                }}
+              />
 
               {product.benefits?.length > 0 && (
-                <div className="bg-stone-50 p-6 rounded-xl border border-stone-100">
-                  <h4 className="text-lg font-bold text-gray-900 mb-4">
+                <div className="bg-stone-50 dark:bg-gray-800 p-6 rounded-xl border border-stone-100 dark:border-gray-700">
+                  <h4 className="text-lg font-bold text-gray-900 dark:text-white mb-4">
                     Key Health Benefits
                   </h4>
                   <div className="grid md:grid-cols-2 gap-3">
                     {product.benefits.map((benefit, idx) => (
                       <div key={idx} className="flex items-start gap-3">
                         <FaCheckCircle className="text-emerald-500 mt-1 flex-shrink-0" />
-                        <span className="text-sm font-medium text-gray-700">
+                        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
                           {benefit}
                         </span>
                       </div>
@@ -347,24 +353,24 @@ const ProductDetail = () => {
               )}
             </div>
 
-            <hr className="border-gray-200" />
+            <hr className="border-gray-200 dark:border-gray-700" />
 
             {/* 3. Ingredients */}
             {ingredients.length > 0 && (
               <div>
-                <h3 className="text-xl font-bold text-gray-900 font-serif mb-6">
+                <h3 className="text-xl font-bold text-gray-900 dark:text-white font-serif mb-6">
                   Natural Ingredients
                 </h3>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                   {ingredients.map((ing, idx) => (
                     <div
                       key={idx}
-                      className="flex items-center gap-3 p-3 border border-emerald-50 bg-emerald-50/20 rounded-lg hover:shadow-sm transition-shadow"
+                      className="flex items-center gap-3 p-3 border border-emerald-50 dark:border-gray-700 bg-emerald-50/20 dark:bg-gray-800 rounded-lg hover:shadow-sm transition-shadow"
                     >
-                      <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-emerald-500 shadow-sm shrink-0">
+                      <div className="w-10 h-10 bg-white dark:bg-gray-700 rounded-full flex items-center justify-center text-emerald-500 dark:text-emerald-400 shadow-sm shrink-0">
                         <FaLeaf />
                       </div>
-                      <span className="font-semibold text-gray-800 text-sm">
+                      <span className="font-semibold text-gray-800 dark:text-gray-200 text-sm">
                         {ing}
                       </span>
                     </div>
@@ -373,20 +379,20 @@ const ProductDetail = () => {
               </div>
             )}
 
-            <hr className="border-gray-200" />
+            <hr className="border-gray-200 dark:border-gray-700" />
 
             {/* 4. Dosage & Usage */}
             <div>
-              <h3 className="text-xl font-bold text-gray-900 font-serif mb-6">
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white font-serif mb-6">
                 Dosage & Direction of Use
               </h3>
 
               {specs.directionOfUse && (
-                <div className="bg-amber-50 border-l-4 border-amber-400 p-4 mb-6 rounded-r-lg">
-                  <p className="font-bold text-amber-900 text-sm uppercase tracking-wide mb-1">
+                <div className="bg-amber-50 dark:bg-amber-900/20 border-l-4 border-amber-400 p-4 mb-6 rounded-r-lg">
+                  <p className="font-bold text-amber-900 dark:text-amber-400 text-sm uppercase tracking-wide mb-1">
                     Recommended Dosage
                   </p>
-                  <p className="text-amber-800 font-medium">
+                  <p className="text-amber-800 dark:text-amber-200 font-medium">
                     {specs.directionOfUse}
                   </p>
                 </div>
@@ -396,22 +402,22 @@ const ProductDetail = () => {
                 {product.curriculum?.map((step, idx) => (
                   <div
                     key={idx}
-                    className="flex gap-4 p-4 bg-white border border-gray-100 rounded-xl shadow-sm"
+                    className="flex gap-4 p-4 bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-xl shadow-sm"
                   >
-                    <div className="flex-shrink-0 w-8 h-8 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-sm">
+                    <div className="flex-shrink-0 w-8 h-8 rounded-full bg-emerald-100 dark:bg-emerald-900 text-emerald-700 dark:text-emerald-300 flex items-center justify-center font-bold text-sm">
                       {idx + 1}
                     </div>
                     <div>
-                      <h4 className="font-bold text-gray-900 mb-1">
+                      <h4 className="font-bold text-gray-900 dark:text-white mb-1">
                         {step.title}
                       </h4>
                       {step.description && (
-                        <p className="text-gray-600 text-sm mb-2">
+                        <p className="text-gray-600 dark:text-gray-300 text-sm mb-2">
                           {step.description}
                         </p>
                       )}
                       {step.topics?.length > 0 && (
-                        <ul className="list-disc list-inside text-sm text-gray-500 space-y-1 ml-1">
+                        <ul className="list-disc list-inside text-sm text-gray-500 dark:text-gray-400 space-y-1 ml-1">
                           {step.topics.map((topic, tIdx) => (
                             <li key={tIdx}>{topic}</li>
                           ))}
@@ -423,18 +429,18 @@ const ProductDetail = () => {
               </div>
             </div>
 
-            <hr className="border-gray-200" />
+            <hr className="border-gray-200 dark:border-gray-700" />
 
             {/* 5. Safety & Specs */}
             <div className="grid md:grid-cols-2 gap-8">
               {/* Safety */}
               <div>
-                <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+                <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
                   <FaExclamationTriangle className="text-red-500" /> Safety
                   Information
                 </h3>
-                <div className="bg-red-50 border border-red-100 rounded-xl p-5">
-                  <ul className="list-disc list-inside text-sm text-red-800 space-y-2">
+                <div className="bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-900/50 rounded-xl p-5">
+                  <ul className="list-disc list-inside text-sm text-red-800 dark:text-red-200 space-y-2">
                     {warnings.length > 0 ? (
                       warnings.map((warn, i) => <li key={i}>{warn}</li>)
                     ) : (
@@ -448,33 +454,35 @@ const ProductDetail = () => {
 
               {/* Storage & More Specs */}
               <div>
-                <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+                <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
                   <FaInfoCircle className="text-blue-500" /> Additional Info
                 </h3>
-                <div className="bg-blue-50 border border-blue-100 rounded-xl p-5 space-y-3">
+                <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-900/50 rounded-xl p-5 space-y-3">
                   {product.storage && (
                     <div>
-                      <span className="text-xs font-bold text-blue-800 uppercase block mb-1">
+                      <span className="text-xs font-bold text-blue-800 dark:text-blue-300 uppercase block mb-1">
                         Storage
                       </span>
-                      <p className="text-sm text-blue-900">{product.storage}</p>
+                      <p className="text-sm text-blue-900 dark:text-blue-200">
+                        {product.storage}
+                      </p>
                     </div>
                   )}
-                  <div className="pt-2 border-t border-blue-200">
+                  <div className="pt-2 border-t border-blue-200 dark:border-blue-800">
                     <div className="grid grid-cols-2 gap-2 text-sm">
                       <div>
-                        <span className="text-blue-800 font-semibold">
+                        <span className="text-blue-800 dark:text-blue-300 font-semibold">
                           Country:
                         </span>{" "}
-                        <span className="text-blue-900">
+                        <span className="text-blue-900 dark:text-blue-200">
                           {specs.countryOfOrigin}
                         </span>
                       </div>
                       <div>
-                        <span className="text-blue-800 font-semibold">
+                        <span className="text-blue-800 dark:text-blue-300 font-semibold">
                           Type:
                         </span>{" "}
-                        <span className="text-blue-900">
+                        <span className="text-blue-900 dark:text-blue-200">
                           {specs.typeOfSupplement || "Dietary Supplement"}
                         </span>
                       </div>
@@ -489,7 +497,7 @@ const ProductDetail = () => {
               <div className="flex justify-center mt-4">
                 <button
                   onClick={downloadBrochure}
-                  className="flex items-center gap-2 text-emerald-700 font-bold hover:underline bg-emerald-50 px-6 py-3 rounded-full transition-colors"
+                  className="flex items-center gap-2 text-emerald-700 dark:text-emerald-400 font-bold hover:underline bg-emerald-50 dark:bg-emerald-900/30 px-6 py-3 rounded-full transition-colors"
                 >
                   <FaFilePdf /> Download Product Leaflet
                 </button>

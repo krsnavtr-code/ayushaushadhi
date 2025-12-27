@@ -142,7 +142,7 @@ function Navbar() {
         {/* =================================================================
             ROW 1: PRIMARY HEADER (Logo, Search, Actions)
             ================================================================= */}
-        <div className="bg-white dark:bg-gray-900 border-b border-gray-100 dark:border-gray-800 transition-colors duration-300 h-20">
+        <div className="bg-white dark:bg-gray-900 border-b border-gray-100 dark:border-gray-800 transition-colors duration-300 h-14">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center justify-between gap-4">
             {/* 1. Mobile Menu Toggle & Logo */}
             <div className="flex items-center gap-3">
