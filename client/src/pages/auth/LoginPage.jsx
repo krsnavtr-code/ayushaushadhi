@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
 import { useAuth } from "../../contexts/AuthContext";
 import { FaLeaf, FaArrowLeft } from "react-icons/fa";
+import SEO from "../../components/SEO";
 
 const LoginPage = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -55,6 +56,17 @@ const LoginPage = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-emerald-900 to-teal-800 p-4 relative overflow-hidden">
+      <SEO
+        title="Login | Ayushaushadhi"
+        description="Log in to your Ayushaushadhi account to access your profile, orders, and personalized Ayurvedic wellness services."
+        keywords="ayushaushadhi login, sign in, user account access, ayurveda account, secure login"
+        og={{
+          title: "Login to Ayushaushadhi",
+          description:
+            "Securely sign in to your Ayushaushadhi account and continue your wellness journey.",
+          type: "website",
+        }}
+      />
       {/* Decorative Background Elements */}
       <FaLeaf className="absolute top-10 left-10 text-emerald-800/50 text-[10rem] transform -rotate-45 pointer-events-none" />
       <div className="absolute bottom-[-5rem] right-[-5rem] w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>

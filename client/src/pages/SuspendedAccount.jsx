@@ -1,6 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { FaBan, FaLeaf, FaEnvelope, FaSignOutAlt } from "react-icons/fa";
+import SEO from "../components/SEO";
 
 const SuspendedAccount = () => {
   const navigate = useNavigate();
@@ -14,6 +15,19 @@ const SuspendedAccount = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-emerald-50/50 dark:bg-gray-900 relative overflow-hidden transition-colors duration-300">
+      {/* SEO */}
+      <SEO
+        title="Account Suspended | Ayushaushadhi"
+        description="Your Ayushaushadhi account has been temporarily suspended due to policy or security reasons. Please contact support to resolve this issue."
+        keywords="account suspended, ayushaushadhi account issue, access restricted, policy violation, contact support"
+        og={{
+          title: "Account Suspended - Ayushaushadhi",
+          description:
+            "This account has been suspended. Please get in touch with Ayushaushadhi support for further assistance.",
+          type: "website",
+        }}
+      />
+
       {/* Decorative Background Elements */}
       <FaLeaf className="absolute top-0 left-0 text-[10rem] text-emerald-100 dark:text-emerald-900/10 transform -rotate-45 -translate-x-1/2 -translate-y-1/2 pointer-events-none" />
       <FaLeaf className="absolute bottom-0 right-0 text-[10rem] text-amber-100 dark:text-amber-900/10 transform rotate-12 translate-x-1/3 translate-y-1/3 pointer-events-none" />

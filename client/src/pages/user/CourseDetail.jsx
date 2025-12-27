@@ -82,7 +82,7 @@ const ProductDetail = () => {
   return (
     <div className="min-h-screen bg-white text-gray-800 font-sans">
       <SEO
-        title={`${product.title} - Authentic Ayurveda | Ayushaushadhi`}
+        title={`${product.title} - Product Details | Authentic Ayurveda | Ayushaushadhi`}
         description={product.shortDescription}
         image={getImageUrl(product.thumbnail)}
       />

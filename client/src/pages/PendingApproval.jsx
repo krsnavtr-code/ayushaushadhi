@@ -6,6 +6,7 @@ import {
   FaEnvelope,
   FaSignOutAlt,
 } from "react-icons/fa";
+import SEO from "../components/SEO";
 
 const PendingApproval = () => {
   const navigate = useNavigate();
@@ -19,6 +20,18 @@ const PendingApproval = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-emerald-50/50 dark:bg-gray-900 relative overflow-hidden transition-colors duration-300">
+      {/* SEO */}
+      <SEO
+        title="Approval Pending | Ayushaushadhi"
+        description="Your request is currently under review. The Ayushaushadhi team is verifying your details and will notify you once approval is completed."
+        keywords="approval pending, ayushaushadhi verification, account under review, request pending, approval status"
+        og={{
+          title: "Approval Pending - Ayushaushadhi",
+          description:
+            "Your account or request is under review. Please wait while our team completes the approval process.",
+          type: "website",
+        }}
+      />
       {/* Decorative Background Elements */}
       <FaLeaf className="absolute top-0 left-0 text-[10rem] text-emerald-100 dark:text-emerald-900/10 transform -rotate-45 -translate-x-1/2 -translate-y-1/2 pointer-events-none" />
       <FaLeaf className="absolute bottom-0 right-0 text-[10rem] text-amber-100 dark:text-amber-900/10 transform rotate-12 translate-x-1/3 translate-y-1/3 pointer-events-none" />

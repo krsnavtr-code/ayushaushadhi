@@ -5,6 +5,7 @@ import userApi from '../../api/userApi';
 import { useNavigate } from 'react-router-dom';
 import { Card, Progress, Button, message } from 'antd';
 import { BookOutlined, ArrowRightOutlined, CheckCircleOutlined } from '@ant-design/icons';
+import SEO from "../../components/SEO";
 
 const { Meta } = Card;
 
@@ -140,6 +141,19 @@ const Profile = () => {
   
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
+      {/* SEO */}
+      <SEO
+        title="My Profile | Ayushaushadhi"
+        description="View and manage your Ayushaushadhi profile details, personal information, and account settings in one place."
+        keywords="ayushaushadhi profile, my account, user dashboard, account settings, personal information"
+        og={{
+          title: "My Profile - Ayushaushadhi",
+          description:
+            "Access and update your personal details and account preferences on Ayushaushadhi.",
+          type: "website",
+        }}
+      />
+
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-8">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
@@ -161,7 +175,7 @@ const Profile = () => {
             </button>
           )}
         </div>
-        
+
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
@@ -178,7 +192,7 @@ const Profile = () => {
                 required
               />
             </div>
-            
+
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Email
@@ -193,7 +207,7 @@ const Profile = () => {
                 required
               />
             </div>
-            
+
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Phone
@@ -207,7 +221,7 @@ const Profile = () => {
                 className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
               />
             </div>
-            
+
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Address
@@ -222,7 +236,7 @@ const Profile = () => {
               />
             </div>
           </div>
-          
+
           {isEditing && (
             <div className="flex justify-end mt-6">
               <button
@@ -230,7 +244,7 @@ const Profile = () => {
                 disabled={isLoading}
                 className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors disabled:opacity-50"
               >
-                {isLoading ? 'Saving...' : 'Save Changes'}
+                {isLoading ? "Saving..." : "Save Changes"}
               </button>
             </div>
           )}
@@ -244,83 +258,81 @@ const Profile = () => {
         </h2>
       </div>
 
-       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {enrollments.map((enrollment) => {
-                const course = enrollment.course;
-                const progress = Math.round(enrollment.progress || 0);
-                const isCompleted = enrollment.completionStatus === 'completed';
-                const lastAccessed = enrollment.updatedAt 
-                  ? new Date(enrollment.updatedAt).toLocaleDateString() 
-                  : 'Never';
-                
-                return (
-                  <Card
-                    key={enrollment._id}
-                    className="h-full flex flex-col group hover:shadow-lg transition-all duration-200 border border-gray-900"
-                    hoverable
-                    onClick={() => handleCourseClick(course._id)}
-                    cover={
-                      <div className="h-48 bg-gray-50 flex items-center border border-gray-900 border-b-0 justify-center overflow-hidden relative">
-                        {course.thumbnail ? (
-                          <img
-                            alt={course.title}
-                            src={course.thumbnail}
-                            className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300"
-                            onError={(e) => {
-                              e.target.onerror = null;
-                              e.target.src =
-                                "https://via.placeholder.com/300x200?text=Course";
-                            }}
-                          />
-                        ) : (
-                          <div className="flex flex-col items-center justify-center text-gray-400">
-                            <BookOutlined className="text-5xl mb-2" />
-                            <span>No Preview Available</span>
-                          </div>
-                        )}
-                        {isCompleted && (
-                          <div className="absolute top-3 right-3 bg-gray-100 text-gray-700 px-2 py-1 rounded-full text-xs font-medium flex items-center">
-                            <CheckCircleOutlined className="mr-1" /> Completed
-                          </div>
-                        )}
-                      </div>
-                    }
-                  >
-                    <Meta
-                      title={
-                        <div className="flex justify-between items-start">
-                          <span className="text-lg font-semibold text-gray-900 line-clamp-2">
-                            {course?.title || "Untitled Course"}
-                          </span>
-                        </div>
-                      }
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {enrollments.map((enrollment) => {
+          const course = enrollment.course;
+          const progress = Math.round(enrollment.progress || 0);
+          const isCompleted = enrollment.completionStatus === "completed";
+          const lastAccessed = enrollment.updatedAt
+            ? new Date(enrollment.updatedAt).toLocaleDateString()
+            : "Never";
+
+          return (
+            <Card
+              key={enrollment._id}
+              className="h-full flex flex-col group hover:shadow-lg transition-all duration-200 border border-gray-900"
+              hoverable
+              onClick={() => handleCourseClick(course._id)}
+              cover={
+                <div className="h-48 bg-gray-50 flex items-center border border-gray-900 border-b-0 justify-center overflow-hidden relative">
+                  {course.thumbnail ? (
+                    <img
+                      alt={course.title}
+                      src={course.thumbnail}
+                      className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src =
+                          "https://via.placeholder.com/300x200?text=Course";
+                      }}
                     />
-                    <div className="mt-4 pt-4 border-t border-gray-100">
-                      <Button
-                        type={isCompleted ? "default" : "primary"}
-                        className="bg-gray-900 hover:bg-gray-800"
-                        block
-                        icon={
-                          isCompleted ? (
-                            <CheckCircleOutlined />
-                          ) : (
-                            <ArrowRightOutlined />
-                          )
-                        }
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleCourseClick(course._id);
-                        }}
-                      >
-                        {isCompleted ? "View Course" : "Continue Learning"}
-                      </Button>
+                  ) : (
+                    <div className="flex flex-col items-center justify-center text-gray-400">
+                      <BookOutlined className="text-5xl mb-2" />
+                      <span>No Preview Available</span>
                     </div>
-                  </Card>
-                );
-              })}
-            </div>
-      
-      
+                  )}
+                  {isCompleted && (
+                    <div className="absolute top-3 right-3 bg-gray-100 text-gray-700 px-2 py-1 rounded-full text-xs font-medium flex items-center">
+                      <CheckCircleOutlined className="mr-1" /> Completed
+                    </div>
+                  )}
+                </div>
+              }
+            >
+              <Meta
+                title={
+                  <div className="flex justify-between items-start">
+                    <span className="text-lg font-semibold text-gray-900 line-clamp-2">
+                      {course?.title || "Untitled Course"}
+                    </span>
+                  </div>
+                }
+              />
+              <div className="mt-4 pt-4 border-t border-gray-100">
+                <Button
+                  type={isCompleted ? "default" : "primary"}
+                  className="bg-gray-900 hover:bg-gray-800"
+                  block
+                  icon={
+                    isCompleted ? (
+                      <CheckCircleOutlined />
+                    ) : (
+                      <ArrowRightOutlined />
+                    )
+                  }
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleCourseClick(course._id);
+                  }}
+                >
+                  {isCompleted ? "View Course" : "Continue Learning"}
+                </Button>
+              </div>
+            </Card>
+          );
+        })}
+      </div>
     </div>
   );
 };

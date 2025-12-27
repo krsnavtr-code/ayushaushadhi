@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { getCategories as getCategoriesFromApi } from "../../api/categoryApi";
 import { getCoursesByCategory } from "../../api/courseApi"; // We treat courses as products
 import { FaLeaf, FaArrowRight, FaMortarPestle } from "react-icons/fa";
+import SEO from "../../components/SEO";
 
 // Helper function to get the full image URL
 const getImageUrl = (imagePath) => {
@@ -123,6 +124,18 @@ const AllCollections = () => {
 
   return (
     <div className="min-h-screen bg-emerald-50/30 dark:bg-gray-900 py-16 px-4 sm:px-6 lg:px-8 relative overflow-hidden transition-colors duration-300">
+      {/* SEO */}
+      <SEO
+        title="All Collections | Ayushaushadhi"
+        description="Explore all Ayushaushadhi collections featuring authentic Ayurvedic and herbal products for holistic health and wellness."
+        keywords="ayushaushadhi collections, ayurvedic products, herbal collections, wellness products, natural remedies"
+        og={{
+          title: "All Collections - Ayushaushadhi",
+          description:
+            "Browse all Ayurvedic and herbal product collections curated for your complete wellness journey.",
+          type: "website",
+        }}
+      />
       {/* Background Leaves */}
       <FaLeaf className="absolute top-0 left-0 text-[12rem] text-emerald-100 dark:text-emerald-900/10 transform -rotate-45 -translate-x-1/3 -translate-y-1/3 pointer-events-none" />
 

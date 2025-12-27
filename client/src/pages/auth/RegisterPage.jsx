@@ -2,6 +2,7 @@ import React from "react";
 import { useNavigate, Link } from "react-router-dom";
 import RegisterForm from "./RegisterForm";
 import { FaLeaf, FaArrowLeft } from "react-icons/fa";
+import SEO from "../../components/SEO";
 
 const RegisterPage = () => {
   const navigate = useNavigate();
@@ -16,6 +17,17 @@ const RegisterPage = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-emerald-900 to-teal-800 p-4 relative overflow-hidden">
+      <SEO
+        title="Register | Ayushaushadhi"
+        description="Create your Ayushaushadhi account to explore authentic Ayurvedic products, track orders, and receive personalized wellness support."
+        keywords="ayushaushadhi register, sign up, create account, ayurveda wellness account, herbal products"
+        og={{
+          title: "Create an Account - Ayushaushadhi",
+          description:
+            "Sign up with Ayushaushadhi and begin your journey toward natural health and holistic wellness.",
+          type: "website",
+        }}
+      />
       {/* Decorative Background Elements */}
       <FaLeaf className="absolute top-10 right-10 text-emerald-800/50 text-[12rem] transform rotate-12 pointer-events-none" />
       <div className="absolute bottom-[-5rem] left-[-5rem] w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>

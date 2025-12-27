@@ -79,6 +79,17 @@ export default function BlogListPage() {
       )}
 
       <div className="p-6 flex flex-col flex-grow">
+        <SEO
+          title="All Collections | Ayushaushadhi"
+          description="Explore all Ayushaushadhi collections featuring authentic Ayurvedic and herbal products for holistic health and wellness."
+          keywords="ayushaushadhi collections, ayurvedic products, herbal collections, wellness products, natural remedies"
+          og={{
+            title: "All Collections - Ayushaushadhi",
+            description:
+              "Browse all Ayurvedic and herbal product collections curated for your complete wellness journey.",
+            type: "website",
+          }}
+        />
         {/* Categories */}
         {post.categories?.length > 0 && (
           <div className="flex flex-wrap gap-2 mb-3">

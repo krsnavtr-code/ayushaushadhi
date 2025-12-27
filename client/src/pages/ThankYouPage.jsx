@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { FaCheck, FaLeaf, FaHome } from "react-icons/fa";
+import SEO from "../components/SEO";
 
 const ThankYouPage = () => {
   const location = useLocation();
@@ -24,6 +25,19 @@ const ThankYouPage = () => {
 
   return (
     <div className="min-h-screen bg-emerald-50/50 dark:bg-gray-900 flex items-center justify-center px-4 relative overflow-hidden transition-colors duration-300">
+      {/* SEO */}
+      <SEO
+        title="Thank You | Ayushaushadhi"
+        description="Thank you for reaching out to Ayushaushadhi. We have received your request and our wellness team will get back to you shortly."
+        keywords="thank you ayushaushadhi, request received, contact success, ayurveda support, herbal wellness"
+        og={{
+          title: "Thank You - Ayushaushadhi",
+          description:
+            "Your message has been successfully submitted. Our team will contact you soon to support your wellness journey.",
+          type: "website",
+        }}
+      />
+
       {/* Decorative Background Elements */}
       <FaLeaf className="absolute top-10 left-10 text-emerald-200 dark:text-emerald-900/20 text-9xl transform -rotate-45 pointer-events-none opacity-50" />
       <FaLeaf className="absolute bottom-10 right-10 text-amber-200 dark:text-amber-900/20 text-8xl transform rotate-12 pointer-events-none opacity-50" />

@@ -1,10 +1,24 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { FaLock, FaLeaf, FaHome } from "react-icons/fa";
+import SEO from "../components/SEO";
 
 export default function Unauthorized() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-emerald-50/50 dark:bg-gray-900 relative overflow-hidden">
+      {/* SEO */}
+      <SEO
+        title="Unauthorized Access | Ayushaushadhi"
+        description="You do not have permission to access this page. Please log in with authorized credentials or contact Ayushaushadhi support for assistance."
+        keywords="unauthorized access, access denied, ayushaushadhi login, permission error, restricted page"
+        og={{
+          title: "Unauthorized Access - Ayushaushadhi",
+          description:
+            "This page is restricted. Please ensure you have the correct permissions or log in to continue.",
+          type: "website",
+        }}
+      />
+
       {/* Decorative Background Elements */}
       <FaLeaf className="absolute top-0 left-0 text-[10rem] text-emerald-100 dark:text-emerald-900/10 transform -rotate-45 -translate-x-1/2 -translate-y-1/2 pointer-events-none" />
       <FaLeaf className="absolute bottom-0 right-0 text-[10rem] text-amber-100 dark:text-amber-900/10 transform rotate-12 translate-x-1/3 translate-y-1/3 pointer-events-none" />
